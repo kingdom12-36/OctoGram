@@ -34,13 +34,13 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-           # 5. تثبيت الأدوات المطلوبة (تخطي التحديث العالق لأن الأدوات مثبتة مسبقاً)
-      - name: Install Dependencies
+      # 5. التحقق من الأدوات الأساسية المثبتة مسبقاً (تخطي apt بالكامل لتفادي التعليق العالق للشبكة)
+      - name: Verify Essential Tools
         run: |
-          echo "Checking pre-installed tools..."
-          ccache --version || sudo apt-get install -y ccache
-          git-lfs --version || sudo apt-get install -y git-lfs
+          echo "Checking essential pre-installed tools..."
+          git lfs version
           sed --version
+          wget --version
 
       # 6. مصنع مفاتيح لِنكيت الديناميكي طبقاً لـ OctoGram 🛡️
       - name: Linkit Key Factory & Properties Fix 🛡️
@@ -129,10 +129,9 @@ jobs:
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      # 10. البدء ببناء النسخة النهائية (Universal APK) والتوقيع بمفتاحك الخاص
+      # 10. البدء ببناء النسخة النهائية من الموديل الأب الحقيقي والوحيد للمشروع
       - name: Build Android App
-        run: ./gradlew :TMessagesProj_AppStandalone:assembleRelease --stacktrace
-
+        run: ./gradlew :TMessagesProj_App:assembleRelease --stacktrace
 
       # 11. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
       - name: Upload Keystore Package
@@ -144,11 +143,9 @@ jobs:
             Linkit.jks.base64
           retention-days: 1
 
-      # 12. رفع التطبيق النهائي الموقّع من المجلد الصحيح لـ OctoGram
+      # 12. رفع التطبيق النهائي الموقّع الملتقط ديناميكياً من مسارات الـ APK الصحيحة
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AyuGramX-Linkit-Official
-          path: TMessagesProj_AppStandalone/build/outputs/apk/release/*.apk
-
-
+          path: TMessagesProj_App/build/outputs/apk/**/*.apk
