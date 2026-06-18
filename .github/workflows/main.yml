@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
-          lfs: true # سحب ملفات الـ LFS للمشروع الرئيسي
+          lfs: true
           fetch-depth: 1
 
-      # 2. خطوة إضافية جبارة: إجبار السيرفر على سحب ملفات الـ LFS من قلب الـ Submodules المتخبية
+      # 2. إجبار السيرفر على سحب ملفات الـ LFS من قلب الـ Submodules
       - name: Checkout Submodules LFS Files
         run: |
           git submodule foreach --recursive 'git lfs pull'
@@ -38,20 +38,22 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget sed git-lfs
+          sudo apt-get install -y wget sed git-lfs ccache
 
-      # 6. مصنع مفاتيح لِنكيت 🛡️ + حل عقدة الـ ModulePlugin النصية
+      # 6. مصنع مفاتيح لِنكيت الديناميكي طبقاً لـ OctoGram 🛡️
       - name: Linkit Key Factory & Properties Fix 🛡️
         run: |
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
           INFO_FILE="Linkit_Key_Info.txt"
-          JKS_FILE="${KEY_NAME}.jks"
-          PROPERTIES_FILE="keystore.properties"
+          
+          # إنشاء المجلد الصارم والمطلوب في مشروع OctoGram وتعديل صلاحياته
+          sudo mkdir -p /home/octogram/keys
+          sudo chmod -R 777 /home/octogram
           
           echo "--- Generating Keystore ---"
           keytool -genkey -v \
-            -keystore $(pwd)/$JKS_FILE \
+            -keystore /home/octogram/keys/octogram-key.jks \
             -alias $KEY_NAME \
             -keyalg RSA \
             -keysize 2048 \
@@ -64,51 +66,62 @@ jobs:
           {
             echo "Key Name/Alias: $KEY_NAME"
             echo "Password: $PASSWORD"
-            echo "Store Password: $PASSWORD"
-            echo "Key Password: $PASSWORD"
             echo "Format: JKS"
             echo "Generated Date: $(date)"
           } > $INFO_FILE
 
-          echo "--- Generating Properties File for ModulePlugin ---"
-          echo "keystore.file=$(pwd)/$JKS_FILE" > $PROPERTIES_FILE
-          echo "keystore.password=$PASSWORD" >> $PROPERTIES_FILE
-          echo "key.alias=$KEY_NAME" >> $PROPERTIES_FILE
-          echo "key.password=$PASSWORD" >> $PROPERTIES_FILE
+          echo "--- Generating signing.properties for OctoGram ---"
+          {
+            echo "storePassword=$PASSWORD"
+            echo "keyAlias=$KEY_NAME"
+            echo "keyPath=/home/octogram/keys/octogram-key.jks"
+            echo "keyPassword=$PASSWORD"
+          } > /home/octogram/keys/signing.properties
 
           echo "--- Generating Base64 String ---"
-          base64 -w 0 $(pwd)/$JKS_FILE > $(pwd)/${JKS_FILE}.base64
+          base64 -w 0 /home/octogram/keys/octogram-key.jks > Linkit.jks.base64
 
-      # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties
+      # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
       - name: Run Repo Setup Script
         env:
           TERM: xterm-256color
           FORCE_COLOR: "1"
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-          KEYSTORE_FILE: "keystore.properties" 
           APP_ID: "org.linkit.tgx"
           APP_NAME: "AyuGramX-Linkit"
           APP_DOWNLOAD_URL: "https://telegram.org/dlx"
           APP_SOURCES_URL: "https://github.com/moeCrafters/moeGramX"
         run: |
-          chmod +x scripts/*.sh
+          chmod +x scripts/*.sh 2>/dev/null || true
           mkdir -p /home/runner/bin
           echo '#!/bin/bash' > /home/runner/bin/tput
           echo 'exit 0' >> /home/runner/bin/tput
           chmod +x /home/runner/bin/tput
           
-          export PATH=/home/runner/bin:$(pwd)/scripts:$PATH
-          ./scripts/setup.sh
+          export PATH=/home/runner/bin:$PATH
+          
+          # حقن المسارات المطلوبة في local.properties الأساسي للمشروع
+          echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
+          echo "MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}" >> local.properties
+          
+          if [ -d "scripts" ]; then
+             ./scripts/setup.sh || true
+          fi
 
-      # 8. الحركة الذكية: تعديل اسم الحزمة داخل ملف google-services.json ليتطابق تماماً
+      # 8. تعديل اسم الحزمة داخل ملف google-services.json في المجلد الصحيح (TMessagesProj_App)
       - name: Patch Google Services Package Name
         run: |
-          echo "--- Patching google-services.json ---"
-          sed -i 's/"package_name": "moe.kirao.mgx"/"package_name": "org.linkit.tgx"/g' app/google-services.json
-          
-          echo "--- Verification ---"
-          grep "package_name" app/google-services.json
+          TARGET_JSON="TMessagesProj_App/google-services.json"
+          if [ -f "$TARGET_JSON" ]; then
+            echo "--- Patching google-services.json ---"
+            sed -i 's/"package_name": "moe.kirao.mgx"/"package_name": "org.linkit.tgx"/g' $TARGET_JSON
+            grep "package_name" $TARGET_JSON
+          else
+            echo "google-services.json not found in TMessagesProj_App, creating an empty placeholder to prevent compile crash if needed."
+            mkdir -p TMessagesProj_App
+            echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
+          fi
 
       # 9. إعطاء صلاحيات التنفيذ للـ Gradle Wrapper
       - name: Grant Execute Permission for Gradle
@@ -118,23 +131,20 @@ jobs:
       - name: Build Android App
         run: ./gradlew assembleUniversalRelease --stacktrace
 
-      # 11. رفع المفاتيح كـ Artifact لحفظها
+      # 11. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
       - name: Upload Keystore Package
         uses: actions/upload-artifact@v4
         with:
           name: Linkit-Release-Keys
           path: |
-            Linkit.jks
-            keystore.properties
             Linkit_Key_Info.txt
             Linkit.jks.base64
           retention-days: 1
 
-      # 12. رفع التطبيق النهائي الموقّع والجاهز للتثبيت
+      # 12. رفع التطبيق النهائي الموقّع من المجلد الصحيح لـ OctoGram
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AyuGramX-Linkit-Official
-          path: app/build/outputs/apk/universal/release/*.apk
-          
-          #only need to put tg secrets in github secrets
+          path: TMessagesProj_App/build/outputs/apk/universal/release/*.apk
+
