@@ -22,12 +22,12 @@ jobs:
         run: |
           git submodule foreach --recursive 'git lfs pull'
 
-      # 3. إعداد بيئة جافا (المشروع يحتاج JDK 17)
-      - name: Set up JDK 17
+      # 3. إعداد بيئة جافا (المشروع يحتاج JDK 21 طبقاً لخطأ الـ Compiler)
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
 
       # 4. إعداد الأندرويد SDK
@@ -129,9 +129,16 @@ jobs:
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      # 10. البدء ببناء النسخة النهائية من الموديل الأب الحقيقي والوحيد للمشروع
+      # 10. البناء النهائي مع إسكات تحذيرات الـ C++ وتوحيد الـ JVM Target لتسريع العملية
       - name: Build Android App
-        run: ./gradlew :TMessagesProj_App:assembleRelease --stacktrace
+        run: |
+          ./gradlew :TMessagesProj_App:assembleRelease \
+            -Pandroid.experimental.jetbrains.kotlin.jvm.target=21 \
+            -Pandroid.antlr.arguments="-w" \
+            -Dorg.gradle.project.android.ndk.cflags="-w" \
+            -Dorg.gradle.project.android.ndk.cppflags="-w" \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
+            --stacktrace
 
       # 11. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
       - name: Upload Keystore Package
