@@ -34,11 +34,13 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # 5. تثبيت الأدوات المطلوبة للترقيع والبناء
+           # 5. تثبيت الأدوات المطلوبة (تخطي التحديث العالق لأن الأدوات مثبتة مسبقاً)
       - name: Install Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget sed git-lfs ccache
+          echo "Checking pre-installed tools..."
+          ccache --version || sudo apt-get install -y ccache
+          git-lfs --version || sudo apt-get install -y git-lfs
+          sed --version
 
       # 6. مصنع مفاتيح لِنكيت الديناميكي طبقاً لـ OctoGram 🛡️
       - name: Linkit Key Factory & Properties Fix 🛡️
