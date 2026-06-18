@@ -1,0 +1,140 @@
+name: Build AyuGramX / moeGramX (Auto-Key Factory)
+
+on:
+  workflow_dispatch: 
+  push: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. جلب كود المشروع وتفعيل الـ LFS بشكل كامل وعميق للمشروع والـ Submodules
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          lfs: true # سحب ملفات الـ LFS للمشروع الرئيسي
+          fetch-depth: 1
+
+      # 2. خطوة إضافية جبارة: إجبار السيرفر على سحب ملفات الـ LFS من قلب الـ Submodules المتخبية
+      - name: Checkout Submodules LFS Files
+        run: |
+          git submodule foreach --recursive 'git lfs pull'
+
+      # 3. إعداد بيئة جافا (المشروع يحتاج JDK 17)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      # 4. إعداد الأندرويد SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 5. تثبيت الأدوات المطلوبة للترقيع والبناء
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget sed git-lfs
+
+      # 6. مصنع مفاتيح لِنكيت 🛡️ + حل عقدة الـ ModulePlugin النصية
+      - name: Linkit Key Factory & Properties Fix 🛡️
+        run: |
+          KEY_NAME="Linkit"
+          PASSWORD="Linkit"
+          INFO_FILE="Linkit_Key_Info.txt"
+          JKS_FILE="${KEY_NAME}.jks"
+          PROPERTIES_FILE="keystore.properties"
+          
+          echo "--- Generating Keystore ---"
+          keytool -genkey -v \
+            -keystore $(pwd)/$JKS_FILE \
+            -alias $KEY_NAME \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass $PASSWORD \
+            -keypass $PASSWORD \
+            -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
+
+          echo "--- Creating Info File ---"
+          {
+            echo "Key Name/Alias: $KEY_NAME"
+            echo "Password: $PASSWORD"
+            echo "Store Password: $PASSWORD"
+            echo "Key Password: $PASSWORD"
+            echo "Format: JKS"
+            echo "Generated Date: $(date)"
+          } > $INFO_FILE
+
+          echo "--- Generating Properties File for ModulePlugin ---"
+          echo "keystore.file=$(pwd)/$JKS_FILE" > $PROPERTIES_FILE
+          echo "keystore.password=$PASSWORD" >> $PROPERTIES_FILE
+          echo "key.alias=$KEY_NAME" >> $PROPERTIES_FILE
+          echo "key.password=$PASSWORD" >> $PROPERTIES_FILE
+
+          echo "--- Generating Base64 String ---"
+          base64 -w 0 $(pwd)/$JKS_FILE > $(pwd)/${JKS_FILE}.base64
+
+      # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties
+      - name: Run Repo Setup Script
+        env:
+          TERM: xterm-256color
+          FORCE_COLOR: "1"
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          KEYSTORE_FILE: "keystore.properties" 
+          APP_ID: "org.linkit.tgx"
+          APP_NAME: "AyuGramX-Linkit"
+          APP_DOWNLOAD_URL: "https://telegram.org/dlx"
+          APP_SOURCES_URL: "https://github.com/moeCrafters/moeGramX"
+        run: |
+          chmod +x scripts/*.sh
+          mkdir -p /home/runner/bin
+          echo '#!/bin/bash' > /home/runner/bin/tput
+          echo 'exit 0' >> /home/runner/bin/tput
+          chmod +x /home/runner/bin/tput
+          
+          export PATH=/home/runner/bin:$(pwd)/scripts:$PATH
+          ./scripts/setup.sh
+
+      # 8. الحركة الذكية: تعديل اسم الحزمة داخل ملف google-services.json ليتطابق تماماً
+      - name: Patch Google Services Package Name
+        run: |
+          echo "--- Patching google-services.json ---"
+          sed -i 's/"package_name": "moe.kirao.mgx"/"package_name": "org.linkit.tgx"/g' app/google-services.json
+          
+          echo "--- Verification ---"
+          grep "package_name" app/google-services.json
+
+      # 9. إعطاء صلاحيات التنفيذ للـ Gradle Wrapper
+      - name: Grant Execute Permission for Gradle
+        run: chmod +x gradlew
+
+      # 10. البدء ببناء النسخة النهائية (Universal APK) والتوقيع بمفتاحك الخاص
+      - name: Build Android App
+        run: ./gradlew assembleUniversalRelease --stacktrace
+
+      # 11. رفع المفاتيح كـ Artifact لحفظها
+      - name: Upload Keystore Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linkit-Release-Keys
+          path: |
+            Linkit.jks
+            keystore.properties
+            Linkit_Key_Info.txt
+            Linkit.jks.base64
+          retention-days: 1
+
+      # 12. رفع التطبيق النهائي الموقّع والجاهز للتثبيت
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AyuGramX-Linkit-Official
+          path: app/build/outputs/apk/universal/release/*.apk
+          
+          #only need to put tg secrets in github secrets
