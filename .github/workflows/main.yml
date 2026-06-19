@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: write
-  secrets: write
 
 jobs:
   build:
@@ -40,10 +39,7 @@ jobs:
           sed --version
           wget --version
 
-      - name: Stable Keystore & Signing Setup
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Linkit Key Factory & Properties Fix
         run: |
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
@@ -51,26 +47,16 @@ jobs:
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
 
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "--- Reusing saved keystore (consistent signature) ---"
-            echo "$KEYSTORE_BASE64" | base64 -d > /home/octogram/keys/octogram-key.jks
-          else
-            echo "--- First run: generating keystore ---"
-            keytool -genkey -v \
-              -keystore /home/octogram/keys/octogram-key.jks \
-              -alias $KEY_NAME \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 36500 \
-              -storepass $PASSWORD \
-              -keypass $PASSWORD \
-              -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
-
-            echo "--- Saving keystore to GitHub Secrets for all future builds ---"
-            base64 -w 0 /home/octogram/keys/octogram-key.jks | \
-              gh secret set KEYSTORE_BASE64 --repo ${{ github.repository }}
-            echo "Keystore saved! Future builds will reuse this exact key."
-          fi
+          echo "--- Generating fresh keystore ---"
+          keytool -genkey -v \
+            -keystore /home/octogram/keys/octogram-key.jks \
+            -alias $KEY_NAME \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass $PASSWORD \
+            -keypass $PASSWORD \
+            -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
 
           echo "--- Writing signing.properties ---"
           {
