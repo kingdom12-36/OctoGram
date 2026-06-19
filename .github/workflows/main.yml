@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  secrets: write
 
 jobs:
   build:
@@ -35,49 +36,49 @@ jobs:
 
       - name: Verify Essential Tools
         run: |
-          echo "Checking essential pre-installed tools..."
           git lfs version
           sed --version
           wget --version
 
-      - name: Linkit Key Factory & Properties Fix
+      - name: Stable Keystore & Signing Setup
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
-          INFO_FILE="Linkit_Key_Info.txt"
 
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
 
-          echo "--- Generating Keystore ---"
-          keytool -genkey -v \
-            -keystore /home/octogram/keys/octogram-key.jks \
-            -alias $KEY_NAME \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -storepass $PASSWORD \
-            -keypass $PASSWORD \
-            -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "--- Reusing saved keystore (consistent signature) ---"
+            echo "$KEYSTORE_BASE64" | base64 -d > /home/octogram/keys/octogram-key.jks
+          else
+            echo "--- First run: generating keystore ---"
+            keytool -genkey -v \
+              -keystore /home/octogram/keys/octogram-key.jks \
+              -alias $KEY_NAME \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 36500 \
+              -storepass $PASSWORD \
+              -keypass $PASSWORD \
+              -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
 
-          echo "--- Creating Info File ---"
-          {
-            echo "Key Name/Alias: $KEY_NAME"
-            echo "Password: $PASSWORD"
-            echo "Format: JKS"
-            echo "Generated Date: $(date)"
-          } > $INFO_FILE
+            echo "--- Saving keystore to GitHub Secrets for all future builds ---"
+            base64 -w 0 /home/octogram/keys/octogram-key.jks | \
+              gh secret set KEYSTORE_BASE64 --repo ${{ github.repository }}
+            echo "Keystore saved! Future builds will reuse this exact key."
+          fi
 
-          echo "--- Generating signing.properties for OctoGram ---"
+          echo "--- Writing signing.properties ---"
           {
             echo "storePassword=$PASSWORD"
             echo "keyAlias=$KEY_NAME"
             echo "keyPath=/home/octogram/keys/octogram-key.jks"
             echo "keyPassword=$PASSWORD"
           } > /home/octogram/keys/signing.properties
-
-          echo "--- Generating Base64 String ---"
-          base64 -w 0 /home/octogram/keys/octogram-key.jks > Linkit.jks.base64
 
       - name: Run Repo Setup Script
         env:
@@ -126,9 +127,8 @@ jobs:
       - name: Fix Deprecated Gradle Properties
         run: |
           if [ -f "gradle.properties" ]; then
-            echo "--- Cleaning gradle.properties ---"
             sed -i '/android.enableR8/d' gradle.properties
-            echo "Properties cleaned successfully."
+            echo "gradle.properties cleaned."
           fi
 
       - name: Grant Execute Permission for Gradle
@@ -197,10 +197,10 @@ jobs:
           import os, asyncio
           from pyrogram import Client
 
-          api_id    = int(os.environ["TELEGRAM_API_ID"])
-          api_hash  = os.environ["TELEGRAM_API_HASH"]
-          session   = os.environ["TELEGRAM_CLIENT"]
-          channel   = -1004457565242
+          api_id   = int(os.environ["TELEGRAM_API_ID"])
+          api_hash = os.environ["TELEGRAM_API_HASH"]
+          session  = os.environ["TELEGRAM_CLIENT"]
+          channel  = -1004457565242
 
           caption = (
               "**OctoGram Latest Build**\n"
