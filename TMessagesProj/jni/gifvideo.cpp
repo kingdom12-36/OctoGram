@@ -517,9 +517,7 @@ extern "C" JNIEXPORT jlong JNICALL Java_org_telegram_ui_Components_AnimatedFileD
         return 0;
     }
 
-    av_init_packet(&info->pkt);
-    info->pkt.data = NULL;
-    info->pkt.size = 0;
+    info->pkt = {};  // zero-init replaces deprecated av_init_packet
 
     jint *dataArr = env->GetIntArrayElements(data, 0);
     if (dataArr != nullptr) {

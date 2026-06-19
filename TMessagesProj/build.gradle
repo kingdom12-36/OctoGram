@@ -207,6 +207,9 @@ android {
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+                // Suppress deprecated-declarations from third-party C/C++ (FFmpeg, WebRTC headers)
+                cppFlags '-Wno-deprecated-declarations'
+                cFlags   '-Wno-deprecated-declarations'
                 var file = getCCacheExecutable()
                 if (file.exists()) {
                     print("Using ccache ${file.getAbsolutePath()}")
@@ -236,6 +239,14 @@ android {
     }
 }
 apply plugin: 'com.google.gms.google-services'
+
+// Silence Java compiler Notes from upstream Telegram/OctoGram code:
+//   -Xlint:-deprecation  → no "uses deprecated API" notes
+//   -Xlint:-unchecked    → no "uses unchecked operations" notes
+//   -Xlint:-classfile    → no "class file for j2objc ... not found" warnings
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xlint:-deprecation', '-Xlint:-unchecked', '-Xlint:-classfile']
+}
 
 task checkVisibility {
     doFirst {
