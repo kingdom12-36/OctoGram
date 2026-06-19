@@ -186,11 +186,46 @@ jobs:
           path: OctoGram-arm64.apk
           retention-days: 30
 
+      - name: Send APK to Telegram Channel
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_CLIENT: ${{ secrets.TELEGRAM_CLIENT }}
+        run: |
+          pip install pyrogram tgcrypto -q
+          python3 << 'PYEOF'
+          import os, asyncio
+          from pyrogram import Client
+
+          api_id    = int(os.environ["TELEGRAM_API_ID"])
+          api_hash  = os.environ["TELEGRAM_API_HASH"]
+          session   = os.environ["TELEGRAM_CLIENT"]
+          channel   = -1004457565242
+
+          caption = (
+              "**OctoGram Latest Build**\n"
+              "Architecture: arm64-v8a\n"
+              "Built automatically via GitHub Actions"
+          )
+
+          async def main():
+              async with Client(":memory:", api_id=api_id, api_hash=api_hash, session_string=session) as app:
+                  await app.send_document(
+                      chat_id=channel,
+                      document="OctoGram-arm64.apk",
+                      caption=caption,
+                      force_document=True
+                  )
+                  print("APK sent to Telegram channel successfully!")
+
+          asyncio.run(main())
+          PYEOF
+
       - name: Publish to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          printf '## OctoGram Latest Auto-Build\n\nCommit: %s\n\narm64-v8a only — download APK below.' "${{ github.sha }}" > release_notes.md
+          printf '## OctoGram Latest Auto-Build\n\nCommit: %s\n\narm64-v8a only - download APK below.' "${{ github.sha }}" > release_notes.md
           gh release delete latest --yes 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
           gh release create latest OctoGram-arm64.apk \
