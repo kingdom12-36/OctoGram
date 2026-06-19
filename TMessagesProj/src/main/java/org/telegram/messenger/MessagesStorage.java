@@ -14276,6 +14276,10 @@ public class MessagesStorage extends BaseController {
         if (messages.isEmpty()) {
             return null;
         }
+        // OctoGram: Show Deleted Messages — skip removing from storage
+        if (it.octogram.android.OctoConfig.INSTANCE.showDeletedMessages.getValue()) {
+            return null;
+        }
         if (useQueue) {
             storageQueue.postRunnable(() -> markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId));
         } else {
@@ -15204,6 +15208,13 @@ public class MessagesStorage extends BaseController {
                                     TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                     oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                     data.reuse();
+                                    // OctoGram: Save edit history before overwrite
+                                    if (it.octogram.android.OctoConfig.INSTANCE.saveEditsHistory.getValue() &&
+                                            oldMessage.message != null && message.message != null &&
+                                            !oldMessage.message.equals(message.message)) {
+                                        it.octogram.android.utils.chat.MessageEditsDatabase.getInstance(ApplicationLoader.applicationContext)
+                                                .addEdit(MessageObject.getDialogId(message), message.id, oldMessage.message, oldMessage.date);
+                                    }
                                     if (reactionUpdates != null) {
                                         reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                     }
