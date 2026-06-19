@@ -339,6 +339,7 @@ import it.octogram.android.StoreUtils;
 import it.octogram.android.TranslatorMode;
 import it.octogram.android.TranslatorProvider;
 import it.octogram.android.app.ui.bottomsheets.MessageDetailsBottomSheet;
+import it.octogram.android.app.ui.bottomsheets.EditHistoryBottomSheet;
 import it.octogram.android.utils.ai.CustomModelsMenuWrapper;
 import it.octogram.android.utils.ai.CustomModelsHelper;
 import it.octogram.android.utils.ai.MainAiHelper;
@@ -34069,33 +34070,8 @@ public class ChatActivity extends BaseFragment implements
                 break;
             }
             case OPTION_EDITS_HISTORY: {
-                // OctoGram: Show edit history dialog
-                if (selectedObject != null && getParentActivity() != null) {
-                    java.util.List<it.octogram.android.utils.chat.MessageEditsDatabase.EditEntry> edits =
-                            it.octogram.android.utils.chat.MessageEditsDatabase.getInstance(getParentActivity())
-                                    .getEdits(selectedObject.getDialogId(), selectedObject.getId());
-                    if (!edits.isEmpty()) {
-                        StringBuilder sb = new StringBuilder();
-                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy HH:mm", java.util.Locale.getDefault());
-                        for (int octoI = 0; octoI < edits.size(); octoI++) {
-                            it.octogram.android.utils.chat.MessageEditsDatabase.EditEntry e = edits.get(octoI);
-                            sb.append("Version ").append(octoI + 1).append("  •  ")
-                              .append(sdf.format(new java.util.Date(e.date * 1000L))).append("\n");
-                            sb.append(e.text).append("\n\n");
-                        }
-                        android.widget.TextView tv = new android.widget.TextView(getParentActivity());
-                        tv.setText(sb.toString().trim());
-                        tv.setPadding(52, 36, 52, 36);
-                        tv.setTextSize(15f);
-                        tv.setTextIsSelectable(true);
-                        android.widget.ScrollView sv = new android.widget.ScrollView(getParentActivity());
-                        sv.addView(tv);
-                        new org.telegram.ui.ActionBar.AlertDialog.Builder(getParentActivity())
-                                .setTitle("Edit History")
-                                .setView(sv)
-                                .setPositiveButton(LocaleController.getString("OK", R.string.OK), null)
-                                .show();
-                    }
+                if (selectedObject != null) {
+                    new EditHistoryBottomSheet(ChatActivity.this, selectedObject).show();
                 }
                 break;
             }

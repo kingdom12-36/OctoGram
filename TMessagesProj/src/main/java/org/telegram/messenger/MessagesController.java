@@ -18618,7 +18618,21 @@ public class MessagesController extends BaseController implements NotificationCe
                 }
                 getMessagesStorage().putMessages(messagesRes, editingMessages.keyAt(b), -2, 0, false, 0, 0);
             }
-            LongSparseArray<ArrayList<MessageObject>> editingMessagesFinal = editingMessages;
+            // OctoGram: Save Edits History
+            if (it.octogram.android.OctoConfig.INSTANCE.saveEditsHistory.getValue()) {
+                it.octogram.android.utils.chat.MessageEditsDatabase octoDb = it.octogram.android.utils.chat.MessageEditsDatabase.getInstance(ApplicationLoader.applicationContext);
+                for (int octoB = 0, octoSize = editingMessages.size(); octoB < octoSize; octoB++) {
+                    long octoDlgId = editingMessages.keyAt(octoB);
+                    ArrayList<MessageObject> octoMsgs = editingMessages.valueAt(octoB);
+                    for (int octoA = 0; octoA < octoMsgs.size(); octoA++) {
+                        MessageObject octoMo = octoMsgs.get(octoA);
+                        if (octoMo.messageOwner != null && octoMo.messageOwner.message != null && octoMo.messageOwner.edit_date != 0) {
+                            octoDb.addEdit(octoDlgId, octoMo.getId(), octoMo.messageOwner.message, octoMo.messageOwner.edit_date);
+                        }
+                    }
+                }
+            }
+                        LongSparseArray<ArrayList<MessageObject>> editingMessagesFinal = editingMessages;
             getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> {
                 getNotificationsController().processEditedMessages(editingMessagesFinal);
                 getTopicsController().processEditedMessages(editingMessagesFinal);

@@ -10043,4 +10043,6 @@
     <string name="OctoSaveEditsHistory_Desc">Keep a local copy of edits made to your sent messages</string>
     <string name="OctoShowDeletedMessages">Show Deleted Messages</string>
     <string name="OctoShowDeletedMessages_Desc">Keep deleted messages visible in chat with a red Deleted badge</string>
+    <string name="OctoEditHistory">Edit History</string>
+    <string name="OctoEditHistory_Empty">No edit history saved for this message yet.</string>
 </resources>
