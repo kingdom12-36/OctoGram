@@ -1208,6 +1208,7 @@
     <string name="SearchFrom">from:</string>
     <string name="NoRecent">No recent</string>
     <string name="Message">Message</string>
+    <string name="Messages">Messages</string>
     <string name="TypeMessage">Message</string>
     <string name="TypeMessageIn">Message in %1$s</string>
     <string name="TypeMessageForStars">Message for ⭐️%s</string>

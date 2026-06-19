@@ -18632,6 +18632,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
                 }
             }
+            LongSparseArray<ArrayList<MessageObject>> editingMessagesFinal = editingMessages;
             getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> {
                 getNotificationsController().processEditedMessages(editingMessagesFinal);
                 getTopicsController().processEditedMessages(editingMessagesFinal);
