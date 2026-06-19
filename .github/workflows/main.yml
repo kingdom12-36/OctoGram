@@ -45,10 +45,10 @@ jobs:
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
           INFO_FILE="Linkit_Key_Info.txt"
-          
+
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
-          
+
           echo "--- Generating Keystore ---"
           keytool -genkey -v \
             -keystore /home/octogram/keys/octogram-key.jks \
@@ -95,17 +95,17 @@ jobs:
           echo '#!/bin/bash' > /home/runner/bin/tput
           echo 'exit 0' >> /home/runner/bin/tput
           chmod +x /home/runner/bin/tput
-          
+
           export PATH=/home/runner/bin:$PATH
-          
+
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
-          
+
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           if [ -z "$MAPS_KEY" ]; then
             MAPS_KEY="AIzaSyDummyKey_Linkit"
           fi
           echo "MAPS_API_KEY=$MAPS_KEY" >> local.properties
-          
+
           if [ -d "scripts" ]; then
              ./scripts/setup.sh || true
           fi
@@ -154,19 +154,16 @@ jobs:
             -not -path "*/cache/*" \
             2>/dev/null | sort
 
-          # Priority 1: release + arm64
           APK_PATH=$(find . -name "*.apk" \
             -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
             2>/dev/null | grep -i "release" | grep -i "arm64" | head -1)
 
-          # Priority 2: any release APK
           if [ -z "$APK_PATH" ]; then
             APK_PATH=$(find . -name "*.apk" \
               -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
               2>/dev/null | grep -i "release" | head -1)
           fi
 
-          # Priority 3: any APK at all
           if [ -z "$APK_PATH" ]; then
             APK_PATH=$(find . -name "*.apk" \
               -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
@@ -175,7 +172,7 @@ jobs:
 
           if [ -n "$APK_PATH" ]; then
             cp "$APK_PATH" OctoGram-arm64.apk
-            echo "Staged: $APK_PATH → OctoGram-arm64.apk"
+            echo "Staged: $APK_PATH -> OctoGram-arm64.apk"
             ls -lh OctoGram-arm64.apk
           else
             echo "ERROR: No APK found anywhere in workspace!"
@@ -193,15 +190,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          printf '## OctoGram Latest Auto-Build\n\nCommit: %s\n\narm64-v8a only — download APK below.' "${{ github.sha }}" > release_notes.md
           gh release delete latest --yes 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
           gh release create latest OctoGram-arm64.apk \
             --title "Latest Build ($(date -u '+%Y-%m-%d %H:%M UTC'))" \
-            --notes "## OctoGram — Latest Auto-Build
-
-Built from commit ${{ github.sha }}
-
-**Download the APK below ⬇️**
-
-> arm64-v8a only" \
+            --notes-file release_notes.md \
             --latest
