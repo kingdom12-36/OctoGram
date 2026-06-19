@@ -66,6 +66,22 @@ jobs:
             echo "keyPassword=$PASSWORD"
           } > /home/octogram/keys/signing.properties
 
+      - name: Patch Package Name & App Name
+        run: |
+          echo "--- Patching gradle.properties ---"
+          sed -i 's/^APP_PACKAGE=.*/APP_PACKAGE=org.linkit.octogram/' gradle.properties
+          grep "APP_PACKAGE" gradle.properties
+
+          echo "--- Patching google-services.json ---"
+          TARGET_JSON="TMessagesProj_App/google-services.json"
+          if [ -f "$TARGET_JSON" ]; then
+            sed -i 's/"package_name": "[^"]*"/"package_name": "org.linkit.octogram"/g' $TARGET_JSON
+            grep "package_name" $TARGET_JSON
+          else
+            mkdir -p TMessagesProj_App
+            echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
+          fi
+
       - name: Run Repo Setup Script
         env:
           TERM: xterm-256color
@@ -95,20 +111,6 @@ jobs:
 
           if [ -d "scripts" ]; then
              ./scripts/setup.sh || true
-          fi
-
-      - name: Patch Google Services Package Name
-        run: |
-          TARGET_JSON="TMessagesProj_App/google-services.json"
-          if [ -f "$TARGET_JSON" ]; then
-            echo "--- Patching google-services.json ---"
-            sed -i 's/"package_name": "moe.kirao.mgx"/"package_name": "org.linkit.octogram"/g' $TARGET_JSON
-            sed -i 's/"package_name": "org.linkit.tgx"/"package_name": "org.linkit.octogram"/g' $TARGET_JSON
-            grep "package_name" $TARGET_JSON
-          else
-            echo "google-services.json not found, creating placeholder."
-            mkdir -p TMessagesProj_App
-            echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
           fi
 
       - name: Fix Deprecated Gradle Properties
@@ -190,7 +192,7 @@ jobs:
           channel  = -1004457565242
 
           caption = (
-              "**OctoGram Linkit — Latest Build**\n"
+              "**OctoGram Linkit - Latest Build**\n"
               "Package: org.linkit.octogram\n"
               "Architecture: arm64-v8a\n"
               "Built automatically via GitHub Actions"
