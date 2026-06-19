@@ -206,6 +206,7 @@ public class MessageObject {
     public String monthKey;
     public boolean deleted;
     public boolean deletedByThanos;
+    public boolean octoRetainedDeleted; // OctoGram: message was deleted but retained by ShowDeletedMessages setting
     public float audioProgress;
     public float forceSeekTo = -1;
     public int audioProgressMs;
