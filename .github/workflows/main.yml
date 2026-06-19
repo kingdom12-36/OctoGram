@@ -45,7 +45,6 @@ jobs:
           PASSWORD="Linkit"
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
-          echo "--- Generating fresh keystore ---"
           keytool -genkey -v \
             -keystore /home/octogram/keys/octogram-key.jks \
             -alias $KEY_NAME \
@@ -62,10 +61,17 @@ jobs:
             echo "keyPassword=$PASSWORD"
           } > /home/octogram/keys/signing.properties
 
-      - name: Patch Package Name
+      - name: Patch Package Name & Limit to arm64 Only
         run: |
+          echo "--- Patching APP_PACKAGE in gradle.properties ---"
           sed -i 's/^APP_PACKAGE=.*/APP_PACKAGE=org.linkit.octogram/' gradle.properties
           grep "APP_PACKAGE" gradle.properties
+
+          echo "--- Restricting ABI splits to arm64-v8a only in build.gradle ---"
+          sed -i "s/include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'/include 'arm64-v8a'/" TMessagesProj_App/build.gradle
+          grep "include" TMessagesProj_App/build.gradle || true
+
+          echo "--- Patching google-services.json ---"
           TARGET_JSON="TMessagesProj_App/google-services.json"
           if [ -f "$TARGET_JSON" ]; then
             sed -i 's/"package_name": "[^"]*"/"package_name": "org.linkit.octogram"/g' $TARGET_JSON
@@ -111,28 +117,56 @@ jobs:
             -Pandroid.antlr.arguments="-w" \
             -Dorg.gradle.project.android.ndk.cflags="-w" \
             -Dorg.gradle.project.android.ndk.cppflags="-w" \
-            -Pandroid.injected.build.abi=arm64-v8a \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
       - name: Locate & Stage APK
         run: |
-          find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | sort
-          APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | grep -i "release" | grep -i "arm64" | head -1)
+          echo "=== All APKs found in workspace ==="
+          find . -name "*.apk" \
+            -not -path "*/.gradle/*" \
+            -not -path "*/tools/*" \
+            -not -path "*/cache/*" \
+            -not -path "*/intermediates/*" \
+            2>/dev/null | sort
+
+          echo "=== Picking from outputs/apk (signed final APKs) ==="
+          APK_PATH=$(find . -path "*/outputs/apk*" -name "*.apk" \
+            -not -path "*/.gradle/*" \
+            2>/dev/null | grep -i "arm64" | head -1)
+
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | grep -i "release" | head -1)
+            APK_PATH=$(find . -path "*/outputs/apk*" -name "*.apk" \
+              -not -path "*/.gradle/*" \
+              2>/dev/null | head -1)
           fi
-          if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | head -1)
-          fi
+
           if [ -n "$APK_PATH" ]; then
             cp "$APK_PATH" OctoGram-arm64.apk
             echo "Staged: $APK_PATH -> OctoGram-arm64.apk"
             ls -lh OctoGram-arm64.apk
           else
-            echo "ERROR: No APK found!"
+            echo "ERROR: No signed APK in outputs/ folder!"
             exit 1
           fi
+
+      - name: Diagnose APK
+        run: |
+          AAPT="$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/aapt"
+          APKSIGNER="$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -1)/apksigner"
+
+          echo "====== FILE INFO ======"
+          file OctoGram-arm64.apk
+          ls -lh OctoGram-arm64.apk
+
+          echo "====== PACKAGE INFO (aapt) ======"
+          $AAPT dump badging OctoGram-arm64.apk | grep -E "package:|application-label|sdkVersion|targetSdkVersion|native-code" || echo "aapt failed"
+
+          echo "====== SIGNATURE CHECK (apksigner) ======"
+          $APKSIGNER verify --verbose OctoGram-arm64.apk 2>&1 || echo "apksigner check failed"
+
+          echo "====== ZIP INTEGRITY ======"
+          unzip -t OctoGram-arm64.apk > /dev/null 2>&1 && echo "ZIP is valid" || echo "ZIP is CORRUPT"
 
       - name: Upload APK as Actions Artifact
         uses: actions/upload-artifact@v4
@@ -140,37 +174,6 @@ jobs:
           name: OctoGram-arm64
           path: OctoGram-arm64.apk
           retention-days: 30
-
-      - name: Send APK to Telegram Channel
-        continue-on-error: true
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-          TELEGRAM_CLIENT: ${{ secrets.TELEGRAM_CLIENT }}
-        run: |
-          pip install "pyrogram==2.0.106" tgcrypto -q
-          cat > /tmp/tg_send.py << 'PYSCRIPT'
-          import os, asyncio, sys
-          from pyrogram import Client
-
-          api_id   = int(os.environ["TELEGRAM_API_ID"])
-          api_hash = os.environ["TELEGRAM_API_HASH"]
-          session  = os.environ["TELEGRAM_CLIENT"]
-          channel  = -1004457565242
-          caption  = "**OctoGram Linkit - Latest Build**\nPackage: org.linkit.octogram\nArchitecture: arm64-v8a\nBuilt via GitHub Actions"
-
-          async def main():
-              async with Client(":memory:", api_id=api_id, api_hash=api_hash, session_string=session) as app:
-                  await app.send_document(chat_id=channel, document="OctoGram-arm64.apk", caption=caption, force_document=True)
-                  print("APK sent to Telegram successfully!")
-
-          asyncio.run(main())
-          PYSCRIPT
-          python3 /tmp/tg_send.py || {
-            echo "v2 session failed, trying Pyrogram v1..."
-            pip install "pyrogram==1.4.16" tgcrypto -q
-            python3 /tmp/tg_send.py
-          }
 
       - name: Publish to GitHub Release
         env:
