@@ -91,6 +91,8 @@ public class OctoConfig {
     public final ConfigProperty<Boolean> hideSentTimeOnStickers = newConfigProperty("hideSentTimeOnStickers", false);
     public final ConfigProperty<Boolean> hideOnlyAllChatsFolder = newConfigProperty("hideOnlyAllChatsFolder", false);
     public final ConfigProperty<Boolean> hideStories = newConfigProperty("hideStories", false);
+    public final ConfigProperty<Boolean> saveEditsHistory = newConfigProperty("saveEditsHistory", false);
+    public final ConfigProperty<Boolean> showDeletedMessages = newConfigProperty("showDeletedMessages", false);
     public final ConfigProperty<Boolean> alwaysShowDownloads = newConfigProperty("alwaysShowDownloads", false);
     public final ConfigProperty<Integer> doubleTapAction = newConfigProperty("doubleTapAction", DoubleTapAction.REACTION.getValue());
     public final ConfigProperty<Integer> doubleTapActionOut = newConfigProperty("doubleTapActionOut", DoubleTapAction.REACTION.getValue());
