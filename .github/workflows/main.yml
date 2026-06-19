@@ -117,6 +117,7 @@ jobs:
             -Pandroid.antlr.arguments="-w" \
             -Dorg.gradle.project.android.ndk.cflags="-w" \
             -Dorg.gradle.project.android.ndk.cppflags="-w" \
+            -Pandroid.injected.testOnly=false \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
