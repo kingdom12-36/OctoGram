@@ -166,9 +166,12 @@ jobs:
             Linkit.jks.base64
           retention-days: 1
 
+      - name: List APK Output
+        run: find TMessagesProj_App/build/outputs/apk -name "*.apk" 2>/dev/null || echo "No APKs found"
+
       # 13. رفع الـ APK الصافي الخاص بمعمارية arm64-v8a فقط
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AyuGramX-Linkit-arm64
-          path: TMessagesProj_App/build/outputs/apk/**/*arm64-v8a*.apk
+          path: TMessagesProj_App/build/outputs/apk/**/*.apk
