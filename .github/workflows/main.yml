@@ -106,7 +106,7 @@ jobs:
           # حقن المسارات المطلوبة في local.properties الأساسي للمشروع
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
           
-          # وضع قيمة افتراضية لتفادي كسر كود الجافا في حال لم يتم تعيين السري
+          # حماية الكود من الكراش بتعويض مفتاح الخرائط بقيمة افتراضية إذا كان السري فارغاً
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           if [ -z "$MAPS_KEY" ]; then
             MAPS_KEY="AIzaSyDummyKey_Linkit"
@@ -131,25 +131,32 @@ jobs:
             echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
           fi
 
-      # 9. إعطاء صلاحيات التنفيذ للـ Gradle Wrapper
+      # 9. ترقيع وإزالة الخيارات القديمة المسببة للمشاكل من gradle.properties
+      - name: Fix Deprecated Gradle Properties
+        run: |
+          if [ -f "gradle.properties" ]; then
+            echo "--- Cleaning gradle.properties ---"
+            sed -i '/android.enableR8/d' gradle.properties
+            echo "Properties cleaned successfully."
+          fi
+
+      # 10. إعطاء صلاحيات التنفيذ للـ Gradle Wrapper
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      # 10. بناء التطبيق بضغط صارم وحذف ملفات الـ Debug لتقليص الحجم لأقل سعة ممكنة
+      # 11. بناء التطبيق الموجه لمعمارية arm64-v8a فقط مع إسكات تحذيرات الـ C++ وتوحيد الـ JVM Target
       - name: Build Android App
         run: |
           ./gradlew :TMessagesProj_App:assembleRelease \
             -Pandroid.experimental.jetbrains.kotlin.jvm.target=21 \
             -Pandroid.antlr.arguments="-w" \
-            -Dorg.gradle.project.android.ndk.cflags="-w -Os -g0" \
-            -Dorg.gradle.project.android.ndk.cppflags="-w -Os -g0" \
+            -Dorg.gradle.project.android.ndk.cflags="-w" \
+            -Dorg.gradle.project.android.ndk.cppflags="-w" \
             -Pandroid.injected.build.abi=arm64-v8a \
-            -Pandroid.enableR8=true \
-            -Pandroid.enableR8.fullMode=true \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
-      # 11. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
+      # 12. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
       - name: Upload Keystore Package
         uses: actions/upload-artifact@v4
         with:
@@ -159,9 +166,9 @@ jobs:
             Linkit.jks.base64
           retention-days: 1
 
-      # 12. رفع التطبيق النهائي الموقّع الملتقط ديناميكياً لـ arm64 الحجم المصغر
+      # 13. رفع الـ APK الصافي الخاص بمعمارية arm64-v8a فقط
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AyuGramX-Linkit-arm64-Minimized
+          name: AyuGramX-Linkit-arm64
           path: TMessagesProj_App/build/outputs/apk/**/*arm64-v8a*.apk
