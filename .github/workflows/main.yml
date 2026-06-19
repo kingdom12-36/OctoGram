@@ -84,6 +84,7 @@ jobs:
           base64 -w 0 /home/octogram/keys/octogram-key.jks > Linkit.jks.base64
 
       # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
+            # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
       - name: Run Repo Setup Script
         env:
           TERM: xterm-256color
@@ -103,13 +104,20 @@ jobs:
           
           export PATH=/home/runner/bin:$PATH
           
-          # حقن المسارات المطلوبة في local.properties الأساسي للمشروع
+          # حقن المسارات المطلوبة في local.properties مع وضع قيمة افتراضية لتفادي كسر كود الجافا
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
-          echo "MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}" >> local.properties
+          
+          # إذا كان السر في جيت هوب فارغاً، سيتم وضع النص الوهمي "AIzaSyDummyKey_Linkit" تلقائياً
+          MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
+          if [ -z "$MAPS_KEY" ]; then
+            MAPS_KEY="AIzaSyDummyKey_Linkit"
+          fi
+          echo "MAPS_API_KEY=$MAPS_KEY" >> local.properties
           
           if [ -d "scripts" ]; then
              ./scripts/setup.sh || true
           fi
+
 
       # 8. تعديل اسم الحزمة داخل ملف google-services.json في المجلد الصحيح (TMessagesProj_App)
       - name: Patch Google Services Package Name
