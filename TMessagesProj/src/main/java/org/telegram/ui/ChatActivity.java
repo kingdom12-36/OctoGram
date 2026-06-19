@@ -1220,6 +1220,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_CLEAR_FROM_CACHE = 203;
     public final static int OPTION_REPLY_PRIVATE = 299;
     public final static int OPTION_AI_FEATURES = 444;
+    public final static int OPTION_EDITS_HISTORY = 445;
 
     private boolean isChannelBottomMuteView = false;
     private boolean _isBottomOverlayHidden = false;
@@ -34067,6 +34068,37 @@ public class ChatActivity extends BaseFragment implements
                 new MessageDetailsBottomSheet(ChatActivity.this, selectedObject).show();
                 break;
             }
+            case OPTION_EDITS_HISTORY: {
+                // OctoGram: Show edit history dialog
+                if (selectedObject != null && getParentActivity() != null) {
+                    java.util.List<it.octogram.android.utils.chat.MessageEditsDatabase.EditEntry> edits =
+                            it.octogram.android.utils.chat.MessageEditsDatabase.getInstance(getParentActivity())
+                                    .getEdits(selectedObject.getDialogId(), selectedObject.getId());
+                    if (!edits.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy HH:mm", java.util.Locale.getDefault());
+                        for (int octoI = 0; octoI < edits.size(); octoI++) {
+                            it.octogram.android.utils.chat.MessageEditsDatabase.EditEntry e = edits.get(octoI);
+                            sb.append("Version ").append(octoI + 1).append("  •  ")
+                              .append(sdf.format(new java.util.Date(e.date * 1000L))).append("\n");
+                            sb.append(e.text).append("\n\n");
+                        }
+                        android.widget.TextView tv = new android.widget.TextView(getParentActivity());
+                        tv.setText(sb.toString().trim());
+                        tv.setPadding(52, 36, 52, 36);
+                        tv.setTextSize(15f);
+                        tv.setTextIsSelectable(true);
+                        android.widget.ScrollView sv = new android.widget.ScrollView(getParentActivity());
+                        sv.addView(tv);
+                        new org.telegram.ui.ActionBar.AlertDialog.Builder(getParentActivity())
+                                .setTitle("Edit History")
+                                .setView(sv)
+                                .setPositiveButton(LocaleController.getString("OK", R.string.OK), null)
+                                .show();
+                    }
+                }
+                break;
+            }
             case OPTION_COPY_PHOTO: {
                 MessageHelper.addMessageToClipboard(selectedObject, () -> {
                     if (BulletinFactory.canShowBulletin(ChatActivity.this)) {
@@ -45140,6 +45172,16 @@ public class ChatActivity extends BaseFragment implements
                 if (allowEdit) {
                     items.add(LocaleController.getString(R.string.Edit));
                     options.add(OPTION_EDIT);
+                    icons.add(R.drawable.msg_edit);
+                }
+                // OctoGram: Edit History option
+                if (it.octogram.android.OctoConfig.INSTANCE.saveEditsHistory.getValue() &&
+                        selectedObject != null && selectedObject.messageOwner != null &&
+                        selectedObject.messageOwner.edit_date != 0 &&
+                        it.octogram.android.utils.chat.MessageEditsDatabase.getInstance(getParentActivity())
+                                .hasEdits(selectedObject.getDialogId(), selectedObject.getId())) {
+                    items.add("Edit History");
+                    options.add(OPTION_EDITS_HISTORY);
                     icons.add(R.drawable.msg_edit);
                 }
                 if (ChatObject.isMonoForum(currentChat) && selectedObject.getGroupId() == 0 && selectedObjectGroup == null && message != null && message.messageOwner != null && message.messageOwner.suggested_post == null && message.messageOwner.action == null) {
