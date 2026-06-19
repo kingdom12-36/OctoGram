@@ -1,15 +1,17 @@
-name: Build AyuGramX / moeGramX (Auto-Key Factory)
+name: Build OctoGram (Auto-Key Factory)
 
 on:
   workflow_dispatch: 
   push: 
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. جلب كود المشروع وتفعيل الـ LFS بشكل كامل وعميق للمشروع والـ Submodules
       - name: Checkout Source Code
         uses: actions/checkout@v4
         with:
@@ -17,12 +19,10 @@ jobs:
           lfs: true
           fetch-depth: 1
 
-      # 2. إجبار السيرفر على سحب ملفات الـ LFS من قلب الـ Submodules
       - name: Checkout Submodules LFS Files
         run: |
           git submodule foreach --recursive 'git lfs pull'
 
-      # 3. إعداد بيئة جافا (المشروع يحتاج JDK 21 طبقاً لخطأ الـ Compiler)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -30,11 +30,9 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
-      # 4. إعداد الأندرويد SDK
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # 5. التحقق من الأدوات الأساسية المثبتة مسبقاً (تخطي apt بالكامل لتفادي التعليق العالق للشبكة)
       - name: Verify Essential Tools
         run: |
           echo "Checking essential pre-installed tools..."
@@ -42,14 +40,12 @@ jobs:
           sed --version
           wget --version
 
-      # 6. مصنع مفاتيح لِنكيت الديناميكي طبقاً لـ OctoGram 🛡️
-      - name: Linkit Key Factory & Properties Fix 🛡️
+      - name: Linkit Key Factory & Properties Fix
         run: |
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
           INFO_FILE="Linkit_Key_Info.txt"
           
-          # إنشاء المجلد الصارم والمطلوب في مشروع OctoGram وتعديل صلاحياته
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
           
@@ -83,7 +79,6 @@ jobs:
           echo "--- Generating Base64 String ---"
           base64 -w 0 /home/octogram/keys/octogram-key.jks > Linkit.jks.base64
 
-      # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
       - name: Run Repo Setup Script
         env:
           TERM: xterm-256color
@@ -103,10 +98,8 @@ jobs:
           
           export PATH=/home/runner/bin:$PATH
           
-          # حقن المسارات المطلوبة في local.properties الأساسي للمشروع
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
           
-          # حماية الكود من الكراش بتعويض مفتاح الخرائط بقيمة افتراضية إذا كان السري فارغاً
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           if [ -z "$MAPS_KEY" ]; then
             MAPS_KEY="AIzaSyDummyKey_Linkit"
@@ -117,7 +110,6 @@ jobs:
              ./scripts/setup.sh || true
           fi
 
-      # 8. تعديل اسم الحزمة داخل ملف google-services.json في المجلد الصحيح (TMessagesProj_App)
       - name: Patch Google Services Package Name
         run: |
           TARGET_JSON="TMessagesProj_App/google-services.json"
@@ -126,12 +118,11 @@ jobs:
             sed -i 's/"package_name": "moe.kirao.mgx"/"package_name": "org.linkit.tgx"/g' $TARGET_JSON
             grep "package_name" $TARGET_JSON
           else
-            echo "google-services.json not found in TMessagesProj_App, creating an empty placeholder to prevent compile crash if needed."
+            echo "google-services.json not found, creating placeholder."
             mkdir -p TMessagesProj_App
             echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
           fi
 
-      # 9. ترقيع وإزالة الخيارات القديمة المسببة للمشاكل من gradle.properties
       - name: Fix Deprecated Gradle Properties
         run: |
           if [ -f "gradle.properties" ]; then
@@ -140,11 +131,9 @@ jobs:
             echo "Properties cleaned successfully."
           fi
 
-      # 10. إعطاء صلاحيات التنفيذ للـ Gradle Wrapper
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      # 11. بناء التطبيق الموجه لمعمارية arm64-v8a فقط مع إسكات تحذيرات الـ C++ وتوحيد الـ JVM Target
       - name: Build Android App
         run: |
           ./gradlew :TMessagesProj_App:assembleRelease \
@@ -156,22 +145,30 @@ jobs:
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
-      # 12. رفع المفاتيح كـ Artifact لحفظها (لو احتجتها مستقبلاً)
-      - name: Upload Keystore Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: Linkit-Release-Keys
-          path: |
-            Linkit_Key_Info.txt
-            Linkit.jks.base64
-          retention-days: 1
-
       - name: List APK Output
         run: find TMessagesProj_App/build/outputs/apk -name "*.apk" 2>/dev/null || echo "No APKs found"
 
-      # 13. رفع الـ APK الصافي الخاص بمعمارية arm64-v8a فقط
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AyuGramX-Linkit-arm64
-          path: TMessagesProj_App/build/outputs/apk/**/*.apk
+      - name: Rename APK
+        run: |
+          APK_PATH=$(find TMessagesProj_App/build/outputs/apk -name "*.apk" | head -1)
+          if [ -n "$APK_PATH" ]; then
+            cp "$APK_PATH" OctoGram-arm64.apk
+            echo "APK copied to OctoGram-arm64.apk"
+          fi
+
+      - name: Publish to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ ! -f "OctoGram-arm64.apk" ]; then
+            echo "No APK found — skipping release"
+            exit 0
+          fi
+          # Delete old 'latest' release + tag if they exist
+          gh release delete latest --yes 2>/dev/null || true
+          git push origin :refs/tags/latest 2>/dev/null || true
+          # Create fresh release tagged 'latest' with the APK attached
+          gh release create latest OctoGram-arm64.apk \
+            --title "Latest Build ($(date -u '+%Y-%m-%d %H:%M UTC'))" \
+            --notes "## OctoGram — Latest Auto-Build\n\nBuilt from commit ${{ github.sha }}\n\n**Download the APK below ⬇️**\n\n> arm64-v8a only" \
+            --latest
