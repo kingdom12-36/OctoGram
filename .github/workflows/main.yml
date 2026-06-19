@@ -84,7 +84,6 @@ jobs:
           base64 -w 0 /home/octogram/keys/octogram-key.jks > Linkit.jks.base64
 
       # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
-            # 7. تشغيل سكربت الإعداد لتهيئة المكتبات وإنتاج الـ local.properties بالمسارات الصحيحة
       - name: Run Repo Setup Script
         env:
           TERM: xterm-256color
@@ -104,10 +103,10 @@ jobs:
           
           export PATH=/home/runner/bin:$PATH
           
-          # حقن المسارات المطلوبة في local.properties مع وضع قيمة افتراضية لتفادي كسر كود الجافا
+          # حقن المسارات المطلوبة في local.properties الأساسي للمشروع
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
           
-          # إذا كان السر في جيت هوب فارغاً، سيتم وضع النص الوهمي "AIzaSyDummyKey_Linkit" تلقائياً
+          # وضع قيمة افتراضية لتفادي كسر كود الجافا في حال لم يتم تعيين السري
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           if [ -z "$MAPS_KEY" ]; then
             MAPS_KEY="AIzaSyDummyKey_Linkit"
@@ -117,7 +116,6 @@ jobs:
           if [ -d "scripts" ]; then
              ./scripts/setup.sh || true
           fi
-
 
       # 8. تعديل اسم الحزمة داخل ملف google-services.json في المجلد الصحيح (TMessagesProj_App)
       - name: Patch Google Services Package Name
@@ -137,14 +135,17 @@ jobs:
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      # 10. البناء النهائي مع إسكات تحذيرات الـ C++ وتوحيد الـ JVM Target لتسريع العملية
+      # 10. بناء التطبيق بضغط صارم وحذف ملفات الـ Debug لتقليص الحجم لأقل سعة ممكنة
       - name: Build Android App
         run: |
           ./gradlew :TMessagesProj_App:assembleRelease \
             -Pandroid.experimental.jetbrains.kotlin.jvm.target=21 \
             -Pandroid.antlr.arguments="-w" \
-            -Dorg.gradle.project.android.ndk.cflags="-w" \
-            -Dorg.gradle.project.android.ndk.cppflags="-w" \
+            -Dorg.gradle.project.android.ndk.cflags="-w -Os -g0" \
+            -Dorg.gradle.project.android.ndk.cppflags="-w -Os -g0" \
+            -Pandroid.injected.build.abi=arm64-v8a \
+            -Pandroid.enableR8=true \
+            -Pandroid.enableR8.fullMode=true \
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
@@ -158,9 +159,9 @@ jobs:
             Linkit.jks.base64
           retention-days: 1
 
-      # 12. رفع التطبيق النهائي الموقّع الملتقط ديناميكياً من مسارات الـ APK الصحيحة
+      # 12. رفع التطبيق النهائي الموقّع الملتقط ديناميكياً لـ arm64 الحجم المصغر
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AyuGramX-Linkit-Official
-          path: TMessagesProj_App/build/outputs/apk/**/*.apk
+          name: AyuGramX-Linkit-arm64-Minimized
+          path: TMessagesProj_App/build/outputs/apk/**/*arm64-v8a*.apk
