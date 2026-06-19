@@ -242,6 +242,18 @@ public class OctoGeneralSettingsUI implements PreferencesEntry {
                             .title(getString(R.string.EnableSmartNotificationsForPrivateChats))
                             .build());
                 })
+                .category(getString(R.string.Messages), category -> {
+                    category.row(new SwitchRow.SwitchRowBuilder()
+                            .preferenceValue(OctoConfig.INSTANCE.saveEditsHistory)
+                            .title(getString(R.string.OctoSaveEditsHistory))
+                            .description(getString(R.string.OctoSaveEditsHistory_Desc))
+                            .build());
+                    category.row(new SwitchRow.SwitchRowBuilder()
+                            .preferenceValue(OctoConfig.INSTANCE.showDeletedMessages)
+                            .title(getString(R.string.OctoShowDeletedMessages))
+                            .description(getString(R.string.OctoShowDeletedMessages_Desc))
+                            .build());
+                })
                 .build();
     }
 

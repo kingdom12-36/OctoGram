@@ -10039,4 +10039,8 @@
     <string name="Gift2AuctionsBidHasBeenIncreased">Your bid has been increased</string>
     <string name="Gift2AuctionsChangeRecipient">Change Recipient</string>
     <string name="Gift2AuctionsChangeRecipient2">You’ve already placed a bid on this gift for **%s.** Do you want to raise your bid and change the recipient to **%s?**</string>
+    <string name="OctoSaveEditsHistory">Save Edits History</string>
+    <string name="OctoSaveEditsHistory_Desc">Keep a local copy of edits made to your sent messages</string>
+    <string name="OctoShowDeletedMessages">Show Deleted Messages</string>
+    <string name="OctoShowDeletedMessages_Desc">Keep deleted messages visible in chat with a red Deleted badge</string>
 </resources>
