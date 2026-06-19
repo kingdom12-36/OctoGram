@@ -43,10 +43,8 @@ jobs:
         run: |
           KEY_NAME="Linkit"
           PASSWORD="Linkit"
-
           sudo mkdir -p /home/octogram/keys
           sudo chmod -R 777 /home/octogram
-
           echo "--- Generating fresh keystore ---"
           keytool -genkey -v \
             -keystore /home/octogram/keys/octogram-key.jks \
@@ -57,8 +55,6 @@ jobs:
             -storepass $PASSWORD \
             -keypass $PASSWORD \
             -dname "CN=${KEY_NAME}, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
-
-          echo "--- Writing signing.properties ---"
           {
             echo "storePassword=$PASSWORD"
             echo "keyAlias=$KEY_NAME"
@@ -66,20 +62,14 @@ jobs:
             echo "keyPassword=$PASSWORD"
           } > /home/octogram/keys/signing.properties
 
-      - name: Patch Package Name & App Name
+      - name: Patch Package Name
         run: |
-          echo "--- Patching gradle.properties ---"
           sed -i 's/^APP_PACKAGE=.*/APP_PACKAGE=org.linkit.octogram/' gradle.properties
           grep "APP_PACKAGE" gradle.properties
-
-          echo "--- Patching google-services.json ---"
           TARGET_JSON="TMessagesProj_App/google-services.json"
           if [ -f "$TARGET_JSON" ]; then
             sed -i 's/"package_name": "[^"]*"/"package_name": "org.linkit.octogram"/g' $TARGET_JSON
             grep "package_name" $TARGET_JSON
-          else
-            mkdir -p TMessagesProj_App
-            echo '{"modules":[{"id":"default"}]}' > $TARGET_JSON
           fi
 
       - name: Run Repo Setup Script
@@ -98,26 +88,17 @@ jobs:
           echo '#!/bin/bash' > /home/runner/bin/tput
           echo 'exit 0' >> /home/runner/bin/tput
           chmod +x /home/runner/bin/tput
-
           export PATH=/home/runner/bin:$PATH
-
           echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
-
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
-          if [ -z "$MAPS_KEY" ]; then
-            MAPS_KEY="AIzaSyDummyKey_Linkit"
-          fi
+          if [ -z "$MAPS_KEY" ]; then MAPS_KEY="AIzaSyDummyKey_Linkit"; fi
           echo "MAPS_API_KEY=$MAPS_KEY" >> local.properties
-
-          if [ -d "scripts" ]; then
-             ./scripts/setup.sh || true
-          fi
+          if [ -d "scripts" ]; then ./scripts/setup.sh || true; fi
 
       - name: Fix Deprecated Gradle Properties
         run: |
           if [ -f "gradle.properties" ]; then
             sed -i '/android.enableR8/d' gradle.properties
-            echo "gradle.properties cleaned."
           fi
 
       - name: Grant Execute Permission for Gradle
@@ -136,35 +117,20 @@ jobs:
 
       - name: Locate & Stage APK
         run: |
-          echo "=== Searching workspace for APKs ==="
-          find . -name "*.apk" \
-            -not -path "*/.gradle/*" \
-            -not -path "*/tools/*" \
-            -not -path "*/cache/*" \
-            2>/dev/null | sort
-
-          APK_PATH=$(find . -name "*.apk" \
-            -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
-            2>/dev/null | grep -i "release" | grep -i "arm64" | head -1)
-
+          find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | sort
+          APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | grep -i "release" | grep -i "arm64" | head -1)
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -name "*.apk" \
-              -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
-              2>/dev/null | grep -i "release" | head -1)
+            APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | grep -i "release" | head -1)
           fi
-
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find . -name "*.apk" \
-              -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" \
-              2>/dev/null | head -1)
+            APK_PATH=$(find . -name "*.apk" -not -path "*/.gradle/*" -not -path "*/tools/*" -not -path "*/cache/*" 2>/dev/null | head -1)
           fi
-
           if [ -n "$APK_PATH" ]; then
             cp "$APK_PATH" OctoGram-arm64.apk
             echo "Staged: $APK_PATH -> OctoGram-arm64.apk"
             ls -lh OctoGram-arm64.apk
           else
-            echo "ERROR: No APK found anywhere in workspace!"
+            echo "ERROR: No APK found!"
             exit 1
           fi
 
@@ -176,46 +142,41 @@ jobs:
           retention-days: 30
 
       - name: Send APK to Telegram Channel
+        continue-on-error: true
         env:
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_CLIENT: ${{ secrets.TELEGRAM_CLIENT }}
         run: |
-          pip install pyrogram tgcrypto -q
-          python3 << 'PYEOF'
-          import os, asyncio
+          pip install "pyrogram==2.0.106" tgcrypto -q
+          cat > /tmp/tg_send.py << 'PYSCRIPT'
+          import os, asyncio, sys
           from pyrogram import Client
 
           api_id   = int(os.environ["TELEGRAM_API_ID"])
           api_hash = os.environ["TELEGRAM_API_HASH"]
           session  = os.environ["TELEGRAM_CLIENT"]
           channel  = -1004457565242
-
-          caption = (
-              "**OctoGram Linkit - Latest Build**\n"
-              "Package: org.linkit.octogram\n"
-              "Architecture: arm64-v8a\n"
-              "Built automatically via GitHub Actions"
-          )
+          caption  = "**OctoGram Linkit - Latest Build**\nPackage: org.linkit.octogram\nArchitecture: arm64-v8a\nBuilt via GitHub Actions"
 
           async def main():
               async with Client(":memory:", api_id=api_id, api_hash=api_hash, session_string=session) as app:
-                  await app.send_document(
-                      chat_id=channel,
-                      document="OctoGram-arm64.apk",
-                      caption=caption,
-                      force_document=True
-                  )
-                  print("APK sent to Telegram channel successfully!")
+                  await app.send_document(chat_id=channel, document="OctoGram-arm64.apk", caption=caption, force_document=True)
+                  print("APK sent to Telegram successfully!")
 
           asyncio.run(main())
-          PYEOF
+          PYSCRIPT
+          python3 /tmp/tg_send.py || {
+            echo "v2 session failed, trying Pyrogram v1..."
+            pip install "pyrogram==1.4.16" tgcrypto -q
+            python3 /tmp/tg_send.py
+          }
 
       - name: Publish to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          printf '## OctoGram Linkit - Latest Build\n\nPackage: org.linkit.octogram\nCommit: %s\n\narm64-v8a only - download APK below.' "${{ github.sha }}" > release_notes.md
+          printf '## OctoGram Linkit - Latest Build\n\nPackage: org.linkit.octogram\nCommit: %s\n\narm64-v8a only.' "${{ github.sha }}" > release_notes.md
           gh release delete latest --yes 2>/dev/null || true
           git push origin :refs/tags/latest 2>/dev/null || true
           gh release create latest OctoGram-arm64.apk \
