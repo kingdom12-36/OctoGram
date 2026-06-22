@@ -286,4 +286,37 @@
         <attr name="shimmer_tilt" format="float"/>
     </declare-styleable>
 
+
+    <!-- ─── 3D Float styles (ported from Nekogram) ──────────────────────── -->
+    <style name="Neko.Float">
+        <item name="android:background">@drawable/neko_float_card</item>
+        <item name="android:elevation">6dp</item>
+        <item name="android:clipToOutline">true</item>
+    </style>
+
+    <style name="Neko.Float.Card" parent="Neko.Float">
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
+    <style name="Neko.Float.Button" parent="Neko.Float">
+        <item name="android:background">@drawable/neko_float_btn</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Neko.Float.BottomSheet" parent="Neko.Float">
+        <item name="android:background">@drawable/neko_float_card</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
 </resources>
