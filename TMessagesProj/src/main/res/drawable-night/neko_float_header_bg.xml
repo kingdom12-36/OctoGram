@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Night-mode header gradient — cooler blue-green tint for dark theme. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#163A7BD5"
+        android:endColor="#003A7BD5"
+        android:angle="270"/>
+    <corners android:topLeftRadius="12dp" android:topRightRadius="12dp"/>
+</shape>
