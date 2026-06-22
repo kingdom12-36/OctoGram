@@ -263,6 +263,11 @@ public class OctoGeneralSettingsUI implements PreferencesEntry {
                             .title(getString(R.string.OctoHideTypingIndicator))
                             .description(getString(R.string.OctoHideTypingIndicator_Desc))
                             .build());
+                    category.row(new SwitchRow.SwitchRowBuilder()
+                            .preferenceValue(OctoConfig.INSTANCE.forceEditEnabled)
+                            .title(getString(R.string.OctoForceEditEnabled))
+                            .description(getString(R.string.OctoForceEditEnabled_Desc))
+                            .build());
                 })
                 .build();
     }
