@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Night-mode 3D card — deeper blacks, stronger shadow contrast.
+  Auto-selected by Android in dark theme.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="2dp" android:top="4dp" android:right="2dp" android:bottom="0dp">
+        <shape>
+            <solid android:color="#70000000"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+    <item android:left="4dp" android:top="8dp" android:right="4dp" android:bottom="0dp">
+        <shape>
+            <solid android:color="#38000000"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+    <item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="8dp">
+        <shape>
+            <gradient
+                android:startColor="#FF1E2130"
+                android:endColor="#FF131520"
+                android:angle="135"/>
+            <corners android:radius="16dp"/>
+            <stroke android:width="1dp" android:color="#22FFFFFF"/>
+        </shape>
+    </item>
+</layer-list>
