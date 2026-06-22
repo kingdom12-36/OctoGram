@@ -96,28 +96,6 @@ jobs:
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
-      - name: Enable Sentry ProGuard Upload
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: |
-          if [ -n "$SENTRY_AUTH_TOKEN" ]; then
-            cat >> TMessagesProj_App/build.gradle << 'SENTRYBLOCK'
-
-          // Sentry ProGuard/R8 mapping upload (CI-injected)
-          sentry {
-              org = "sham-19"
-              projectName = "android"
-              authToken = System.getenv("SENTRY_AUTH_TOKEN")
-              uploadNativeSymbols = false
-              autoUploadProguardMapping = true
-              includeSourceContext = false
-          }
-          SENTRYBLOCK
-            echo "Sentry block appended to build.gradle"
-          else
-            echo "SENTRY_AUTH_TOKEN not set — skipping Sentry upload config"
-          fi
-
       - name: Build Android App
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -131,6 +109,21 @@ jobs:
             -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
+      - name: Upload ProGuard Mappings to Sentry
+        continue-on-error: true
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          if [ -z "$SENTRY_AUTH_TOKEN" ]; then echo "No SENTRY_AUTH_TOKEN — skip"; exit 0; fi
+          curl -sL https://sentry.io/get-cli/ | bash -s -- 2>/dev/null || true
+          MAPPING=$(find . -path "*/mapping/release/mapping.txt" 2>/dev/null | head -1)
+          if [ -n "$MAPPING" ]; then
+            sentry-cli releases --org sham-19 --project android files "build-$GITHUB_RUN_NUMBER" upload-proguard-mappings "$MAPPING" \
+              --android-manifest $(find . -path "*/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml" 2>/dev/null | head -1) || true
+            echo "ProGuard mappings uploaded to Sentry"
+          else
+            echo "No mapping.txt found — R8 may be off"
+          fi
       - name: Locate & Stage APKs
         id: stage
         run: |
