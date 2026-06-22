@@ -288,6 +288,8 @@
 
 
     <!-- ─── 3D Float styles (ported from Nekogram) ──────────────────────── -->
+    <!-- Base Neko style — required parent so that "Neko.Float" dot-notation resolves -->
+    <style name="Neko" />
     <style name="Neko.Float">
         <item name="android:background">@drawable/neko_float_card</item>
         <item name="android:elevation">6dp</item>
