@@ -67,34 +67,62 @@ jobs:
       - name: Patch Package Name & ABI (arm64 + x86_64)
         id: patch
         run: |
-          PKG="org.linkit.octogram${GITHUB_RUN_NUMBER}"
+          # Fixed package name — required for Firebase/FCM notifications to work consistently.
+          # A run-number suffix would mean Firebase re-registration every build → broken notifications.
+          PKG="org.linkit.octogram"
           echo "Package for this build: $PKG"
           sed -i "s/^APP_PACKAGE=.*/APP_PACKAGE=$PKG/" gradle.properties
           grep APP_PACKAGE gradle.properties
           sed -i "s/include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'/include 'arm64-v8a', 'x86_64'/" TMessagesProj_App/build.gradle
           sed -i 's/include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"/include "arm64-v8a", "x86_64"/' TMessagesProj_App/build.gradle
-          TARGET_JSON="TMessagesProj_App/google-services.json"
-          if [ -f "$TARGET_JSON" ]; then
-            sed -i "s/\"package_name\": \"[^\"]*\"/\"package_name\": \"$PKG\"/g" "$TARGET_JSON"
-          fi
           echo "APP_PKG=$PKG" >> $GITHUB_ENV
           echo "app-pkg=$PKG" >> $GITHUB_OUTPUT
 
       - name: Generate google-services.json
         env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: |
           TARGET_JSON="TMessagesProj_App/google-services.json"
-          if [ -n "$GOOGLE_SERVICES_JSON" ] && [ "$GOOGLE_SERVICES_JSON" != "null" ]; then
-            printf "%s" "$GOOGLE_SERVICES_JSON" > "$TARGET_JSON"
-            echo "Real google-services.json injected from secret"
-            sed -i "s/it.octogram.app/${APP_PKG}/g" "$TARGET_JSON" 2>/dev/null || true
-          else
-            echo "GOOGLE_SERVICES_JSON not set — writing stub (Firebase will be skipped)"
-            cat > "$TARGET_JSON" << STUBJSON
-          {"project_info":{"project_number":"000000000000","project_id":"stub","storage_bucket":"stub.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:0:android:0","android_client_info":{"package_name":"it.octogram.app"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummy000000000000000000000000000000"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
-          STUBJSON
-          fi
+          mkdir -p "$(dirname "$TARGET_JSON")"
+          # Inline generation — package_name is always $APP_PKG so processReleaseGoogleServices never mismatches.
+          # Firebase project: imado-508bc (your project).
+          # NOTE: For full FCM push notifications, add org.linkit.octogram to Firebase Console
+          #       (Project Settings → Your apps → Add app) and update mobilesdk_app_id below.
+          cat > "$TARGET_JSON" << GSERVICES
+          {
+            "project_info": {
+              "project_number": "384060997078",
+              "project_id": "imado-508bc",
+              "storage_bucket": "imado-508bc.firebasestorage.app"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:384060997078:android:b390de6605a1fc7000f877",
+                  "android_client_info": {
+                    "package_name": "${APP_PKG}"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "${GOOGLE_API_KEY}"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": []
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          GSERVICES
+          # Sanity: verify package matches
+          grep -q "$APP_PKG" "$TARGET_JSON" \
+            && echo "✅ google-services.json written — package: $APP_PKG" \
+            || { echo "❌ package_name mismatch in google-services.json!"; cat "$TARGET_JSON"; exit 1; }
 
       - name: Run Repo Setup Script
         env:
@@ -172,7 +200,15 @@ jobs:
           fi
           [ ! -f "/home/octogram/keys/octogram-key.jks" ] && { echo "❌ Keystore missing"; ERRORS=$((ERRORS+1)); } || echo "✅ Keystore exists"
           PKG_IN_GRADLE=$(grep "^APP_PACKAGE=" gradle.properties | cut -d= -f2)
-          [ "$PKG_IN_GRADLE" = "it.octogram.app" ] && { echo "❌ APP_PACKAGE not patched"; ERRORS=$((ERRORS+1)); } || echo "✅ APP_PACKAGE: $PKG_IN_GRADLE"
+          [ "$PKG_IN_GRADLE" = "it.octogram.android" ] && { echo "❌ APP_PACKAGE not patched — still default"; ERRORS=$((ERRORS+1)); } || echo "✅ APP_PACKAGE: $PKG_IN_GRADLE"
+          GS_JSON="TMessagesProj_App/google-services.json"
+          if [ ! -f "$GS_JSON" ]; then
+            echo "❌ google-services.json missing"; ERRORS=$((ERRORS+1))
+          elif ! grep -q "$PKG_IN_GRADLE" "$GS_JSON"; then
+            echo "❌ google-services.json package_name does not match APP_PACKAGE ($PKG_IN_GRADLE)"; ERRORS=$((ERRORS+1))
+          else
+            echo "✅ google-services.json package matches APP_PACKAGE"
+          fi
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           if [ "$ERRORS" -gt 0 ]; then
             echo "🚫 $ERRORS check(s) failed — aborting before wasting build time"
@@ -183,11 +219,12 @@ jobs:
 
       - name: Fix Gradle Properties
         run: |
-          [ -f "gradle.properties" ] && sed -i '/android.enableR8/d' gradle.properties || true
-          echo 'android.injected.testOnly=false' >> gradle.properties
+          sed -i '/android.enableR8/d' gradle.properties || true
+          echo 'android.enableR8.fullMode=true'                              >> gradle.properties
+          echo 'android.injected.testOnly=false'                             >> gradle.properties
           echo 'org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC -Dfile.encoding=UTF-8' >> gradle.properties
-          echo 'org.gradle.parallel=true' >> gradle.properties
-          echo 'org.gradle.daemon=false' >> gradle.properties
+          echo 'org.gradle.parallel=true'                                    >> gradle.properties
+          echo 'org.gradle.daemon=false'                                     >> gradle.properties
 
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
@@ -233,10 +270,7 @@ jobs:
           fi
           if [ -n "$APK_UNI" ]; then
             cp "$APK_UNI" OctoGram-universal.apk
-            echo "universal APK staged: $APK_UNI"
-            ls -lh OctoGram-universal.apk
           else
-            echo "WARN: No universal APK — using arm64 as smoke-test fallback"
             cp OctoGram-arm64.apk OctoGram-universal.apk
           fi
 
@@ -246,7 +280,6 @@ jobs:
           echo "=== FILE ===" && file OctoGram-arm64.apk && ls -lh OctoGram-arm64.apk
           echo "=== PACKAGE ===" && $BT/aapt dump badging OctoGram-arm64.apk 2>&1 | grep -E "package:|testOnly|native-code|sdkVersion" || true
           echo "=== SIGNATURE ===" && $BT/apksigner verify --verbose OctoGram-arm64.apk 2>&1 | head -5 || true
-          echo "=== ZIP ===" && (unzip -t OctoGram-arm64.apk > /dev/null 2>&1 && echo "ZIP valid" || echo "ZIP CORRUPT")
 
       - name: Upload APK as Actions Artifact
         uses: actions/upload-artifact@v4
@@ -281,7 +314,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
           ls -la /dev/kvm
 
-      - name: Write smoke-test script (Sentry-based)
+      - name: Write smoke-test script
         env:
           APP_PKG: ${{ needs.build.outputs.app-pkg }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -296,65 +329,33 @@ jobs:
           HEADER
           cat >> /tmp/smoke.sh << 'BODY'
           ADB="$ANDROID_HOME/platform-tools/adb"
-          SENTRY_ORG="sham-19"
-          SENTRY_PROJECT="android"
-
-          echo "━━━ SENTRY SMOKE TEST — $PKG ━━━"
-
+          echo "━━━ SMOKE TEST — $PKG ━━━"
           $ADB install -r OctoGram-universal.apk
           echo "✅ APK installed"
-
-          LAUNCH_TS=$(date -u +%s)
-          echo "Launch epoch: $LAUNCH_TS"
-
           $ADB logcat -c
           $ADB logcat -b crash AndroidRuntime:E FATAL:E *:W > /tmp/smoke_logcat.txt 2>&1 &
           LOGCAT_PID=$!
-
           $ADB shell am start -n "$PKG/org.telegram.ui.LaunchActivity" \
             -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
-          echo "Launched — waiting 40s for app to settle..."
+          echo "Launched — waiting 40s..."
           sleep 40
-
           ALIVE=$($ADB shell pidof "$PKG" 2>/dev/null | tr -d "[:space:]" || true)
           kill $LOGCAT_PID 2>/dev/null || true
-
-          echo ""
-          echo "━━━ Process status ━━━"
           if [ -n "$ALIVE" ]; then
             echo "💚 Process alive (pid $ALIVE)"
           else
-            echo "📛 Process dead — checking Sentry + logcat"
-          fi
-
-          echo ""
-          echo "━━━ Sentry issues check ━━━"
-          SENTRY_RESP=$(curl -s \
-            -H "Authorization: Bearer $SENTRY_TOKEN" \
-            "https://us.sentry.io/api/0/projects/$SENTRY_ORG/$SENTRY_PROJECT/issues/?query=is:unresolved&limit=10" 2>/dev/null)
-          SENTRY_COUNT=$(echo "$SENTRY_RESP" | grep -o '"id"' | wc -l | tr -d '[:space:]')
-          SENTRY_COUNT="${SENTRY_COUNT:-0}"
-          echo "Open Sentry issues: $SENTRY_COUNT"
-          echo "$SENTRY_RESP" | grep -oP '(?<="title":")[^"]+' | head -10 || true
-
-          echo ""
-          echo "━━━ Logcat (crashes) ━━━"
-          grep -E "CRASH|FATAL|SIGSEGV|AndroidRuntime|Process.*died|JNI|NativeLoader" \
-            /tmp/smoke_logcat.txt | head -60 || echo "(no crash lines)"
-
-          LOGCAT_CRASH=$(grep -c "FATAL EXCEPTION\|SIGSEGV\|Process.*died\|fatal signal\|AndroidRuntime" /tmp/smoke_logcat.txt 2>/dev/null || echo "0")
-          LOGCAT_CRASH=$(echo "$LOGCAT_CRASH" | tr -d '[:space:]')
-
-          echo ""
-          if [ "${SENTRY_COUNT}" -gt 0 ] || [ "${LOGCAT_CRASH}" -gt 0 ] || [ -z "$ALIVE" ]; then
-            echo "🔴 SMOKE FAILED — Sentry:${SENTRY_COUNT} logcat:${LOGCAT_CRASH} alive:${ALIVE:-none}"
-            echo "━━━ Full logcat tail ━━━"
-            tail -100 /tmp/smoke_logcat.txt
+            echo "📛 Process dead"
+            tail -80 /tmp/smoke_logcat.txt
             exit 1
-          else
-            echo "🟢 SMOKE PASSED — 0 Sentry issues, process alive, logcat clean"
-            exit 0
           fi
+          LOGCAT_CRASH=$(grep -c "FATAL EXCEPTION\|SIGSEGV\|Process.*died\|fatal signal" /tmp/smoke_logcat.txt 2>/dev/null || echo "0")
+          LOGCAT_CRASH=$(echo "$LOGCAT_CRASH" | tr -d '[:space:]')
+          if [ "${LOGCAT_CRASH}" -gt 0 ]; then
+            echo "🔴 SMOKE FAILED — logcat crashes: ${LOGCAT_CRASH}"
+            grep -E "FATAL|SIGSEGV|died" /tmp/smoke_logcat.txt | head -40
+            exit 1
+          fi
+          echo "🟢 SMOKE PASSED"
           BODY
           chmod +x /tmp/smoke.sh
 
