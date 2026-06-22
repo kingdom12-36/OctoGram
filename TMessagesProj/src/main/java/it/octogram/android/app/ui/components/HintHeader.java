@@ -22,12 +22,14 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.StickerImageView;
 
 import it.octogram.android.OctoConfig;
+import it.octogram.android.app.ui.components.NekoFloatUI;
 import it.octogram.android.StickerUi;
 
 @SuppressLint("ViewConstructor")
 public class HintHeader extends FrameLayout {
     public HintHeader(Context context, String text) {
         super(context);
+        NekoFloatUI.applyCard(this);
         StickerImageView imageView = new StickerImageView(context, UserConfig.selectedAccount);
         imageView.setStickerPackName(OctoConfig.STICKERS_PLACEHOLDER_PACK_NAME);
         imageView.setStickerNum(StickerUi.IMPORT_SETTINGS.getValue());
