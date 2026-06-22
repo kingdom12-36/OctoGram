@@ -10046,33 +10046,4 @@
     <string name="OctoShowDeletedMessages_Desc">Keep deleted messages visible in chat with a red Deleted badge</string>
     <string name="OctoEditHistory">Edit History</string>
     <string name="OctoEditHistory_Empty">No edit history saved for this message yet.</string>
-
-    <!-- Missing default strings (required by AAPT2 — locale files have variants but no default) -->
-    <string name="PleaseEnterFirstPassword">Enter a Password</string>
-    <string name="PleaseEnterPassword">Enter your new password</string>
-    <string name="YourEmailCode">Email Code</string>
-    <string name="YourEmailCodeInfo">Please enter the code we've sent to %1$s to confirm your email address.</string>
-    <string name="YourPasswordSuccessText">Your cloud password has been set.</string>
-    <string name="EmailPasswordConfirmText3">To confirm the recovery email for your password, check %1$s (don't forget the spam folder) and enter the code from the email you received.</string>
-    <string name="ResetAccountButton">RESET ACCOUNT</string>
-    <string name="ResetMyAccountText">If you reset your account, all your messages, media and contacts will be lost.</string>
-    <string name="formatterMonthYear2">MMM yyyy</string>
-    <string name="formatterMonthName">MMM</string>
-    <string name="NoContactsYet">No contacts yet.</string>
-    <string name="NoContactsYetLine1">You have no contacts yet.</string>
-    <string name="NoContactsYetLine2">Tap the button below to search for people.</string>
-    <string name="NoContactsYetLine3">Or invite your friends to join Telegram.</string>
-    <string name="WidgetPasscodeEnable2">The app passcode does not affect widgets added to the home screen.</string>
-    <plurals name="AddManyMembersAlertNamesText">
-        <item quantity="one">%1$s and %3$d other</item>
-        <item quantity="other">%1$s, %2$s and %3$d others</item>
-    </plurals>
-    <plurals name="AddManyMembersAlertTitle">
-        <item quantity="one">Add %d member?</item>
-        <item quantity="other">Add %d members?</item>
-    </plurals>
-    <plurals name="Languages">
-        <item quantity="one">%d language</item>
-        <item quantity="other">%d languages</item>
-    </plurals>
 </resources>
