@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  neko_float_section_card — heavy floating card for full settings sections.
+  Wider shadow spread than neko_float_card; use this on the outer container
+  that wraps an entire group of settings rows.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Layer 1: ambient spread shadow -->
+    <item android:left="4dp" android:top="6dp" android:right="4dp" android:bottom="0dp">
+        <shape>
+            <solid android:color="@color/neko_float_shadow_soft"/>
+            <corners android:radius="18dp"/>
+        </shape>
+    </item>
+    <!-- Layer 2: key (hard) shadow -->
+    <item android:left="2dp" android:top="3dp" android:right="2dp" android:bottom="0dp">
+        <shape>
+            <solid android:color="@color/neko_float_shadow_hard"/>
+            <corners android:radius="18dp"/>
+        </shape>
+    </item>
+    <!-- Layer 3: surface -->
+    <item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="6dp">
+        <shape>
+            <gradient
+                android:startColor="@color/neko_float_surface_raised"
+                android:endColor="@color/neko_float_surface"
+                android:angle="135"/>
+            <corners android:radius="18dp"/>
+            <stroke android:width="1dp" android:color="@color/neko_float_rim_light"/>
+        </shape>
+    </item>
+</layer-list>
