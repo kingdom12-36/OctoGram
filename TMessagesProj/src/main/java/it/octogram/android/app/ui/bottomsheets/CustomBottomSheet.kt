@@ -9,6 +9,7 @@
 package it.octogram.android.app.ui.bottomsheets
 
 import android.content.Context
+import it.octogram.android.app.ui.components.NekoFloatUI
 import org.telegram.ui.ActionBar.BottomSheet
 
 open class CustomBottomSheet(
@@ -25,6 +26,8 @@ open class CustomBottomSheet(
             return
         }
         shown = true
+        // Apply Neko.Float 3D card elevation to the bottom-sheet container
+        containerView?.let { NekoFloatUI.applyBottomSheet(it) }
         super.show()
     }
 }
