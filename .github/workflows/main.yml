@@ -143,18 +143,23 @@ jobs:
           export PATH=/home/runner/bin:$PATH
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           [ -z "$MAPS_KEY" ] && MAPS_KEY="AIzaSyDummyKey_Linkit"
+          # Create signing properties file (build.gradle reads "sign.file" → separate props file
+          # with keyPath/storePassword/keyAlias/keyPassword, NOT from local.properties directly)
+          cat > /home/octogram/keys/sign.properties << SIGNEOF
+          keyPath=/home/octogram/keys/octogram-key.jks
+          storePassword=Linkit
+          keyAlias=Linkit
+          keyPassword=Linkit
+          SIGNEOF
           {
-            echo "storeFile=/home/octogram/keys/octogram-key.jks"
-            echo "storePassword=Linkit"
-            echo "keyAlias=Linkit"
-            echo "keyPassword=Linkit"
-            echo "mapsApiKey=$MAPS_KEY"
+            echo "sign.file=/home/octogram/keys/sign.properties"
+            echo "MAPS_API_KEY=$MAPS_KEY"
             echo "apiId=$TELEGRAM_API_ID"
             echo "apiHash=$TELEGRAM_API_HASH"
             echo "sentryDsn=$SENTRY_DSN"
           } > local.properties
           echo "=== local.properties (credentials redacted) ==="
-          grep -v "apiId\|apiHash\|storePassword\|keyPassword" local.properties
+          grep -v "apiId\|apiHash" local.properties
           echo "apiId=<set>" && echo "apiHash=<set>"
           [ -d "scripts" ] && ./scripts/setup.sh || true
 
