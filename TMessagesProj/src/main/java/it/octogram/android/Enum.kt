@@ -208,6 +208,18 @@ enum class AiProvidersDetails(
         statusProperty = OctoConfig.INSTANCE.aiFeaturesUseOpenRouterAPIs,
         keyProperty = OctoConfig.INSTANCE.aiFeaturesOpenRouterAPIKey,
         needWarningZone = true
+    ),
+    LINKIT(
+        id = 3,
+        title = "Linkit AI",
+        useThisProviderString = "Free · Shamsaver Worker · No API key needed",
+        keyMinLength = 0,
+        keyMaxLength = 0,
+        animationScope = OctoAnimationFragment.OctoAnimationScopes.OPENROUTER,
+        statusProperty = OctoConfig.INSTANCE.aiFeaturesUseLinkitAI,
+        keyProperty = null,
+        needWarningZone = false,
+        isSuggested = true
     );
 
     companion object {
