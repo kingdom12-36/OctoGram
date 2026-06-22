@@ -32,6 +32,15 @@ public abstract class CustomFab {
         return createFabBackground(DEFAULT_FAB_SIZE_DP, defaultBackgroundColor, pressedBackgroundColor);
     }
 
+    /**
+     * Returns the Neko.Float 3D ripple drawable for use as a floating FAB background.
+     * Gives the FAB the same push-button 3D elevation feel as the Neko.Float system.
+     * Call this instead of {@link #createFabBackground()} to opt-in to the 3D look.
+     */
+    public static Drawable createFloating3DBackground(android.content.Context context) {
+        return androidx.core.content.ContextCompat.getDrawable(context, org.telegram.messenger.R.drawable.neko_float_ripple);
+    }
+
     public static Drawable createFabBackground(int sizeDp, int defaultBackgroundColor, int pressedBackgroundColor) {
         int fabCornerRadiusDp;
         if (!OctoConfig.INSTANCE.useSquaredFab.getValue()) {
