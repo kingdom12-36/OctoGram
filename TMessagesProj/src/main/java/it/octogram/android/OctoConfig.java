@@ -93,6 +93,8 @@ public class OctoConfig {
     public final ConfigProperty<Boolean> hideStories = newConfigProperty("hideStories", false);
     public final ConfigProperty<Boolean> saveEditsHistory = newConfigProperty("saveEditsHistory", false);
     public final ConfigProperty<Boolean> showDeletedMessages = newConfigProperty("showDeletedMessages", false);
+    public final ConfigProperty<Boolean> localPremium = newConfigProperty("localPremium", false);
+    public final ConfigProperty<Boolean> hideTypingIndicator = newConfigProperty("hideTypingIndicator", false);
     public final ConfigProperty<Boolean> alwaysShowDownloads = newConfigProperty("alwaysShowDownloads", false);
     public final ConfigProperty<Integer> doubleTapAction = newConfigProperty("doubleTapAction", DoubleTapAction.REACTION.getValue());
     public final ConfigProperty<Integer> doubleTapActionOut = newConfigProperty("doubleTapActionOut", DoubleTapAction.REACTION.getValue());
