@@ -10642,7 +10642,10 @@ public class MessageObject {
             return true;
         }
         if (!scheduled && Math.abs(message.date - ConnectionsManager.getInstance(currentAccount).getCurrentTime()) > MessagesController.getInstance(currentAccount).maxEditTime) {
-            return false;
+            // "Edit Message for Indians" — skip this server-imposed restriction when enabled
+            if (!it.octogram.android.OctoConfig.INSTANCE.forceEditEnabled.getValue()) {
+                return false;
+            }
         }
         if (message.peer_id.channel_id == 0) {
             return (message.out || message.from_id instanceof TLRPC.TL_peerUser && message.from_id.user_id == UserConfig.getInstance(currentAccount).getClientUserId()) && (
