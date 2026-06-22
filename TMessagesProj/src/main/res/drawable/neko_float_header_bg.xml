@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Subtle top-fade gradient for 3D section headers — tints header rows
+  with a barely-visible accent wash so they feel elevated.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#124A90D9"
+        android:endColor="#004A90D9"
+        android:angle="270"/>
+    <corners android:topLeftRadius="12dp" android:topRightRadius="12dp"/>
+</shape>
