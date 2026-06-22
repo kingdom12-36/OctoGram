@@ -431,10 +431,16 @@ public class ActionBarPopupWindow extends PopupWindow {
 
         @Override
         public void addView(View child) {
+            if (child.getParent() instanceof android.view.ViewGroup) {
+                ((android.view.ViewGroup) child.getParent()).removeView(child);
+            }
             linearLayout.addView(child);
         }
 
         public void addView(View child, LinearLayout.LayoutParams layoutParams) {
+            if (child.getParent() instanceof android.view.ViewGroup) {
+                ((android.view.ViewGroup) child.getParent()).removeView(child);
+            }
             linearLayout.addView(child, layoutParams);
         }
 
