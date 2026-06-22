@@ -68,6 +68,7 @@ import it.octogram.android.app.rows.impl.TextIconRow;
 import it.octogram.android.app.ui.components.ExpandableRowIndex;
 import it.octogram.android.app.ui.components.SwitchCell;
 import it.octogram.android.utils.OctoUtils;
+import it.octogram.android.app.ui.components.NekoFloatUI;
 
 public class ListAdapter extends AdapterWithDiffUtils {
 
@@ -102,6 +103,7 @@ public class ListAdapter extends AdapterWithDiffUtils {
             case TEXT_ICON:
                 view = new FrameLayout(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case SHADOW:
                 view = new ShadowSectionCell(context);
@@ -111,23 +113,29 @@ public class ListAdapter extends AdapterWithDiffUtils {
             case HEADER_WITHOUT_STYLE:
                 view = new HeaderCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setForeground(androidx.core.content.ContextCompat.getDrawable(context, org.telegram.messenger.R.drawable.neko_float_header_bg));
+                view.setElevation(dp(2.5f));
                 break;
             case SWITCH:
             case MAIN_PAGE_SWITCH:
                 view = new TextCheckCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case TEXT_DETAIL:
                 view = new TextDetailSettingsCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case SLIDER:
                 view = new SliderCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case LIST:
                 view = new TextSettingsCell(context, 21);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case SLIDER_CHOOSE:
                 view = new SlideChooseView(context) {
@@ -147,6 +155,7 @@ public class ListAdapter extends AdapterWithDiffUtils {
                     }
                 };
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case FOOTER:
                 TextInfoPrivacyCell cell = new TextInfoPrivacyCell(context, 10);
@@ -164,6 +173,7 @@ public class ListAdapter extends AdapterWithDiffUtils {
             case STICKER_HEADER:
                 LinearLayout layout = new LinearLayout(context);
                 layout.setOrientation(VERTICAL);
+                NekoFloatUI.applyCard(layout);
                 view = layout;
                 break;
             case CHECKBOX:
@@ -173,15 +183,18 @@ public class ListAdapter extends AdapterWithDiffUtils {
                 checkBoxCell.setEnabled(true);
                 view = checkBoxCell;
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case EXPANDABLE_ROWS:
             case EXPANDABLE_ROWS_CHILD:
                 view = new SwitchCell(context, fragment);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             case CUSTOM_AI_MODEL:
                 view = new CustomAIModelCell(context);
                 view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                view.setElevation(dp(1.5f));
                 break;
             default:
                 throw new RuntimeException("No view found for " + type);
