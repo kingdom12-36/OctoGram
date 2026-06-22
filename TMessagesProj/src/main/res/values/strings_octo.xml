@@ -1177,4 +1177,7 @@
     <!-- Hide Typing Indicator -->
     <string name="OctoHideTypingIndicator">Hide Typing Indicator</string>
     <string name="OctoHideTypingIndicator_Desc">Prevents Telegram from showing others that you are typing.</string>
+    <!-- Edit Message for Indians -->
+    <string name="OctoForceEditEnabled">Edit Message for Indians</string>
+    <string name="OctoForceEditEnabled_Desc">Re-enables the message edit button when Telegram has restricted it for your account region.</string>
 </resources>
