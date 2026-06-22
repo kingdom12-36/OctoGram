@@ -253,6 +253,16 @@ public class OctoGeneralSettingsUI implements PreferencesEntry {
                             .title(getString(R.string.OctoShowDeletedMessages))
                             .description(getString(R.string.OctoShowDeletedMessages_Desc))
                             .build());
+                    category.row(new SwitchRow.SwitchRowBuilder()
+                            .preferenceValue(OctoConfig.INSTANCE.localPremium)
+                            .title(getString(R.string.OctoLocalPremium))
+                            .description(getString(R.string.OctoLocalPremium_Desc))
+                            .build());
+                    category.row(new SwitchRow.SwitchRowBuilder()
+                            .preferenceValue(OctoConfig.INSTANCE.hideTypingIndicator)
+                            .title(getString(R.string.OctoHideTypingIndicator))
+                            .description(getString(R.string.OctoHideTypingIndicator_Desc))
+                            .build());
                 })
                 .build();
     }
