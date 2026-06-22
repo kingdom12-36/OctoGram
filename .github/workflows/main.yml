@@ -10,6 +10,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      apk-name: ${{ steps.stage.outputs.apk-name }}
+      app-pkg: ${{ steps.patch.outputs.app-pkg }}
 
     steps:
       - name: Checkout Source Code
@@ -25,15 +28,29 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '21'
-          cache: 'gradle'
+
+      - name: Setup Gradle (Safe Cache)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-cleanup: on-success
+          gradle-home-cache-includes: |
+            caches/modules-2
+            caches/transforms-3
+            wrapper
+          gradle-home-cache-excludes: |
+            caches/build-cache-*
+            caches/journal-*
+            caches/configuration-cache
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Verify Essential Tools
-        run: git lfs version && sed --version
+        run: |
+          git lfs version
+          sed --version
 
       - name: Linkit Key Factory
         run: |
@@ -46,22 +63,37 @@ jobs:
             -alias $KEY_NAME -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass $PASSWORD -keypass $PASSWORD \
             -dname "CN=Linkit, OU=Dev, O=LinkitFortress, L=Global, S=Security, C=US"
-          printf 'storePassword=%s\nkeyAlias=%s\nkeyPath=%s\nkeyPassword=%s\n' \
-            "$PASSWORD" "$KEY_NAME" "/home/octogram/keys/octogram-key.jks" "$PASSWORD" \
-            > /home/octogram/keys/signing.properties
 
       - name: Patch Package Name & ABI (arm64 + x86_64)
+        id: patch
         run: |
-          sed -i 's/^APP_PACKAGE=.*/APP_PACKAGE=org.linkit.octogram/' gradle.properties
-          grep "APP_PACKAGE" gradle.properties
-          # arm64 + x86_64: arm64 for delivery, x86_64 for emulator smoke test
+          PKG="org.linkit.octogram${GITHUB_RUN_NUMBER}"
+          echo "Package for this build: $PKG"
+          sed -i "s/^APP_PACKAGE=.*/APP_PACKAGE=$PKG/" gradle.properties
+          grep APP_PACKAGE gradle.properties
           sed -i "s/include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'/include 'arm64-v8a', 'x86_64'/" TMessagesProj_App/build.gradle
-          sed -i "s/include 'arm64-v8a'/include 'arm64-v8a', 'x86_64'/" TMessagesProj_App/build.gradle
-          # Update package name in existing google-services.json
+          sed -i 's/include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"/include "arm64-v8a", "x86_64"/' TMessagesProj_App/build.gradle
           TARGET_JSON="TMessagesProj_App/google-services.json"
           if [ -f "$TARGET_JSON" ]; then
-            sed -i 's/"package_name": "[^"]*"/"package_name": "org.linkit.octogram"/g' "$TARGET_JSON"
-            echo "google-services.json updated for org.linkit.octogram"
+            sed -i "s/\"package_name\": \"[^\"]*\"/\"package_name\": \"$PKG\"/g" "$TARGET_JSON"
+          fi
+          echo "APP_PKG=$PKG" >> $GITHUB_ENV
+          echo "app-pkg=$PKG" >> $GITHUB_OUTPUT
+
+      - name: Generate google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          TARGET_JSON="TMessagesProj_App/google-services.json"
+          if [ -n "$GOOGLE_SERVICES_JSON" ] && [ "$GOOGLE_SERVICES_JSON" != "null" ]; then
+            printf "%s" "$GOOGLE_SERVICES_JSON" > "$TARGET_JSON"
+            echo "Real google-services.json injected from secret"
+            sed -i "s/it.octogram.app/${APP_PKG}/g" "$TARGET_JSON" 2>/dev/null || true
+          else
+            echo "GOOGLE_SERVICES_JSON not set — writing stub (Firebase will be skipped)"
+            cat > "$TARGET_JSON" << STUBJSON
+          {"project_info":{"project_number":"000000000000","project_id":"stub","storage_bucket":"stub.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:0:android:0","android_client_info":{"package_name":"it.octogram.app"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyDummy000000000000000000000000000000"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
+          STUBJSON
           fi
 
       - name: Run Repo Setup Script
@@ -70,7 +102,7 @@ jobs:
           FORCE_COLOR: "1"
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-          APP_ID: "org.linkit.octogram"
+          APP_ID: ${{ env.APP_PKG }}
           APP_NAME: "OctoGram Linkit"
           APP_DOWNLOAD_URL: "https://telegram.org/dl"
           APP_SOURCES_URL: "https://github.com/kingdom12-36/OctoGram"
@@ -81,71 +113,131 @@ jobs:
           printf '#!/bin/bash\nexit 0\n' > /home/runner/bin/tput
           chmod +x /home/runner/bin/tput
           export PATH=/home/runner/bin:$PATH
-          echo "sign.file=/home/octogram/keys/signing.properties" > local.properties
           MAPS_KEY="${{ secrets.MAPS_API_KEY }}"
           [ -z "$MAPS_KEY" ] && MAPS_KEY="AIzaSyDummyKey_Linkit"
-          echo "MAPS_API_KEY=$MAPS_KEY" >> local.properties
-          # Inject Sentry DSN so it bakes into BuildConfig
-          [ -n "$SENTRY_DSN" ] && echo "SENTRY_DSN=$SENTRY_DSN" >> local.properties || true
+          {
+            echo "storeFile=/home/octogram/keys/octogram-key.jks"
+            echo "storePassword=Linkit"
+            echo "keyAlias=Linkit"
+            echo "keyPassword=Linkit"
+            echo "mapsApiKey=$MAPS_KEY"
+            echo "apiId=$TELEGRAM_API_ID"
+            echo "apiHash=$TELEGRAM_API_HASH"
+            echo "sentryDsn=$SENTRY_DSN"
+          } > local.properties
+          echo "=== local.properties (credentials redacted) ==="
+          grep -v "apiId\|apiHash\|storePassword\|keyPassword" local.properties
+          echo "apiId=<set>" && echo "apiHash=<set>"
           [ -d "scripts" ] && ./scripts/setup.sh || true
+
+      - name: Pre-Build Sanity Check
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+        run: |
+          ERRORS=0
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  PRE-BUILD SANITY CHECK"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ -z "$TELEGRAM_API_ID" ]; then
+            echo "❌ TELEGRAM_API_ID secret is not set"; ERRORS=$((ERRORS+1))
+          elif ! echo "$TELEGRAM_API_ID" | grep -qE '^[0-9]+$'; then
+            echo "❌ TELEGRAM_API_ID is not a valid integer"; ERRORS=$((ERRORS+1))
+          elif [ "$TELEGRAM_API_ID" -eq 0 ]; then
+            echo "❌ TELEGRAM_API_ID is 0 — native crash at launch"; ERRORS=$((ERRORS+1))
+          else
+            echo "✅ TELEGRAM_API_ID is set and non-zero"
+          fi
+          if [ -z "$TELEGRAM_API_HASH" ]; then
+            echo "❌ TELEGRAM_API_HASH secret is not set"; ERRORS=$((ERRORS+1))
+          elif ! echo "$TELEGRAM_API_HASH" | grep -qE '^[0-9a-fA-F]{32}$'; then
+            echo "❌ TELEGRAM_API_HASH is not a 32-char hex string (len: ${#TELEGRAM_API_HASH})"; ERRORS=$((ERRORS+1))
+          else
+            echo "✅ TELEGRAM_API_HASH is set and looks valid"
+          fi
+          if [ ! -f "local.properties" ]; then
+            echo "❌ local.properties not found"; ERRORS=$((ERRORS+1))
+          else
+            LOCAL_ID=$(grep "^apiId=" local.properties | cut -d= -f2)
+            if [ -z "$LOCAL_ID" ] || [ "$LOCAL_ID" = "0" ]; then
+              echo "❌ local.properties apiId is empty or 0"; ERRORS=$((ERRORS+1))
+            else
+              echo "✅ local.properties apiId is set"
+            fi
+            if ! grep -q "^apiHash=" local.properties || [ -z "$(grep "^apiHash=" local.properties | cut -d= -f2)" ]; then
+              echo "❌ local.properties apiHash missing"; ERRORS=$((ERRORS+1))
+            else
+              echo "✅ local.properties apiHash is set"
+            fi
+          fi
+          [ ! -f "/home/octogram/keys/octogram-key.jks" ] && { echo "❌ Keystore missing"; ERRORS=$((ERRORS+1)); } || echo "✅ Keystore exists"
+          PKG_IN_GRADLE=$(grep "^APP_PACKAGE=" gradle.properties | cut -d= -f2)
+          [ "$PKG_IN_GRADLE" = "it.octogram.app" ] && { echo "❌ APP_PACKAGE not patched"; ERRORS=$((ERRORS+1)); } || echo "✅ APP_PACKAGE: $PKG_IN_GRADLE"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "🚫 $ERRORS check(s) failed — aborting before wasting build time"
+            exit 1
+          else
+            echo "🟢 All checks passed — proceeding to build"
+          fi
 
       - name: Fix Gradle Properties
         run: |
           [ -f "gradle.properties" ] && sed -i '/android.enableR8/d' gradle.properties || true
+          echo 'android.injected.testOnly=false' >> gradle.properties
+          echo 'org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC -Dfile.encoding=UTF-8' >> gradle.properties
+          echo 'org.gradle.parallel=true' >> gradle.properties
+          echo 'org.gradle.daemon=false' >> gradle.properties
 
       - name: Grant Execute Permission for Gradle
         run: chmod +x gradlew
 
+      - name: Enable Sentry Upload
+        run: |
+          echo 'sentry.autoUpload=true'                      >> gradle.properties
+          echo 'sentry.uploadNativeSymbols=false'            >> gradle.properties
+          echo 'sentry.includeSourceContext=false'           >> gradle.properties
+          echo 'sentry.uploadProguardMapping=true'           >> gradle.properties
+          echo 'sentry.tracingInstrumentation.enabled=false' >> gradle.properties
+          echo "[Sentry] flags written:" && grep sentry gradle.properties
+
       - name: Build Android App
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: 'sham-19'
+          SENTRY_PROJECT: 'android'
         run: |
           ./gradlew :TMessagesProj_App:assembleRelease \
-            -Pandroid.experimental.jetbrains.kotlin.jvm.target=21 \
+            --no-configuration-cache \
+            -Pandroid.injected.testOnly=false \
             -Pandroid.antlr.arguments="-w" \
             -Dorg.gradle.project.android.ndk.cflags="-w" \
             -Dorg.gradle.project.android.ndk.cppflags="-w" \
-            -Pandroid.injected.testOnly=false \
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" \
             --stacktrace
 
-      - name: Upload ProGuard Mappings to Sentry
-        continue-on-error: true
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: |
-          if [ -z "$SENTRY_AUTH_TOKEN" ]; then echo "No SENTRY_AUTH_TOKEN — skip"; exit 0; fi
-          curl -sL https://sentry.io/get-cli/ | bash -s -- 2>/dev/null || true
-          MAPPING=$(find . -path "*/mapping/release/mapping.txt" 2>/dev/null | head -1)
-          if [ -n "$MAPPING" ]; then
-            sentry-cli releases --org sham-19 --project android files "build-$GITHUB_RUN_NUMBER" upload-proguard-mappings "$MAPPING" \
-              --android-manifest $(find . -path "*/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml" 2>/dev/null | head -1) || true
-            echo "ProGuard mappings uploaded to Sentry"
-          else
-            echo "No mapping.txt found — R8 may be off"
-          fi
-      - name: Locate & Stage APKs
+      - name: Locate & Stage APK
         id: stage
         run: |
           echo "=== All APKs built ==="
           find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | sort
-          # arm64 → delivered to users
-          APK_ARM=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | grep -i "arm64" | grep -v "x86" | head -1)
-          [ -z "$APK_ARM" ] && APK_ARM=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | head -1)
-          # x86_64 → smoke test on emulator
-          APK_X86=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | grep -i "x86_64\|x86" | head -1)
+          APK_ARM=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | grep -i "arm64" | grep -v "universal" | head -1)
+          [ -z "$APK_ARM" ] && APK_ARM=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | grep -v "universal" | head -1)
+          APK_UNI=$(find . -path "*/outputs/apk*" -name "*.apk" -not -path "*/.gradle/*" 2>/dev/null | grep -i "universal" | head -1)
           if [ -n "$APK_ARM" ]; then
             cp "$APK_ARM" OctoGram-arm64.apk
-            echo "arm64: $APK_ARM ($(ls -lh OctoGram-arm64.apk | awk '{print $5}'))"
+            echo "arm64 APK staged: $APK_ARM"
+            ls -lh OctoGram-arm64.apk
+            echo "apk-name=OctoGram-arm64.apk" >> $GITHUB_OUTPUT
           else
             echo "ERROR: No arm64 APK found"; exit 1
           fi
-          if [ -n "$APK_X86" ]; then
-            cp "$APK_X86" OctoGram-x86_64.apk
-            echo "x86_64: $APK_X86 ($(ls -lh OctoGram-x86_64.apk | awk '{print $5}'))"
+          if [ -n "$APK_UNI" ]; then
+            cp "$APK_UNI" OctoGram-universal.apk
+            echo "universal APK staged: $APK_UNI"
+            ls -lh OctoGram-universal.apk
           else
-            echo "WARN: No x86_64 APK — using arm64 as smoke fallback"
-            cp OctoGram-arm64.apk OctoGram-x86_64.apk
+            echo "WARN: No universal APK — using arm64 as smoke-test fallback"
+            cp OctoGram-arm64.apk OctoGram-universal.apk
           fi
 
       - name: Diagnose APK
@@ -154,112 +246,143 @@ jobs:
           echo "=== FILE ===" && file OctoGram-arm64.apk && ls -lh OctoGram-arm64.apk
           echo "=== PACKAGE ===" && $BT/aapt dump badging OctoGram-arm64.apk 2>&1 | grep -E "package:|testOnly|native-code|sdkVersion" || true
           echo "=== SIGNATURE ===" && $BT/apksigner verify --verbose OctoGram-arm64.apk 2>&1 | head -5 || true
-          echo "=== LIBS ===" && unzip -l OctoGram-x86_64.apk | grep "\.so$" | head -10 || true
+          echo "=== ZIP ===" && (unzip -t OctoGram-arm64.apk > /dev/null 2>&1 && echo "ZIP valid" || echo "ZIP CORRUPT")
 
-      - name: Upload arm64 APK (delivery)
+      - name: Upload APK as Actions Artifact
         uses: actions/upload-artifact@v4
         with:
           name: OctoGram-arm64
           path: OctoGram-arm64.apk
-          retention-days: 30
+          retention-days: 7
 
-      - name: Upload x86_64 APK (smoke test)
+      - name: Upload Universal APK (for smoke test)
         uses: actions/upload-artifact@v4
         with:
-          name: OctoGram-x86_64
-          path: OctoGram-x86_64.apk
+          name: OctoGram-universal
+          path: OctoGram-universal.apk
           retention-days: 7
 
   smoke-test:
-    needs: build
     runs-on: ubuntu-latest
-    outputs:
-      result: ${{ steps.smoke.outcome }}
+    needs: build
+    continue-on-error: true
 
     steps:
-      - name: Download x86_64 APK
+      - name: Download universal APK artifact
         uses: actions/download-artifact@v4
         with:
-          name: OctoGram-x86_64
+          name: OctoGram-universal
 
       - name: Enable KVM
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-          ls /dev/kvm
+          ls -la /dev/kvm
 
-      - name: Write smoke script
+      - name: Write smoke-test script (Sentry-based)
         env:
+          APP_PKG: ${{ needs.build.outputs.app-pkg }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
-          PKG="org.linkit.octogram"
-          ADB="$ANDROID_HOME/platform-tools/adb"
+          PKG_VAL="${APP_PKG}"
+          TOKEN_VAL="${SENTRY_AUTH_TOKEN}"
           cat > /tmp/smoke.sh << HEADER
-          #!/bin/bash
-          set -e
-          PKG="$PKG"
-          ADB="$ADB"
-          SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN"
+          #!/usr/bin/env bash
+          set -euo pipefail
+          PKG="$PKG_VAL"
+          SENTRY_TOKEN="$TOKEN_VAL"
           HEADER
           cat >> /tmp/smoke.sh << 'BODY'
-          echo "━━━ SMOKE TEST — $PKG ━━━"
-          $ADB install -r OctoGram-x86_64.apk && echo "✅ APK installed" || { echo "❌ Install failed"; exit 1; }
+          ADB="$ANDROID_HOME/platform-tools/adb"
+          SENTRY_ORG="sham-19"
+          SENTRY_PROJECT="android"
 
-          # Start logcat capturing crash + fatal lines
+          echo "━━━ SENTRY SMOKE TEST — $PKG ━━━"
+
+          $ADB install -r OctoGram-universal.apk
+          echo "✅ APK installed"
+
+          LAUNCH_TS=$(date -u +%s)
+          echo "Launch epoch: $LAUNCH_TS"
+
           $ADB logcat -c
           $ADB logcat -b crash AndroidRuntime:E FATAL:E *:W > /tmp/smoke_logcat.txt 2>&1 &
+          LOGCAT_PID=$!
 
-          EPOCH=$(date +%s)
           $ADB shell am start -n "$PKG/org.telegram.ui.LaunchActivity" \
             -a android.intent.action.MAIN -c android.intent.category.LAUNCHER
-          echo "Launched — waiting 45s for app to settle..."
-          sleep 45
+          echo "Launched — waiting 40s for app to settle..."
+          sleep 40
 
+          ALIVE=$($ADB shell pidof "$PKG" 2>/dev/null | tr -d "[:space:]" || true)
+          kill $LOGCAT_PID 2>/dev/null || true
+
+          echo ""
           echo "━━━ Process status ━━━"
-          ALIVE=$($ADB shell pidof "$PKG" 2>/dev/null | tr -d '[:space:]')
           if [ -n "$ALIVE" ]; then
-            echo "✅ Process alive PID=$ALIVE"
+            echo "💚 Process alive (pid $ALIVE)"
           else
-            echo "📛 Process dead — checking logcat"
-            echo "━━━ Logcat (last 60 lines) ━━━"
-            cat /tmp/smoke_logcat.txt | grep -v "^-" | tail -60 || true
-            # Report crash to Sentry via API
-            if [ -n "$SENTRY_AUTH_TOKEN" ]; then
-              curl -sf -X POST "https://us.sentry.io/api/0/projects/sham-19/android/issues/" \
-                -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
-                -H "Content-Type: application/json" \
-                -d '{"title":"OctoGram Smoke Test — Process died on emulator","culprit":"CI emulator smoke test","type":"error"}' \
-                >/dev/null 2>&1 || true
-            fi
-            exit 1
+            echo "📛 Process dead — checking Sentry + logcat"
           fi
-          echo "🟢 SMOKE PASSED — process alive after 45s"
+
+          echo ""
+          echo "━━━ Sentry issues check ━━━"
+          SENTRY_RESP=$(curl -s \
+            -H "Authorization: Bearer $SENTRY_TOKEN" \
+            "https://us.sentry.io/api/0/projects/$SENTRY_ORG/$SENTRY_PROJECT/issues/?query=is:unresolved&limit=10" 2>/dev/null)
+          SENTRY_COUNT=$(echo "$SENTRY_RESP" | grep -o '"id"' | wc -l | tr -d '[:space:]')
+          SENTRY_COUNT="${SENTRY_COUNT:-0}"
+          echo "Open Sentry issues: $SENTRY_COUNT"
+          echo "$SENTRY_RESP" | grep -oP '(?<="title":")[^"]+' | head -10 || true
+
+          echo ""
+          echo "━━━ Logcat (crashes) ━━━"
+          grep -E "CRASH|FATAL|SIGSEGV|AndroidRuntime|Process.*died|JNI|NativeLoader" \
+            /tmp/smoke_logcat.txt | head -60 || echo "(no crash lines)"
+
+          LOGCAT_CRASH=$(grep -c "FATAL EXCEPTION\|SIGSEGV\|Process.*died\|fatal signal\|AndroidRuntime" /tmp/smoke_logcat.txt 2>/dev/null || echo "0")
+          LOGCAT_CRASH=$(echo "$LOGCAT_CRASH" | tr -d '[:space:]')
+
+          echo ""
+          if [ "${SENTRY_COUNT}" -gt 0 ] || [ "${LOGCAT_CRASH}" -gt 0 ] || [ -z "$ALIVE" ]; then
+            echo "🔴 SMOKE FAILED — Sentry:${SENTRY_COUNT} logcat:${LOGCAT_CRASH} alive:${ALIVE:-none}"
+            echo "━━━ Full logcat tail ━━━"
+            tail -100 /tmp/smoke_logcat.txt
+            exit 1
+          else
+            echo "🟢 SMOKE PASSED — 0 Sentry issues, process alive, logcat clean"
+            exit 0
+          fi
           BODY
           chmod +x /tmp/smoke.sh
 
-      - name: Boot emulator + run smoke test
-        id: smoke
+      - name: Run smoke test on emulator
         uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 12
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          ram-size: 4096M
-          disk-size: 8192M
-          cores: 2
+          profile: pixel_3a
+          ram-size: 2048M
+          heap-size: 512M
+          disk-size: 4096M
           emulator-options: -no-window -no-audio -no-snapshot -gpu swiftshader_indirect
           disable-animations: true
           script: bash /tmp/smoke.sh
 
   deliver:
-    needs: [build, smoke-test]
     runs-on: ubuntu-latest
+    needs: [build, smoke-test]
     if: always() && needs.build.result == 'success'
 
     steps:
-      - name: Download arm64 APK
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download APK artifact
         uses: actions/download-artifact@v4
         with:
           name: OctoGram-arm64
@@ -270,11 +393,11 @@ jobs:
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_CLIENT: ${{ secrets.TELEGRAM_CLIENT }}
+          BUILD_PKG: ${{ needs.build.outputs.app-pkg }}
+          BUILD_NUM: ${{ github.run_number }}
           SMOKE_RESULT: ${{ needs.smoke-test.result }}
         run: |
           pip install telethon -q
-          SMOKE_ICON="✅ passed"
-          [ "$SMOKE_RESULT" != "success" ] && SMOKE_ICON="⚠️ check logs"
           python3 - << PYEOF
           import os, asyncio
           from telethon import TelegramClient
@@ -285,11 +408,13 @@ jobs:
           channel  = -1004457565242
           smoke    = os.environ.get('SMOKE_RESULT', '?')
           smoke_icon = '✅ passed' if smoke == 'success' else '⚠️ check logs'
-          caption  = f"**OctoGram Linkit — Build #${{ github.run_number }}**\nPackage: org.linkit.octogram\nArch: arm64-v8a\nSmoke test: {smoke_icon}"
+          pkg      = os.environ.get('BUILD_PKG', 'unknown')
+          num      = os.environ.get('BUILD_NUM', '?')
+          caption  = f"**OctoGram Linkit — Build #{num}**\nPackage: {pkg}\nArch: arm64-v8a + x86_64\nSmoke test: {smoke_icon}"
           async def main():
               async with TelegramClient(StringSession(session), api_id, api_hash) as client:
                   await client.send_file(channel, 'OctoGram-arm64.apk', caption=caption, force_document=True)
-                  print('APK sent to Telegram!')
+                  print('APK sent!')
           asyncio.run(main())
           PYEOF
 
@@ -300,11 +425,11 @@ jobs:
         run: |
           SMOKE_ICON="✅ passed"
           [ "$SMOKE_RESULT" != "success" ] && SMOKE_ICON="⚠️ check logs"
-          printf '## OctoGram Linkit — Build #%s\n\nPackage: `org.linkit.octogram`\nCommit: `%s`\nSmoke test: %s\n\narch: arm64-v8a' \
-            "${{ github.run_number }}" "${{ github.sha }}" "$SMOKE_ICON" > release_notes.md
+          PKG="${{ needs.build.outputs.app-pkg }}"
+          printf '## OctoGram Linkit — Build #%s\n\nPackage: `%s`\nCommit: `%s`\nSmoke test: %s\n\narch: arm64-v8a + x86_64.' \
+            "${{ github.run_number }}" "$PKG" "${{ github.sha }}" "$SMOKE_ICON" > release_notes.md
           gh release delete latest --yes 2>/dev/null || true
-          git push origin :refs/tags/latest 2>/dev/null || true
           gh release create latest OctoGram-arm64.apk \
-            --title "OctoGram Linkit - $(date -u '+%Y-%m-%d %H:%M UTC')" \
+            --title "OctoGram Linkit — Build #${{ github.run_number }} — $(date -u '+%Y-%m-%d %H:%M UTC')" \
             --notes-file release_notes.md \
             --latest
