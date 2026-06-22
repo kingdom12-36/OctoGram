@@ -557,6 +557,9 @@ public class UserConfig extends BaseController {
     }
 
     public boolean isPremium() {
+        if (it.octogram.android.OctoConfig.INSTANCE.localPremium.getValue()) {
+            return true;
+        }
         TLRPC.User user = currentUser;
         if (user == null) {
             return false;
