@@ -1170,4 +1170,11 @@
     <!-- Choose SystemCamera Mode -->
     <string name="TakePhoto">Take Photo</string>
     <string name="RecordVideo">Record Video</string>
+    <!-- Enable Local Premium -->
+    <string name="OctoLocalPremium">Enable Local Premium</string>
+    <string name="OctoLocalPremium_Desc">Unlocks Telegram Premium features on this device without a real subscription.</string>
+
+    <!-- Hide Typing Indicator -->
+    <string name="OctoHideTypingIndicator">Hide Typing Indicator</string>
+    <string name="OctoHideTypingIndicator_Desc">Prevents Telegram from showing others that you are typing.</string>
 </resources>
