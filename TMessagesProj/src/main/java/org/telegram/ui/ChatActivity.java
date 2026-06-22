@@ -15054,13 +15054,13 @@ public class ChatActivity extends BaseFragment implements
                     if (messageObjectToReply.messageOwner.from_id.channel_id != 0) {
                         TLRPC.Chat chat = getMessagesController().getChat(messageObjectToReply.messageOwner.from_id.channel_id);
                         if (chat == null) {
-                            return;
+                            name = "";
                         }
                         name = new SpannableStringBuilder(ChatObject.isChannelAndNotMegaGroup(chat) ? MessageObject.channelSpan() : MessageObject.groupSpan()).append(" ").append(chat.title);
                     } else {
                         TLRPC.User user = getMessagesController().getUser(messageObjectToReply.messageOwner.from_id.user_id);
                         if (user == null) {
-                            return;
+                            name = "";
                         }
                         name = UserObject.getUserName(user);
                     }
@@ -15078,7 +15078,7 @@ public class ChatActivity extends BaseFragment implements
                         }
                     }
                     if (chat == null && user == null) {
-                        return;
+                        name = "";
                     }
                     if (chat != null) {
                         name = new SpannableStringBuilder(ChatObject.isChannelAndNotMegaGroup(chat) ? MessageObject.channelSpan() : MessageObject.groupSpan()).append(" ").append(chat.title);
