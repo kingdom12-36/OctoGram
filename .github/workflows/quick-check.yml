@@ -7,7 +7,7 @@ on:
 
 jobs:
   compile:
-    name: Java compile only
+    name: Java compile only (no APK)
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -31,20 +31,12 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*','**/libs.versions.toml','**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Compile Java sources (no APK)
+      - name: Compile Java sources (no APK, no cache)
         run: |
           chmod +x ./gradlew
           ./gradlew :TMessagesProj:compileDebugJava \
             --no-daemon \
-            --build-cache \
-            --parallel \
+            --no-build-cache \
+            --rerun-tasks \
             -x lint \
-            -x lintDebug \
-            2>&1 | tee /tmp/compile.log | grep -E "error:|\.java:[0-9]+|BUILD (SUCCESSFUL|FAILED)|> Task|FAILED" | tail -100
-          grep -c "error:" /tmp/compile.log && exit 1 || true
-
-      - name: Show error count
-        if: failure()
-        run: |
-          echo "=== ERRORS ==="
-          grep "error:" /tmp/compile.log | head -50
+            -x lintDebug
