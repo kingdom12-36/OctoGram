@@ -535,7 +535,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                         textSelectActionCallback.onCreateActionMode(actionMode, actionMode.getMenu());
                     }
                     textSelectActionCallback.onPrepareActionMode(actionMode, actionMode.getMenu());
-                    actionMode.hide(1);
+                    actionMode.hide(0); // fix: hide(0) skips setZeroTouchableSurface, restores touch region immediately
                 }
                 AndroidUtilities.cancelRunOnUIThread(hideActionsRunnable);
                 actionsIsShowing = true;
