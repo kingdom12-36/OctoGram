@@ -10084,6 +10084,39 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             previousActionBar = null;
         }
 
+            final boolean fromChat = previousTransitionFragment instanceof ChatActivity && ((ChatActivity) previousTransitionFragment).getCurrentChat() != null;
+            if (previousTransitionFragment != null) {
+                updateTimeItem();
+                updateStar();
+            }
+            final AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.setDuration(playProfileAnimation == 2 ? 250 : 180);
+            listView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            ActionBarMenu menu = actionBar.createMenu();
+            if (menu.getItem(10) == null) {
+                if (animatingItem == null) {
+                    animatingItem = menu.addItem(10, R.drawable.ic_ab_other);
+                }
+            }
+
+            if (isOpen) {
+                for (int i = 0; i < 2; i++) {
+                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) onlineTextView[i + 1].getLayoutParams();
+                    layoutParams.rightMargin = (int) (-21 * AndroidUtilities.density + AndroidUtilities.dp(8));
+                    onlineTextView[i + 1].setLayoutParams(layoutParams);
+                }
+
+                if (playProfileAnimation != 2) {
+                    int width = (int) Math.ceil(AndroidUtilities.displaySize.x - AndroidUtilities.dp(118 + 8) + 21 * AndroidUtilities.density);
+                    float width2 = nameTextView[1].getPaint().measureText(nameTextView[1].getText().toString()) * 1.12f + nameTextView[1].getSideDrawablesSize();
+                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) nameTextView[1].getLayoutParams();
+                    if (width < width2) {
+                        layoutParams.width = (int) Math.ceil(width / 1.12f);
+                    } else {
+                        layoutParams.width = LayoutHelper.WRAP_CONTENT;
+                    }
+                    nameTextView[1].setLayoutParams(layoutParams);
+
                     initialAnimationExtraHeight = getHeaderExtraHeight();
                 } else {
                     FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) nameTextView[1].getLayoutParams();
