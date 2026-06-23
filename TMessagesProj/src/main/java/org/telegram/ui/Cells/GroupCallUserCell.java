@@ -508,7 +508,7 @@ public class GroupCallUserCell extends FrameLayout {
                 hasAvatar = true;
                 avatarImageView.setImage(ImageLocation.getForLocal(uploadingAvatar), "50_50", avatarDrawable, null);
             } else {
-                ImageLocation imageLocation = ImageLocation.getForUser(account.getCurrentAccount(), currentUser, ImageLocation.TYPE_SMALL);
+                ImageLocation imageLocation = ImageLocation.getForUser(currentUser, ImageLocation.TYPE_SMALL);
                 hasAvatar = imageLocation != null;
                 avatarImageView.setImage(imageLocation, "50_50", avatarDrawable, currentUser);
             }
@@ -926,12 +926,11 @@ public class GroupCallUserCell extends FrameLayout {
     protected void dispatchDraw(Canvas canvas) {
         if (needDivider && !OctoConfig.INSTANCE.disableDividers.getValue()) {
             if (progressToAvatarPreview != 0) {
-                dividerPaint.setAlpha((int) ((1.0f - progressToAvatarPreview) * wasAlpha));
+                dividerPaint.setAlpha((int) ((1.0f - progressToAvatarPreview) * 255));
             } else {
-                dividerPaint.setAlpha((int) ((1.0f - statusTextView[4].getFullAlpha()) * wasAlpha));
+                dividerPaint.setAlpha((int) ((1.0f - statusTextView[4].getFullAlpha()) * 255));
             }
             canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(68), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(68) : 0), getMeasuredHeight() - 1, dividerPaint);
-            dividerPaint.setAlpha(wasAlpha);
         }
         int cx = avatarImageView.getLeft() + avatarImageView.getMeasuredWidth() / 2;
         int cy = avatarImageView.getTop() + avatarImageView.getMeasuredHeight() / 2;
