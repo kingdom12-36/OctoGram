@@ -106,6 +106,12 @@ public class MainAiHelper {
     }
 
     public static void ping(AiProvidersDetails provider, String key, OnResultState callback) {
+        // Providers without an API key (e.g. Linkit AI) don't need a ping — just confirm available
+        if (provider.getKeyProperty() == null) {
+            callback.onSuccess("ok");
+            return;
+        }
+
         frozenState = true;
 
         boolean originalState = provider.getStatusProperty().getValue();
