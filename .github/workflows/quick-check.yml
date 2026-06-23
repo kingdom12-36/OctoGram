@@ -36,21 +36,23 @@ jobs:
 
       - name: Create local.properties (dummy credentials for compile check)
         run: |
-          mkdir -p /home/octogram/keys
-          cat > /home/octogram/keys/sign.properties << 'EOF'
-          keyPath=/home/octogram/keys/octogram-key.jks
+          mkdir -p /home/runner/keys
+          cat > /home/runner/keys/sign.properties << 'EOF'
+          keyPath=/home/runner/keys/octogram-key.jks
           storePassword=dummy
           keyAlias=dummy
           keyPassword=dummy
           EOF
           {
-            echo "sign.file=/home/octogram/keys/sign.properties"
+            echo "sign.file=/home/runner/keys/sign.properties"
             echo "MAPS_API_KEY=AIzaSyDummyKey"
             echo "apiId=12345"
             echo "apiHash=dummyhash"
             echo "sentryDsn="
+            echo "sdk.dir=$ANDROID_SDK_ROOT"
           } > local.properties
-          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+          echo "=== local.properties (no secrets) ==="
+          cat local.properties
 
       - name: Compile Java sources (no APK)
         run: |
