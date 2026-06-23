@@ -9,7 +9,6 @@
 package org.telegram.ui.Components;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.AndroidUtilities.lerp;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -229,7 +228,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                 if (drawable instanceof MotionBackgroundDrawable) {
                     MotionBackgroundDrawable motionBackgroundDrawable = (MotionBackgroundDrawable) drawable;
                     if (motionBackgroundDrawable.hasPattern()) {
-                        int actionBarHeight = (isActionBarVisible() ? ActionBar.getCurrentActionBarHeight() : 0) + (isStatusBarVisible() && occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
+                        int actionBarHeight = (isActionBarVisible() ? ActionBar.getCurrentActionBarHeight() : 0) + (isStatusBarVisible() && Build.VERSION.SDK_INT >= 21 && occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
                         int viewHeight = useRootView() ? getRootView().getMeasuredHeight() - actionBarHeight : getHeight();
                         float scaleX = (float) getMeasuredWidth() / (float) drawable.getIntrinsicWidth();
                         float scaleY = (float) (viewHeight) / (float) drawable.getIntrinsicHeight();
@@ -251,6 +250,11 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                         }
                         motionBackgroundDrawable.setTranslationY(backgroundTranslationY);
                         int bottom = (int) (getRootView().getMeasuredHeight() - backgroundTranslationY + translationY);
+                        if (animationInProgress) {
+                            bottom -= emojiOffset;
+                        } else if (emojiHeight != 0) {
+                            bottom -= emojiHeight;
+                        }
                         drawable.setBounds(0, 0, getMeasuredWidth(), bottom);
                         drawable.draw(canvas);
                         if (bottomClip != 0) {
@@ -290,7 +294,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                         checkSnowflake(canvas);
                         canvas.restore();
                     } else {
-                        int actionBarHeight = (isActionBarVisible() ? ActionBar.getCurrentActionBarHeight() : 0) + (isStatusBarVisible() && occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
+                        int actionBarHeight = (isActionBarVisible() ? ActionBar.getCurrentActionBarHeight() : 0) + (isStatusBarVisible() && Build.VERSION.SDK_INT >= 21 && occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
                         int viewHeight = useRootView() ? getRootView().getMeasuredHeight() - actionBarHeight : getHeight();
                         float scaleX = (float) getMeasuredWidth() / (float) drawable.getIntrinsicWidth();
                         float scaleY = (float) (viewHeight) / (float) drawable.getIntrinsicHeight();
@@ -346,16 +350,6 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                 backgroundView.invalidate();
             }
         }
-
-        @Override
-        public void invalidate() {
-            super.invalidate();
-            onBackgroundViewInvalidate();
-        }
-    }
-
-    protected void onBackgroundViewInvalidate() {
-
     }
 
     public void onUpdateBackgroundDrawable(Drawable drawable) {
@@ -522,6 +516,11 @@ public class SizeNotifierFrameLayout extends FrameLayout {
 
     public int getBackgroundTranslationY() {
         if (backgroundDrawable instanceof MotionBackgroundDrawable) {
+            if (animationInProgress) {
+                return (int) emojiOffset;
+            } else if (emojiHeight != 0) {
+                return emojiHeight;
+            }
             return backgroundTranslationY;
         } else if (backgroundDrawable instanceof ChatBackgroundDrawable) {
             return backgroundTranslationY;
@@ -531,7 +530,20 @@ public class SizeNotifierFrameLayout extends FrameLayout {
 
     public int getBackgroundSizeY() {
         int offset = 0;
-        if (backgroundDrawable instanceof ChatBackgroundDrawable) {
+        if (backgroundDrawable instanceof MotionBackgroundDrawable) {
+            MotionBackgroundDrawable motionBackgroundDrawable = (MotionBackgroundDrawable) backgroundDrawable;
+            if (!motionBackgroundDrawable.hasPattern()) {
+                if (animationInProgress) {
+                    offset = (int) emojiOffset;
+                } else if (emojiHeight != 0) {
+                    offset = emojiHeight;
+                } else {
+                    offset = backgroundTranslationY;
+                }
+            } else {
+                offset = backgroundTranslationY != 0 ? 0 : -keyboardHeight;
+            }
+        } else if (backgroundDrawable instanceof ChatBackgroundDrawable) {
             offset = backgroundTranslationY;
         }
         return getMeasuredHeight() - offset;
@@ -564,7 +576,6 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         if (backgroundView != null && (Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) || OctoConfig.INSTANCE.showSnowflakes.getValue()) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
-                snowflakesEffect.setForcedColor(0xFFFFFFFF);
             }
             snowflakesEffect.onDraw(backgroundView, canvas);
         }
@@ -964,10 +975,6 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         }
     }
 
-    protected float getBlurRadiusInternal() {
-        return getBlurRadius();
-    }
-
     public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top) {
         drawBlurRect(canvas, y, rectTmp, blurScrimPaint, top, false);
     }
@@ -1002,7 +1009,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                     ColorMatrix colorMatrix = new ColorMatrix();
                     colorMatrix.setSaturation(2f);
                     blurNodes[a].setRenderEffect(RenderEffect.createChainEffect(
-                            RenderEffect.createBlurEffect(getBlurRadiusInternal(), getBlurRadiusInternal(), Shader.TileMode.DECAL),
+                            RenderEffect.createBlurEffect(getBlurRadius(), getBlurRadius(), Shader.TileMode.DECAL),
                             RenderEffect.createColorFilterEffect(new ColorMatrixColorFilter(colorMatrix))
                     ));
                 }
@@ -1232,8 +1239,4 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         }
     }
 
-    @Override
-    public void updateColors() {
-
-    }
 }
