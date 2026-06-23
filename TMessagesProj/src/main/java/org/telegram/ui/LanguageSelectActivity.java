@@ -247,7 +247,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         } else {
                             listAdapter.notifyItemRemoved(start + 1);
                         }
-                    }*/
+                    }
                     return;
                 } else if (view instanceof TextCell) {
                     presentFragment(new PreferencesFragment(new OctoChatsTranslatorUI()));
