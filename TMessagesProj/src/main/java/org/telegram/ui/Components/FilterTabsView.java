@@ -1756,6 +1756,7 @@ public class FilterTabsView extends FrameLayout {
         invalidate();
     }
 
+    /*
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (!tabs.isEmpty()) {
