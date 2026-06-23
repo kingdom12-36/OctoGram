@@ -231,10 +231,6 @@ public class TextSettingsCell extends FrameLayout {
         setWillNotDraw(!divider);
     }
 
-    public void setValue(CharSequence value, boolean animated) {
-        valueTextView.setText(value, animated);
-    }
-
     public void setIcon(int resId) {
         MarginLayoutParams params = (MarginLayoutParams) textView.getLayoutParams();
         imageViewIsColorful = false;
