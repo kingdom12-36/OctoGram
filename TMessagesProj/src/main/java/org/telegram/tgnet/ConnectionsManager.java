@@ -435,14 +435,26 @@ public class ConnectionsManager extends BaseController {
                     final TLRPC.TL_error finalError = error;
                     Utilities.stageQueue.postRunnable(() -> {
                         if (onComplete != null) {
-                            onComplete.run(finalResponse, finalError);
+                            AndroidUtilities.runOnUIThread(() -> {
+                                onComplete.run(finalResponse, finalError);
+                                if (finalResponse != null) {
+                                    finalResponse.freeResources();
+                                }
+                            });
                         } else if (onCompleteTimestamp != null) {
-                            onCompleteTimestamp.run(finalResponse, finalError, timestamp);
+                            AndroidUtilities.runOnUIThread(() -> {
+                                onCompleteTimestamp.run(finalResponse, finalError, timestamp);
+                                if (finalResponse != null) {
+                                    finalResponse.freeResources();
+                                }
+                            });
                         } else if (finalResponse instanceof TLRPC.Updates) {
                             KeepAliveJob.finishJob();
                             AccountInstance.getInstance(currentAccount).getMessagesController().processUpdates((TLRPC.Updates) finalResponse, false);
-                        }
-                        if (finalResponse != null) {
+                            if (finalResponse != null) {
+                                finalResponse.freeResources();
+                            }
+                        } else if (finalResponse != null) {
                             finalResponse.freeResources();
                         }
                     });
