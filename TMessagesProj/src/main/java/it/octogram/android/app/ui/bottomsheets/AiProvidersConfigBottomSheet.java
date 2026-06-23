@@ -102,7 +102,7 @@ public class AiProvidersConfigBottomSheet extends BottomSheet {
         this.callback = callback;
         this.fragment = fragment;
 
-        skipToApiKeyConfig = provider.getStatusProperty().getValue() && !provider.getKeyProperty().getValue().isEmpty();
+        skipToApiKeyConfig = provider.getKeyProperty() != null && provider.getStatusProperty().getValue() && !provider.getKeyProperty().getValue().isEmpty();
 
         TextView textView;
 
@@ -125,6 +125,7 @@ public class AiProvidersConfigBottomSheet extends BottomSheet {
         PagerAdapter pagerAdapter = new PagerAdapter() {
             @Override
             public int getCount() {
+                if (provider.getKeyProperty() == null) return 1; // no API key needed — show only intro
                 return skipToApiKeyConfig ? 1 : provider.getNeedWarningZone() ? 3 : 2;
             }
 
@@ -159,11 +160,11 @@ public class AiProvidersConfigBottomSheet extends BottomSheet {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         buttonTextView.setTypeface(AndroidUtilities.bold());
-        buttonTextView.setText(getString(skipToApiKeyConfig ? R.string.AiFeatures_AccessVia_Login_NextStep_SaveKey : R.string.AiFeatures_AccessVia_Login_NextStep));
+        buttonTextView.setText(getString((skipToApiKeyConfig && provider.getKeyProperty() != null) ? R.string.AiFeatures_AccessVia_Login_NextStep_SaveKey : R.string.AiFeatures_AccessVia_Login_NextStep));
         buttonTextView.setTextColor(Color.WHITE);
         buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(6), Color.parseColor(OctoColors.AiColor.getValue()), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)));
         buttonTextView.setOnClickListener(view -> {
-            if (skipToApiKeyConfig || selectedPosition == (CurrentStep.INSERT_API_KEY + (provider.getNeedWarningZone() ? 1 : 0))) {
+            if (provider.getKeyProperty() == null || skipToApiKeyConfig || selectedPosition == (CurrentStep.INSERT_API_KEY + (provider.getNeedWarningZone() ? 1 : 0))) {
                 checkApiKey();
                 return;
             }
@@ -315,6 +316,23 @@ public class AiProvidersConfigBottomSheet extends BottomSheet {
 
     private void checkApiKey() {
         if (isCheckingApiKey) {
+            return;
+        }
+
+        // No API key required (e.g. Linkit AI) — enable/disable directly
+        if (provider.getKeyProperty() == null) {
+            if (provider.getStatusProperty().getValue()) {
+                provider.getStatusProperty().updateValue(false);
+                if (OctoConfig.INSTANCE.aiFeaturesRecentProvider.getValue() == provider.getId()) {
+                    OctoConfig.INSTANCE.aiFeaturesRecentProvider.clear();
+                }
+                shouldShowSuccessBulletin = false;
+            } else {
+                provider.getStatusProperty().updateValue(true);
+                shouldShowSuccessBulletin = callback.canShowSuccessBulletin();
+            }
+            callback.onStateUpdated();
+            dismiss();
             return;
         }
 
@@ -613,7 +631,7 @@ public class AiProvidersConfigBottomSheet extends BottomSheet {
                             LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.FILL_HORIZONTAL, 32, 0, 32, 16)
                     );
                 }
-            } else if (skipToApiKeyConfig || p == (CurrentStep.INSERT_API_KEY + (provider.getNeedWarningZone() ? 1 : 0))) {
+            } else if (provider.getKeyProperty() != null && (skipToApiKeyConfig || p == (CurrentStep.INSERT_API_KEY + (provider.getNeedWarningZone() ? 1 : 0)))) {
                 OutlineEditText editText = new OutlineEditText(context);
                 editText.setHint(getString(R.string.AiFeatures_AccessVia_Login_Step2_Hint));
                 editText.getEditText().setText(provider.getKeyProperty().getValue());
