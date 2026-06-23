@@ -10,7 +10,6 @@ package org.telegram.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +39,7 @@ import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
+import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
@@ -124,6 +125,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
         actionBar.setTitle(LocaleController.getString(R.string.Language));
+        if (parentLayout != null && parentLayout.isRightLayout()) {
+            actionBar.setBackButtonImage(R.drawable.ic_ab_close);
+        }
 
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
@@ -135,7 +139,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         });
 
         ActionBarMenu menu = actionBar.createMenu();
-        searchItem = menu.addItem(0, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+        searchItem = menu.addItem(0, R.drawable.outline_header_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
             @Override
             public void onSearchExpand() {
                 searching = true;
@@ -186,6 +190,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         emptyView.setShowAtCenter(true);
         frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
+<<<<<<< OctoGram
         listView = new RecyclerListView(context) {
             @Override
             protected void dispatchDraw(Canvas canvas) {
@@ -201,6 +206,11 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 super.dispatchDraw(canvas);
             }
         };
+=======
+        listView = new RecyclerListView(context);
+        listView.setSections();
+        actionBar.setAdaptiveBackground(listView);
+>>>>>>> upstream-12.8.1
         listView.setEmptyView(emptyView);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
@@ -221,13 +231,18 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         listView.setOnItemClickListener((view, position) -> {
             try {
                 if (view instanceof TextCheckCell) {
+<<<<<<< OctoGram
                     /*final boolean prevFullValue = getContextValue() || getChatValue();
                     if (position == listAdapter.manualTranslationPosition) {
+=======
+                    final boolean prevFullValue = getContextValue() || getChatValue();
+                    if (position == manualTranslationPosition) {
+>>>>>>> upstream-12.8.1
                         boolean value = !getContextValue();
                         getMessagesController().getTranslateController().setContextTranslateEnabled(value);
                         ((TextCheckCell) view).setChecked(value);
                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
-                    } else if (position == listAdapter.autoTranslationPosition) {
+                    } else if (position == autoTranslationPosition) {
                         boolean value = !getChatValue();
                         if (value && !getUserConfig().isPremium()) {
                             showDialog(new PremiumFeatureBottomSheet(LanguageSelectActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
@@ -239,7 +254,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     }
                     final boolean currentFullValue = getContextValue() || getChatValue();
                     if (currentFullValue != prevFullValue) {
-                        int start = listAdapter.autoTranslationPosition >= 0 ? listAdapter.autoTranslationPosition : listAdapter.manualTranslationPosition;
+                        int start = autoTranslationPosition >= 0 ? autoTranslationPosition : manualTranslationPosition;
                         TextCheckCell last = null;
                         for (int i = 0; i < listView.getChildCount(); ++i) {
                             View child = listView.getChildAt(i);
@@ -309,8 +324,12 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 }
                 boolean search = listView.getAdapter() == searchListViewAdapter;
                 if (!search) {
+<<<<<<< OctoGram
                     // position -= listAdapter.languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
                     position -= 4;//(7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
+=======
+                    position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
+>>>>>>> upstream-12.8.1
                 }
                 LocaleController.LocaleInfo localeInfo;
                 if (search) {
@@ -376,8 +395,12 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 }
                 boolean search = listView.getAdapter() == searchListViewAdapter;
                 if (!search) {
+<<<<<<< OctoGram
                     //position -= listAdapter.languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
                     position -= 4;
+=======
+                    position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
+>>>>>>> upstream-12.8.1
                 }
                 LocaleController.LocaleInfo localeInfo;
                 if (search) {
@@ -584,6 +607,17 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
     public static final int VIEW_TYPE_SETTINGS_2 = 5;
     public static final int VIEW_TYPE_INFO = 6;
 
+    private int settingsFromPosition = -1;
+    private int settingsToPosition = -1;
+    @Keep
+    private int manualTranslationPosition = -1;
+    @Keep
+    private int autoTranslationPosition = -1;
+    @Keep
+    private int doNotTranslatePosition = -1;
+    private int infoPosition1;
+    private int languagesStartsPosition;
+
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
 
         private Context mContext;
@@ -622,9 +656,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         count++;
                     }
                     count++;
-                    if (!("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled))) {
-                        count++;
-                    }
+                    //if (!("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled))) {
+                    //    count++;
+                    //}
                 }
                 count++;
                 count += sortedLanguages.size();
@@ -643,25 +677,26 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
             switch (viewType) {
                 case VIEW_TYPE_LANGUAGE: {
                     view = new TextRadioCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 }
                 case VIEW_TYPE_SWITCH:
                     TextCheckCell switchCell = new TextCheckCell(mContext);
-                    switchCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = switchCell;
                     break;
                 case VIEW_TYPE_SETTINGS:
                 case VIEW_TYPE_SETTINGS_2:
+<<<<<<< OctoGram
                     /*TextSettingsCell settingsCell = new TextSettingsCell(mContext);
                     settingsCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));*/
                     TextCell settingsCell = new TextCell(mContext);
                     settingsCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+=======
+                    TextSettingsCell settingsCell = new TextSettingsCell(mContext);
+>>>>>>> upstream-12.8.1
                     view = settingsCell;
                     break;
                 case VIEW_TYPE_HEADER:
                     HeaderCell header = new HeaderCell(mContext);
-                    header.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = header;
                     break;
                 case VIEW_TYPE_INFO:
@@ -807,15 +842,18 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     infoCell.setBottomPadding(16);
                     /*if (position == infoPosition1) {
                         infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo1));
-                        infoCell.setBackground(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                         infoCell.setTopPadding(11);
                         infoCell.setBottomPadding(16);
                     } else {
                         infoCell.setTopPadding(0);
                         infoCell.setBottomPadding(16);
+<<<<<<< OctoGram
                         infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo2));
                         infoCell.setBackground(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
                     }*/
+=======
+                    }
+>>>>>>> upstream-12.8.1
                     break;
                 }
                 case VIEW_TYPE_HEADER: {
@@ -826,6 +864,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
             }
         }
 
+<<<<<<< OctoGram
         /*private int settingsFromPosition = -1;
         private int settingsToPosition = -1;
         private int manualTranslationPosition = -1;
@@ -833,6 +872,8 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         private int doNotTranslatePosition = -1;
         private int infoPosition1, infoPosition2;
         private int languagesStartsPosition;*/
+=======
+>>>>>>> upstream-12.8.1
         @Override
         public int getItemViewType(int i) {
             final int position = i;
@@ -882,14 +923,14 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         infoPosition1 = position;
                         return VIEW_TYPE_INFO;
                     }
-                    if ("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled)) {
-                        infoPosition2 = -1;
-                    } else {
-                        if (i-- == 0) {
-                            infoPosition2 = position;
-                            return VIEW_TYPE_INFO;
-                        }
-                    }
+                    //if ("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled)) {
+                    //    infoPosition2 = -1;
+                    //} else {
+                    //    if (i-- == 0) {
+                    //        infoPosition2 = position;
+                    //        return VIEW_TYPE_INFO;
+                    //    }
+                    //}
                 } else {
                     settingsFromPosition = -1;
                     settingsToPosition = -1;
@@ -911,7 +952,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{LanguageCell.class}, null, null, null, Theme.key_windowBackgroundWhite));
         themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundGray));
 
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
+//        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_actionBarDefaultIcon));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, Theme.key_actionBarDefaultTitle));
@@ -932,5 +973,15 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{LanguageCell.class}, new String[]{"checkImage"}, null, null, null, Theme.key_featuredStickers_addedIcon));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+        listView.setClipToPadding(false);
     }
 }

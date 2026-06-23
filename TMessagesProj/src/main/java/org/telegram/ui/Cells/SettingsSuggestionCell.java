@@ -98,6 +98,7 @@ public class SettingsSuggestionCell extends LinearLayout {
         currentType = type;
         if (type == TYPE_PHONE) {
             final TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(UserConfig.getInstance(currentAccount).clientUserId);
+<<<<<<< OctoGram
             String phoneNumber = PhoneFormat.getInstance().format("+" + user.phone);
             String phoneText = LocaleController.formatString("CheckPhoneNumber", R.string.CheckPhoneNumber, phoneNumber);
             SpannableString phoneChars = new SpannableString(phoneText);
@@ -110,6 +111,9 @@ public class SettingsSuggestionCell extends LinearLayout {
                 phoneChars.setSpan(result, phoneText.indexOf(totalString), phoneText.indexOf(totalString) + totalString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             textView.setText(phoneChars);
+=======
+            textView.setText(LocaleController.formatString(R.string.CheckPhoneNumber, PhoneFormat.getInstance().format("+" + user.phone)));
+>>>>>>> upstream-12.8.1
             String text = LocaleController.getString(R.string.CheckPhoneNumberInfo);
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
             int index1 = text.indexOf("**");

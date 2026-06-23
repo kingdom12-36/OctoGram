@@ -72,26 +72,28 @@ public class ReplyMessageLine {
 
     public ReplyMessageLine(View view) {
         this.parentView = view;
-        parentView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(@NonNull View v) {
-                if (emoji != null) {
-                    emoji.attach();
+        if (parentView != null) {
+            parentView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(@NonNull View v) {
+                    if (emoji != null) {
+                        emoji.attach();
+                    }
+                    if (sticker != null) {
+                        sticker.attach();
+                    }
                 }
-                if (sticker != null) {
-                    sticker.attach();
+                @Override
+                public void onViewDetachedFromWindow(@NonNull View v) {
+                    if (emoji != null) {
+                        emoji.detach();
+                    }
+                    if (sticker != null) {
+                        sticker.attach();
+                    }
                 }
-            }
-            @Override
-            public void onViewDetachedFromWindow(@NonNull View v) {
-                if (emoji != null) {
-                    emoji.detach();
-                }
-                if (sticker != null) {
-                    sticker.attach();
-                }
-            }
-        });
+            });
+        }
 
         backgroundColorAnimated = new AnimatedColor(view, 0, 400, CubicBezierInterpolator.EASE_OUT_QUINT);
         color1Animated = new AnimatedColor(view, 0, 400, CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -187,7 +189,7 @@ public class ReplyMessageLine {
         backgroundColor = Theme.multAlpha(nameColor, 0.10f);
         emojiDocumentId = p.background_emoji_id;
         stickerDocumentId = p.gift_emoji_id;
-        if (emojiDocumentId != 0 && emoji == null) {
+        if (emojiDocumentId != 0 && emoji == null && parentView != null) {
             emoji = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(parentView, false, dp(20), AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC);
             if (parentView instanceof ChatMessageCell ? ((ChatMessageCell) parentView).isCellAttachedToWindow() : parentView.isAttachedToWindow()) {
                 emoji.attach();
@@ -200,7 +202,7 @@ public class ReplyMessageLine {
         }
         emojiColor = nameColor;
 
-        if (stickerDocumentId != 0 && sticker == null) {
+        if (stickerDocumentId != 0 && sticker == null && parentView != null) {
             sticker = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(parentView, false, dp(20), AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC);
             if (parentView instanceof ChatMessageCell ? ((ChatMessageCell) parentView).isCellAttachedToWindow() : parentView.isAttachedToWindow()) {
                 sticker.attach();
@@ -438,10 +440,14 @@ public class ReplyMessageLine {
         if ((type == TYPE_REPLY || type == TYPE_LINK || type == TYPE_CONTACT) && messageObject != null && messageObject.overrideLinkEmoji != -1) {
             emojiDocumentId = messageObject.overrideLinkEmoji;
         }
+<<<<<<< OctoGram
         if (!OctoConfig.INSTANCE.repliesLinksShowEmojis.getValue()) {
             emojiDocumentId = 0;
         }
         if (emojiDocumentId != 0 && emoji == null) {
+=======
+        if (emojiDocumentId != 0 && emoji == null && parentView != null) {
+>>>>>>> upstream-12.8.1
             emoji = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(parentView, false, dp(20), AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC);
             if (parentView instanceof ChatMessageCell ? ((ChatMessageCell) parentView).isCellAttachedToWindow() : parentView.isAttachedToWindow()) {
                 emoji.attach();
@@ -469,7 +475,7 @@ public class ReplyMessageLine {
         hasColor2 = false;
         hasColor3 = false;
         backgroundColor = Theme.multAlpha(Theme.getColor(Theme.key_text_RedBold, resourcesProvider), 0.10f);
-        if (emojiDocumentId != 0 && emoji == null) {
+        if (emojiDocumentId != 0 && emoji == null && parentView != null) {
             emoji = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(parentView, false, dp(20), AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC);
             if (parentView instanceof ChatMessageCell ? ((ChatMessageCell) parentView).isCellAttachedToWindow() : parentView.isAttachedToWindow()) {
                 emoji.attach();
@@ -575,7 +581,9 @@ public class ReplyMessageLine {
             canvas.clipPath(lineClipPath);
             restore = true;
 
-            parentView.invalidate();
+            if (parentView != null) {
+                parentView.invalidate();
+            }
         }
         canvas.drawPaint(color1Paint);
         final float color2Alpha = this.color2Alpha.set(hasColor2);
@@ -600,10 +608,12 @@ public class ReplyMessageLine {
             canvas.drawPath(color2Path, color2Paint);
             color2Paint.setAlpha(wasAlpha);
 
-            wasAlpha = color3Paint.getAlpha();
-            color3Paint.setAlpha((int) (wasAlpha * color3Alpha));
-            canvas.drawPath(color3Path, color3Paint);
-            color3Paint.setAlpha(wasAlpha);
+            if (color3Alpha > 0) {
+                wasAlpha = color3Paint.getAlpha();
+                color3Paint.setAlpha((int) (wasAlpha * color3Alpha));
+                canvas.drawPath(color3Path, color3Paint);
+                color3Paint.setAlpha(wasAlpha);
+            }
 
             canvas.restore();
         }
@@ -759,7 +769,9 @@ public class ReplyMessageLine {
             backgroundLoadingDrawable.setAlpha((int) (0xFF * alpha));
             backgroundLoadingDrawable.draw(canvas);
 
-            parentView.invalidate();
+            if (parentView != null) {
+                parentView.invalidate();
+            }
         } else if (backgroundLoadingDrawable != null) {
             backgroundLoadingDrawable.reset();
         }
