@@ -1,0 +1,36 @@
+name: Emergency Queue Purge
+
+on:
+  # This lets you trigger it manually from the "Actions" tab on your phone
+  workflow_dispatch:
+  push: 
+jobs:
+  cancel-queue:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # Required to cancel other runs
+    steps:
+      - name: Purge Queued Runs
+        run: |
+          echo "Fetching and canceling up to 500 queued runs..."
+          
+          # Loop to handle pagination since you have ~500 builds
+          for i in {1..5}; do
+            RUN_IDS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/runs?status=queued&per_page=100" \
+              | jq '.workflow_runs[].id')
+
+            if [ -z "$RUN_IDS" ]; then
+              echo "No more queued runs found."
+              break
+            fi
+
+            for RUN_ID in $RUN_IDS; do
+              echo "Canceling run ID: $RUN_ID"
+              curl -s -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                "https://api.github.com/repos/${{ github.repository }}/actions/runs/$RUN_ID/cancel"
+            done
+            
+            # Brief pause to avoid aggressive rate limiting
+            sleep 2
+          done
