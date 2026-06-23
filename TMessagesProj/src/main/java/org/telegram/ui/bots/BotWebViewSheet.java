@@ -65,7 +65,6 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -229,7 +228,6 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
     private boolean dismissed;
     private boolean fullscreen;
-    private boolean fullscreenBlur;
     private float fullscreenProgress;
     private float fullscreenTransitionProgress;
     private boolean fullscreenInProgress;
@@ -308,7 +306,6 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         tab.lastUrl = webViewContainer != null ? webViewContainer.getUrlLoaded() : null;
         tab.expanded = swipeContainer != null && swipeContainer.getSwipeOffsetY() < 0 || forceExpnaded || isFullSize() || fullscreen;
         tab.fullscreen = fullscreen;
-        tab.fullscreenBlur = fullscreenBlur;
         tab.fullsize = (fullsize == null ? defaultFullsize : fullsize);
         tab.expandedOffset = swipeContainer != null ? swipeContainer.getOffsetY() : Float.MAX_VALUE;
         tab.needsContext = needsContext;
@@ -377,7 +374,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 //            setMainButton(tab.main);
             botButtons.setState(tab.buttons, false);
         }
-        setFullscreen(tab.fullscreen, false, tab.fullscreenBlur);
+        setFullscreen( tab.fullscreen, false);
         currentAccount = tab.props != null ? tab.props.currentAccount : UserConfig.selectedAccount;
         if (tab.webView != null) {
 //            tab.webView.resumeTimers();
@@ -618,7 +615,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                 final TLRPC.User bot = MessagesController.getInstance(currentAccount).getUser(botId);
                 if (granted) {
                     BulletinFactory.UndoObject undo = new BulletinFactory.UndoObject();
-                    undo.undoText = LocaleController.getString(R.string.UndoNoCaps);
+                    undo.undoText = LocaleController.getString(R.string.Undo);
                     undo.onUndo = () -> {
                         BotLocation.get(getContext(), currentAccount, botId).setGranted(false, null);
                     };
@@ -762,7 +759,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                     DialogsActivity dialogsActivity = new DialogsActivity(args);
                     AndroidUtilities.hideKeyboard(windowView);
                     OverlayActionBarLayoutDialog overlayActionBarLayoutDialog = new OverlayActionBarLayoutDialog(context, resourcesProvider);
-                    dialogsActivity.setDelegate((fragment, dids, message1, param, notify, scheduleDate, scheduleRepeatPeriod, topicsFragment) -> {
+                    dialogsActivity.setDelegate((fragment, dids, message1, param, notify, scheduleDate, topicsFragment) -> {
                         long did = dids.get(0).dialogId;
 
                         Bundle args1 = new Bundle();
@@ -803,8 +800,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             }
 
             @Override
-            public void onSetupMainButton(boolean isVisible, boolean isActive, String text, long emojiId, int color, int textColor, boolean isProgressVisible, boolean hasShineEffect) {
-                botButtons.setMainState(BotButtons.ButtonState.of(isVisible, isActive, isProgressVisible, hasShineEffect, text, emojiId, color, textColor), true);
+            public void onSetupMainButton(boolean isVisible, boolean isActive, String text, int color, int textColor, boolean isProgressVisible, boolean hasShineEffect) {
+                botButtons.setMainState(BotButtons.ButtonState.of(isVisible, isActive, isProgressVisible, hasShineEffect, text, color, textColor), true);
                 if (fullscreen) {
                     updateFullscreenLayout();
                     updateWindowFlags();
@@ -812,8 +809,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             }
 
             @Override
-            public void onSetupSecondaryButton(boolean isVisible, boolean isActive, String text, long emojiId, int color, int textColor, boolean isProgressVisible, boolean hasShineEffect, String position) {
-                botButtons.setSecondaryState(BotButtons.ButtonState.of(isVisible, isActive, isProgressVisible, hasShineEffect, text, emojiId, color, textColor, position), true);
+            public void onSetupSecondaryButton(boolean isVisible, boolean isActive, String text, int color, int textColor, boolean isProgressVisible, boolean hasShineEffect, String position) {
+                botButtons.setSecondaryState(BotButtons.ButtonState.of(isVisible, isActive, isProgressVisible, hasShineEffect, text, color, textColor, position), true);
                 if (fullscreen) {
                     updateFullscreenLayout();
                     updateWindowFlags();
@@ -834,13 +831,13 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             }
 
             @Override
-            public String onFullscreenRequested(boolean fullscreen, boolean blur) {
+            public String onFullscreenRequested(boolean fullscreen) {
                 if (BotWebViewSheet.this.fullscreen == fullscreen) {
                     if (BotWebViewSheet.this.fullscreen)
                         return "ALREADY_FULLSCREEN";
                     return null;
                 }
-                setFullscreen(fullscreen, true, blur);
+                setFullscreen(fullscreen, true);
                 return null;
             }
 
@@ -901,8 +898,9 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         fullscreenButtons = new BotFullscreenButtons(getContext());
         fullscreenButtons.setAlpha(0f);
         fullscreenButtons.setVisibility(View.GONE);
-        fullscreenBlur = !MessagesController.getInstance(currentAccount).disableBotFullscreenBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH;
-        fullscreenButtons.setParentRenderNode(fullscreenBlur ? swipeContainer.getRenderNode() : null);
+        if (!MessagesController.getInstance(currentAccount).disableBotFullscreenBlur) {
+            fullscreenButtons.setParentRenderNode(swipeContainer.getRenderNode());
+        }
         windowView.addView(fullscreenButtons, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
         fullscreenButtons.setOnCloseClickListener(() -> {
             if (!webViewContainer.onBackPressed()) {
@@ -1009,16 +1007,6 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         }
     }
 
-    public boolean isGuardBotTab(long peerId, long queryId) {
-        if (requestProps != null && requestProps.type == BotWebViewAttachedSheet.TYPE_WEB_VIEW_GUARD && (requestProps.peerId == peerId || requestProps.peerId == 0)) {
-            if (requestProps.response instanceof TLRPC.TL_webViewResultUrl) {
-                final long bQueryId = ((TLRPC.TL_webViewResultUrl) requestProps.response).query_id;
-                return bQueryId == queryId;
-            }
-        }
-        return false;
-    }
-
     private void relayout() {
         updateFullscreenLayout();
     }
@@ -1097,7 +1085,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
         window.setWindowAnimations(R.style.DialogNoAnimation);
@@ -1125,34 +1113,36 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
         windowView.setFitsSystemWindows(true);
         windowView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        windowView.setOnApplyWindowInsetsListener((v, insets) -> {
-            final WindowInsetsCompat insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, v);
-            final androidx.core.graphics.Insets navInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars());
-            this.navInsets.set(navInsets.left, navInsets.top, navInsets.right, navInsets.bottom);
-            final androidx.core.graphics.Insets cutoutInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.systemBars());
-            this.insets.set(
-                Math.max(cutoutInsets.left, insets.getStableInsetLeft()),
-                Math.max(cutoutInsets.top, insets.getStableInsetTop()),
-                Math.max(cutoutInsets.right, insets.getStableInsetRight()),
-                Math.max(cutoutInsets.bottom, insets.getStableInsetBottom())
-            );
-            if (Build.VERSION.SDK_INT <= 28) {
-                this.insets.top = Math.max(this.insets.top, AndroidUtilities.getStatusBarHeight(getContext()));
-            }
-            final androidx.core.graphics.Insets keyboardInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.ime());
-            final int keyboardHeight = keyboardInsets.bottom;
-            if (keyboardHeight > this.insets.bottom && keyboardHeight > dp(20)) {
-                this.keyboardInset = keyboardHeight;
-            } else {
-                this.keyboardInset = 0;
-            }
-            updateFullscreenLayout();
-            if (Build.VERSION.SDK_INT >= 30) {
-                return WindowInsets.CONSUMED;
-            } else {
-                return insets.consumeSystemWindowInsets();
-            }
-        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            windowView.setOnApplyWindowInsetsListener((v, insets) -> {
+                final WindowInsetsCompat insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, v);
+                final androidx.core.graphics.Insets navInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars());
+                this.navInsets.set(navInsets.left, navInsets.top, navInsets.right, navInsets.bottom);
+                final androidx.core.graphics.Insets cutoutInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.systemBars());
+                this.insets.set(
+                    Math.max(cutoutInsets.left,   insets.getStableInsetLeft()),
+                    Math.max(cutoutInsets.top,    insets.getStableInsetTop()),
+                    Math.max(cutoutInsets.right,  insets.getStableInsetRight()),
+                    Math.max(cutoutInsets.bottom, insets.getStableInsetBottom())
+                );
+                if (Build.VERSION.SDK_INT <= 28) {
+                    this.insets.top = Math.max(this.insets.top, AndroidUtilities.getStatusBarHeight(getContext()));
+                }
+                final androidx.core.graphics.Insets keyboardInsets = insetsCompat.getInsets(WindowInsetsCompat.Type.ime());
+                final int keyboardHeight = keyboardInsets.bottom;
+                if (keyboardHeight > this.insets.bottom && keyboardHeight > dp(20)) {
+                    this.keyboardInset = keyboardHeight;
+                } else {
+                    this.keyboardInset = 0;
+                }
+                updateFullscreenLayout();
+                if (Build.VERSION.SDK_INT >= 30) {
+                    return WindowInsets.CONSUMED;
+                } else {
+                    return insets.consumeSystemWindowInsets();
+                }
+            });
+        }
         if (fullscreen && !(botButtons != null && botButtons.getTotalHeight() > 0)) {
             windowView.setSystemUiVisibility(windowView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         } else {
@@ -1609,7 +1599,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                     req.bot = MessagesController.getInstance(currentAccount).getInputUser(props.botId);
                     req.platform = "android";
                     req.peer = fragment instanceof ChatActivity ? ((ChatActivity) fragment).getCurrentUser() != null ? MessagesController.getInputPeer(((ChatActivity) fragment).getCurrentUser()) : MessagesController.getInputPeer(((ChatActivity) fragment).getCurrentChat())
-                            : MessagesController.getInstance(currentAccount).getInputPeer(props.peerId);
+                            : MessagesController.getInputPeer(props.botUser);
                     req.compact = props.compact;
                     req.fullscreen = props.fullscreen;
 
@@ -1876,7 +1866,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             if (user != null && user.photo != null) {
                 File f = FileLoader.getInstance(currentAccount).getPathToAttach(user.photo.photo_small, true);
                 if (!f.exists()) {
-                    MediaDataController.getInstance(currentAccount).preloadImage(ImageLocation.getForUser(currentAccount, user, ImageLocation.TYPE_SMALL), FileLoader.PRIORITY_LOW);
+                    MediaDataController.getInstance(currentAccount).preloadImage(ImageLocation.getForUser(user, ImageLocation.TYPE_SMALL), FileLoader.PRIORITY_LOW);
                 }
             }
         }
@@ -2076,10 +2066,6 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         activeSheets.remove(this);
     }
 
-    public BulletinFactory getBulletinFactory() {
-        return BulletinFactory.of(bulletinContainer, resourcesProvider);
-    }
-
     public void release() {
         if (superDismissed) return;
         try {
@@ -2196,18 +2182,13 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
     private boolean resetOffsetY = true;
     private ValueAnimator fullscreenAnimator;
     public void setFullscreen(boolean fullscreen, boolean animated) {
-        setFullscreen(fullscreen, animated, fullscreenBlur);
-    }
-    public void setFullscreen(boolean fullscreen, boolean animated, boolean blur) {
         if (this.fullscreen == fullscreen) return;
         this.fullscreen = fullscreen;
-        this.fullscreenBlur = blur && !MessagesController.getInstance(currentAccount).disableBotFullscreenBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH;
         if (fullscreenAnimator != null) {
             fullscreenAnimator.cancel();
         }
         if (fullscreenButtons != null) {
             fullscreenButtons.setPreview(fullscreen, animated);
-            fullscreenButtons.setParentRenderNode(fullscreenBlur ? swipeContainer.getRenderNode() : null);
         }
         swipeContainerFromWidth = swipeContainer.getWidth();
         swipeContainerFromHeight = swipeContainer.getHeight();
@@ -2640,7 +2621,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
             clipPath.rewind();
             float radius = dp(16) * (AndroidUtilities.isTablet() ? 1f : 1f - actionBarTransitionProgress);
-            final float r = lerp(radius, dp(18), progress);
+            final float r = lerp(radius, dp(10), progress);
             clipPath.addRoundRect(clipRect, r, r, Path.Direction.CW);
             canvas.clipPath(clipPath);
             canvas.drawPaint(backgroundPaint);
