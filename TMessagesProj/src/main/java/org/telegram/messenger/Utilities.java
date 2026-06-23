@@ -15,7 +15,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Build;
 
 import com.carrotsearch.randomizedtesting.Xoroshiro128PlusRandom;
 
@@ -55,13 +54,12 @@ public class Utilities {
 
     static {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                random = SecureRandom.getInstanceStrong();
-            } else {
-                random = new SecureRandom();
-            }
+            File URANDOM_FILE = new File("/dev/urandom");
+            FileInputStream sUrandomIn = new FileInputStream(URANDOM_FILE);
             byte[] buffer = new byte[1024];
-            random.nextBytes(buffer);
+            sUrandomIn.read(buffer);
+            sUrandomIn.close();
+            random.setSeed(buffer);
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -89,6 +87,8 @@ public class Utilities {
     public static native void drawDitheredGradient(Bitmap bitmap, int[] colors, int startX, int startY, int endX, int endY);
 //    public static native int saveProgressiveJpeg(Bitmap bitmap, int width, int height, int stride, int quality, String path);
     public static native void generateGradient(Bitmap bitmap, boolean unpin, int phase, float progress, int width, int height, int stride, int[] colors);
+    public static native boolean applySoftLight(Bitmap inputBitmap, Bitmap outputBitmap, int color);
+    public static native boolean copyBitmaps(Bitmap src, Bitmap dst);
     public static native void setupNativeCrashesListener(String path);
 
     public static Bitmap stackBlurBitmapMax(Bitmap bitmap) {
@@ -216,7 +216,7 @@ public class Utilities {
             Matcher matcher = pattern.matcher(value);
             if (matcher.find()) {
                 String num = matcher.group(0);
-                if (num != null) val = Long.parseLong(num);
+                val = Long.parseLong(num);
             }
         } catch (Exception ignore) {
 
@@ -274,7 +274,6 @@ public class Utilities {
         for (int a = offset1; a < arr1.length; a++) {
             if (arr1[a + offset1] != arr2[a + offset2]) {
                 result = false;
-                break;
             }
         }
         return result;
@@ -579,18 +578,15 @@ public class Utilities {
         return v;
     }
 
-    @SafeVarargs
     public static void doCallbacks(Utilities.Callback<Runnable> ...actions) {
         doCallbacks(0, actions);
     }
-    @SafeVarargs
     private static void doCallbacks(int i, Utilities.Callback<Runnable> ...actions) {
         if (actions != null && actions.length > i) {
             actions[i].run(() -> doCallbacks(i + 1, actions));
         }
     }
 
-    @SafeVarargs
     public static void raceCallbacks(Runnable onFinish, Utilities.Callback<Runnable> ...actions) {
         if (actions == null || actions.length == 0) {
             if (onFinish != null) {
@@ -643,6 +639,10 @@ public class Utilities {
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    public static int divCeil(int a, int b) {
+        return (a + b - 1) / b;
     }
 
 }

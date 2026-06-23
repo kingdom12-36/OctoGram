@@ -8,11 +8,9 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,7 +37,6 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
     private final Theme.ResourcesProvider resourcesProvider;
 
     private final ButtonHolder replyButton = new ButtonHolder();
-    private final ButtonHolder forwardNoQuoteButton = new ButtonHolder();
     private final ButtonHolder forwardButton = new ButtonHolder();
 
     public ChatActivityActionsButtonsLayout(@NonNull Context context,
@@ -49,36 +46,26 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
         super(context);
         this.resourcesProvider = resourcesProvider;
 
-        replyButton.button = ChatActivityBlurredRoundButton.create(context, blurredBackgroundDrawableViewFactory,
-            colorProvider, resourcesProvider, 0);
+        replyButton.button = ChatActivityBlurredRoundButton.create(
+            context, blurredBackgroundDrawableViewFactory, colorProvider, resourcesProvider
+        );
         replyButton.button.setOnClickListener(v -> {});
         ScaleStateListAnimator.apply(replyButton.button, .065f, 2f);
 
-        forwardNoQuoteButton.button = ChatActivityBlurredRoundButton.create(context, blurredBackgroundDrawableViewFactory,
-            colorProvider, resourcesProvider, 0);
-        forwardNoQuoteButton.button.setOnClickListener(v -> {});
-        ScaleStateListAnimator.apply(forwardNoQuoteButton.button, .065f, 2f);
-
-        forwardButton.button = ChatActivityBlurredRoundButton.create(context, blurredBackgroundDrawableViewFactory,
-            colorProvider, resourcesProvider, 0);
+        forwardButton.button = ChatActivityBlurredRoundButton.create(
+            context, blurredBackgroundDrawableViewFactory, colorProvider, resourcesProvider
+        );
         forwardButton.button.setOnClickListener(v -> {});
         ScaleStateListAnimator.apply(forwardButton.button, .065f, 2f);
 
         addTextView(replyButton, LocaleController.getString(R.string.Reply), R.drawable.input_reply, false);
-        addTextView(forwardNoQuoteButton, LocaleController.getString(R.string.NoQuoteForward), R.drawable.msg_forward, true);
         addTextView(forwardButton, LocaleController.getString(R.string.Forward), R.drawable.input_forward, true);
 
         setOrientation(HORIZONTAL);
         setClipChildren(false);
 
         addView(replyButton.button, LayoutHelper.createLinear(0, 56, 1f, 1, 0, -1, 0));
-        FrameLayout forwardButtonContainer = new FrameLayout(context);
-        forwardButtonContainer.setClipChildren(false);
-        forwardButtonContainer.setClipToPadding(false);
-        addView(forwardButtonContainer, LayoutHelper.createLinear(0, 56, 1f, -1, 0, 1, 0));
-        forwardButtonContainer.addView(forwardButton.button, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        forwardButtonContainer.addView(forwardNoQuoteButton.button, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        forwardNoQuoteButton.button.setVisibility(INVISIBLE);
+        addView(forwardButton.button, LayoutHelper.createLinear(0, 56, 1f, -1, 0, 1, 0));
     }
 
     public void setReplyButtonOnClickListener(View.OnClickListener listener) {
@@ -93,21 +80,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
         return forwardButton.button;
     }
 
-    public void setForwardNoQuoteButtonOnClickListener(View.OnClickListener listener) {
-        forwardNoQuoteButton.button.setOnClickListener(listener);
-    }
-
-    public View getForwardNoQuoteButton() {
-        return forwardNoQuoteButton.button;
-    }
-
     private void addTextView(ButtonHolder button, String text, @DrawableRes int iconRes, boolean iconLeft) {
         TextView forwardButton = new TextView(getContext());
         forwardButton.setText(text);
         forwardButton.setGravity(Gravity.CENTER_VERTICAL);
         forwardButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        forwardButton.setSingleLine(true);
-        forwardButton.setEllipsize(TextUtils.TruncateAt.END);
         forwardButton.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), 0);
         forwardButton.setCompoundDrawablePadding(AndroidUtilities.dp(6));
         forwardButton.setTextColor(Theme.getColor(Theme.key_glass_defaultText, resourcesProvider));
@@ -142,15 +119,6 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
         forwardButton.button.setEnabled(enabled);
     }
 
-    public void showForwardNoQuoteButton(boolean visible, boolean animated) {
-        forwardNoQuoteButton.visibilityAnimator.setValue(visible, animated);
-    }
-
-    public void setForwardNoQuoteButtonEnabled(boolean enabled, boolean animated) {
-        forwardNoQuoteButton.enabledAnimator.setValue(enabled, animated);
-        forwardNoQuoteButton.button.setEnabled(enabled);
-    }
-
 
 
 
@@ -158,7 +126,6 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
 
     public void updateColors() {
         replyButton.button.updateColors();
-        forwardNoQuoteButton.button.updateColors();
         forwardButton.button.updateColors();
     }
 
@@ -177,37 +144,30 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
     }
 
     private void checkButtonsPositionsAndVisibility() {
-        checkHolderPositionsAndVisibility(replyButton);
-        checkHolderPositionsAndVisibility(forwardNoQuoteButton);
         checkHolderPositionsAndVisibility(forwardButton);
+        checkHolderPositionsAndVisibility(replyButton);
     }
 
     private void checkHolderPositionsAndVisibility(ButtonHolder holder) {
         final float visibility = totalVisibilityFactor * holder.visibilityAnimator.getFloatValue();
-        final float offsetY = dp(54) * (1f - visibility);
+        final float offsetY = -dp(54) * (1f - visibility);
         float offsetX = getMeasuredWidth() / 2f * (1f - AnimatorUtils.DECELERATE_INTERPOLATOR.getInterpolation(visibility));
         if (holder == replyButton) {
             offsetX *= -1;
-        } else if (holder == forwardNoQuoteButton) {
-            offsetX = 0;
         }
 
         holder.button.setTranslationX(offsetX);
         holder.button.setTranslationY(offsetY);
         holder.button.setAlpha(visibility);
-        if (holder == forwardNoQuoteButton) {
-            holder.button.setVisibility(visibility > 0 ? VISIBLE : GONE);
-        } else {
-            holder.button.setVisibility(visibility > 0 ? VISIBLE : INVISIBLE);
-        }
+        holder.button.setVisibility(visibility > 0 ? VISIBLE : INVISIBLE);
     }
 
     private class ButtonHolder implements FactorAnimator.Target {
         public ChatActivityBlurredRoundButton button;
         public TextView textView;
 
-        public BoolAnimator visibilityAnimator = new BoolAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 350, true);
-        public BoolAnimator enabledAnimator = new BoolAnimator(1, this, CubicBezierInterpolator.EASE_OUT_QUINT, 350, true);
+        public BoolAnimator visibilityAnimator = new BoolAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320, true);
+        public BoolAnimator enabledAnimator = new BoolAnimator(1, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320, true);
 
         @Override
         public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {

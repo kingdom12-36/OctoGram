@@ -53,7 +53,6 @@ import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.Bulletin;
@@ -156,8 +155,8 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
         } else if (id == R.id.menu_open_bot) {
             Bundle bundle = new Bundle();
             bundle.putLong("user_id", botId);
-            parentAlert.baseFragment.presentFragment(new INavigationLayout.NavigationParams(new ChatActivity(bundle)).setOnFragmentOpen(() -> parentAlert.dismiss()));
-            //parentAlert.dismiss();
+            parentAlert.baseFragment.presentFragment(new ChatActivity(bundle));
+            parentAlert.dismiss();
         } else if (id == R.id.menu_reload_page) {
             if (webViewContainer.getWebView() != null) {
                 webViewContainer.getWebView().animate().cancel();
@@ -582,7 +581,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
         if (!webViewContainer.isBackButtonVisible()) {
             AndroidUtilities.updateImageViewImageAnimated(parentAlert.actionBar.getBackButton(), R.drawable.ic_ab_back);
         }
-        parentAlert.actionBar.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+        parentAlert.actionBar.setBackground(null);
 
         if (webViewContainer.hasUserPermissions()) {
             webViewContainer.destroyWebView();

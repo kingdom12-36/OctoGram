@@ -58,7 +58,8 @@ public class RecordStatusDrawable extends StatusDrawable {
         while (progress > 1.0f) {
             progress -= 1.0f;
         }
-        invalidateSelf();
+
+        invalidateLimited();
     }
 
     public void start() {
@@ -78,7 +79,7 @@ public class RecordStatusDrawable extends StatusDrawable {
             paint.setStrokeWidth(AndroidUtilities.dp(2));
         }
         canvas.save();
-        canvas.translate(getBounds().left, getIntrinsicHeight() / 2 + AndroidUtilities.dp(isChat ? 1 : 2));
+        canvas.translate(0, getIntrinsicHeight() / 2 + AndroidUtilities.dp(isChat ? 1 : 2));
         for (int a = 0; a < 4; a++) {
             if (a == 0) {
                 paint.setAlpha((int) (alpha * progress));

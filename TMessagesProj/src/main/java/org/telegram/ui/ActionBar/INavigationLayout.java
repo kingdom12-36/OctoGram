@@ -25,6 +25,9 @@ public interface INavigationLayout {
     int FORCE_NOT_ATTACH_VIEW = -2;
     int FORCE_ATTACH_VIEW_AS_FIRST = -3;
 
+    boolean isLayersLayout();
+    boolean isRightLayout();
+
     boolean presentFragment(NavigationParams params);
     boolean checkTransitionAnimation();
     boolean addFragmentToStack(BaseFragment fragment, int position);
@@ -79,13 +82,6 @@ public interface INavigationLayout {
     // TODO: Make something like FieldsContainer and put them there?
     List<BackButtonMenu.PulledDialog> getPulledDialogs();
     void setPulledDialogs(List<BackButtonMenu.PulledDialog> pulledDialogs);
-
-    // exp menu
-    void updateUseAlternativeNavigation(boolean status);
-    void updateUseActionbarCrossfade(boolean status);
-    void updateSpringStiffness(int stiffness);
-    void updateBounceLevel(float bounceLevel);
-    void setDisallowParentIntercept(boolean disallowParentIntercept);
 
     static INavigationLayout newLayout(Context context, boolean main) {
         return new ActionBarLayout(context, main);
@@ -189,14 +185,6 @@ public interface INavigationLayout {
 
     default void animateThemedValues(Theme.ThemeInfo theme, int accentId, boolean nightTheme, boolean instant, Runnable onDone) {
         animateThemedValues(new ThemeAnimationSettings(theme, accentId, nightTheme, instant), onDone);
-    }
-
-    /**
-     * @deprecated Deprecated in favor of {@link INavigationLayout#bringToFront(int)}
-     */
-    @Deprecated
-    default void showFragment(int i) {
-        bringToFront(i);
     }
 
     default void bringToFront(int i) {
@@ -325,7 +313,6 @@ public interface INavigationLayout {
         /**
          * @deprecated You should override {@link INavigationLayoutDelegate#needPresentFragment(INavigationLayout, NavigationParams)} for more fields
          */
-        @Deprecated
         default boolean needPresentFragment(BaseFragment fragment, boolean removeLast, boolean forceWithoutAnimation, INavigationLayout layout) {
             return true;
         }
@@ -355,14 +342,18 @@ public interface INavigationLayout {
         public boolean preview;
         public ActionBarPopupWindow.ActionBarPopupWindowLayout menuView;
         public boolean needDelayWithoutAnimation;
-
-        public Runnable onFragmentOpen;
+        public boolean forceRightLayout;
 
         public boolean isFromDelay;
         public boolean delayDone;
 
         public NavigationParams(BaseFragment fragment) {
             this.fragment = fragment;
+        }
+
+        public NavigationParams forceRightLayout() {
+            forceRightLayout = true;
+            return this;
         }
 
         public NavigationParams setRemoveLast(boolean removeLast) {
@@ -392,11 +383,6 @@ public interface INavigationLayout {
 
         public NavigationParams setNeedDelayWithoutAnimation(boolean needDelayWithoutAnimation) {
             this.needDelayWithoutAnimation = needDelayWithoutAnimation;
-            return this;
-        }
-
-        public NavigationParams setOnFragmentOpen(Runnable onFragmentOpen) {
-            this.onFragmentOpen = onFragmentOpen;
             return this;
         }
     }
