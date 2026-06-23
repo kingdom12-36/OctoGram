@@ -6157,7 +6157,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int getActionsExtraHeight(boolean withMusic) {
         if (userId != 0 && imageUpdater != null && !myProfile)
             return 0;
-        }
         //return dp(74);
         return dp(OctoConfig.INSTANCE.md3ChatActions.getValue() ? 95 : 80);
     }
