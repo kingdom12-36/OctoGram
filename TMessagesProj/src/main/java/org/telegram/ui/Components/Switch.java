@@ -39,12 +39,8 @@ import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.BaseCell;
 
-<<<<<<< OctoGram
 import it.octogram.android.InterfaceSwitchUI;
 import it.octogram.android.OctoConfig;
-=======
-import me.vkryl.android.animator.BoolAnimator;
->>>>>>> upstream-12.8.1
 
 public class Switch extends View {
     private final BoolAnimator animatorIconVisibility = new BoolAnimator(this, CubicBezierInterpolator.EASE_OUT_QUINT, 380L, true);
@@ -582,20 +578,6 @@ public class Switch extends View {
                 canvasToDraw.drawCircle(tx, ty, AndroidUtilities.dp(circleSize), paint);
             }
 
-<<<<<<< OctoGram
-            if (a == 0 && (getUIState() == InterfaceSwitchUI.DEFAULT.getValue() || getUIState() == InterfaceSwitchUI.GOOGLE_NEW.getValue())) {
-                if (getUIState() == InterfaceSwitchUI.GOOGLE_NEW.getValue()) {
-                    int iconWidth = checkDrawable.getIntrinsicWidth() / 2;
-                    int iconHeight = checkDrawable.getIntrinsicHeight() / 2;
-                    checkDrawable.setBounds(tx - iconWidth / 2, ty - iconHeight / 2, tx + iconWidth / 2, ty + iconHeight / 2);
-                    checkDrawable.setAlpha((int) (255 * progress));
-                    checkDrawable.draw(canvasToDraw);
-                } else if (iconDrawable != null) {
-                    int iconWidth = iconDrawable.getIntrinsicWidth();
-                    int iconHeight = iconDrawable.getIntrinsicHeight();
-                    iconDrawable.setBounds(tx - iconWidth / 2, ty - iconHeight / 2, tx + iconWidth / 2, ty + iconHeight / 2);
-                    iconDrawable.draw(canvasToDraw);
-=======
             if (a == 0) {
                 if (iconDrawable != null) {
                     final float factor = animatorIconVisibility.getFloatValue();
@@ -611,7 +593,6 @@ public class Switch extends View {
                             canvas.restore();
                         }
                     }
->>>>>>> upstream-12.8.1
                 } else if (drawIconType == 1) {
                     tx -= AndroidUtilities.dp(10.8f) - AndroidUtilities.dp(1.3f) * progress;
                     ty -= AndroidUtilities.dp(8.5f) - AndroidUtilities.dp(0.5f) * progress;

@@ -11909,7 +11909,6 @@ public class ChatActivityEnterView extends FrameLayout implements
 
             @Override
             public void onGifSelected(View view, Object gif, String query, Object parent, boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
-<<<<<<< OctoGram
                 if (OctoConfig.INSTANCE.promptBeforeSendingGIFs.getValue()) {
                     PopupPromptUtils.createAlertDialog(parentActivity, PromptBeforeSendMedia.GIFS, () -> onGifSelectedFinal(view, gif, query, parent, notify, scheduleDate, scheduleRepeatPeriod));
                     return;
@@ -11919,12 +11918,6 @@ public class ChatActivityEnterView extends FrameLayout implements
             }
 
             public void onGifSelectedFinal(View view, Object gif, String query, Object parent, boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
-=======
-                onGifSelected(view, gif, query, parent, notify, scheduleDate, scheduleRepeatPeriod, null, false);
-            }
-
-            public void onGifSelected(View view, Object gif, String query, Object parent, boolean notify, int scheduleDate, int scheduleRepeatPeriod, MediaController.PhotoEntry entry, boolean invertMedia) {
->>>>>>> upstream-12.8.1
                 if (replyingQuote != null && parentFragment != null && replyingQuote.outdated) {
                     parentFragment.showQuoteMessageUpdate();
                     return;

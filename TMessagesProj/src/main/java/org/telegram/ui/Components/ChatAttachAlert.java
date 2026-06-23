@@ -177,7 +177,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-<<<<<<< OctoGram
 import it.octogram.android.CameraPreview;
 import it.octogram.android.CameraType;
 import it.octogram.android.OctoConfig;
@@ -190,48 +189,6 @@ import it.octogram.android.utils.translator.SingleTranslationsHandler;
 import it.octogram.android.utils.translator.MainTranslationsHandler;
 
 public class ChatAttachAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, BottomSheet.BottomSheetDelegateInterface {
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
-import me.vkryl.android.animator.ListAnimator;
-import me.vkryl.android.animator.ReplaceAnimator;
-import me.vkryl.core.BitwiseUtils;
-
-public class ChatAttachAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, BottomSheet.BottomSheetDelegateInterface, FactorAnimator.Target {
-
-    public static final int LAYOUT_TYPE_PHOTO = 1;
-    public static final int LAYOUT_TYPE_MUSIC = 3;
-    public static final int LAYOUT_TYPE_DOCUMENTS = 4;
-    public static final int LAYOUT_TYPE_CONTACTS = 5;
-    public static final int LAYOUT_TYPE_LOCATION = 6;
-    public static final int LAYOUT_TYPE_POLL = 9;
-    public static final int LAYOUT_TYPE_REPLIES = 11;
-    public static final int LAYOUT_TYPE_TODO = 12;
-    public static final int LAYOUT_TYPE_STICKERS = 13;
-    public static final int LAYOUT_TYPE_EMOJI = 14;
-    public static final int LAYOUT_TYPE_LINK = 15;
-    public static final int LAYOUT_TYPE_RICH = 16;
-
-    private static final int ANIMATOR_ID_CAPTION_ABOVE = 0;
-    private static final int ANIMATOR_ID_CAPTION_VISIBLE = 1;
-    private static final int ANIMATOR_ID_ACTIONBAR_VISIBLE = 2;
-    private static final int ANIMATOR_ID_CAPTION_NOT_EMPTY = 3;
-    private static final int ANIMATOR_ID_TOGGLE_CAPTION_SUPPORTED = 4;
-
-    private final BoolAnimator animatorCaptionAbove = new BoolAnimator(ANIMATOR_ID_CAPTION_ABOVE, this,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-    private final BoolAnimator animatorCaptionVisible = new BoolAnimator(ANIMATOR_ID_CAPTION_VISIBLE, this,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-    private final BoolAnimator animatorActionBarVisible = new BoolAnimator(ANIMATOR_ID_ACTIONBAR_VISIBLE, this,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-    private final BoolAnimator animatorCaptionNotEmpty = new BoolAnimator(ANIMATOR_ID_CAPTION_NOT_EMPTY, this,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-    private final BoolAnimator animatorToggleCaptionSupported = new BoolAnimator(ANIMATOR_ID_TOGGLE_CAPTION_SUPPORTED, this,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L, true);
-
-    private final ReplaceAnimator<Long> animatorCurrentVisibleLayout = new ReplaceAnimator<>(this::onCurrentLayoutAnimatorChanged,
-        CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
->>>>>>> upstream-12.8.1
 
     public ChatActivity.ThemeDelegate parentThemeDelegate;
 
@@ -2883,18 +2840,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 } else if (view.getTag() instanceof Integer) {
                     delegate.didPressedButton((Integer) view.getTag(), true, true, 0, 0, 0, isCaptionAbove(), false, 0);
                 }
-<<<<<<< OctoGram
 
-                int left = view.getLeft();
-                int right = view.getRight();
-                int extra = dp(10);
-                if (left - extra < 0) {
-                    buttonsRecyclerView.smoothScrollBy(left - extra, 0);
-                } else if (right + extra > buttonsRecyclerView.getMeasuredWidth()) {
-                    buttonsRecyclerView.smoothScrollBy(right + extra - buttonsRecyclerView.getMeasuredWidth(), 0);
-                }
-=======
->>>>>>> upstream-12.8.1
             } else if (view instanceof AttachBotButton) {
                 AttachBotButton button = (AttachBotButton) view;
                 if (button.attachMenuBot != null) {
@@ -3595,14 +3541,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
         writeButton.setTranslationX(backgroundPaddingLeft);
-<<<<<<< OctoGram
         writeButton.setCircleSize(dp(OctoConfig.INSTANCE.useSquaredFab.getValue() ? 64 : 56));
         writeButton.setCirclePadding(dp(8), dp(8));
-=======
-        writeButton.setCircleSize(dp(52), dp(38));
-        writeButton.setCirclePadding(dp(7), dp(6));
-        writeButton.newCounterPos = true;
->>>>>>> upstream-12.8.1
         writeButton.setOnClickListener(v -> {
             onWriteButtonPressed();
         });
@@ -5136,12 +5076,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 frameLayout2.setVisibility(View.VISIBLE);
             }
             writeButtonContainer.setVisibility(View.VISIBLE);
-<<<<<<< OctoGram
-            if (!typeButtonsAvailable && !isSoundPicker && !isEmojiPicker && !isExportPicker) {
-                shadow.setVisibility(View.VISIBLE);
-            }
-=======
->>>>>>> upstream-12.8.1
+
         } else if (typeButtonsAvailable) {
             buttonsRecyclerViewWrapper.setVisibility(View.VISIBLE);
         }
@@ -5168,16 +5103,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             if (actionBar.getTag() != null) {
                 animators.add(ObjectAnimator.ofFloat(frameLayout2, View.TRANSLATION_Y, show ? 0.0f : dp(48)));
             } else if (typeButtonsAvailable) {
-<<<<<<< OctoGram
-                animators.add(ObjectAnimator.ofFloat(buttonsRecyclerView, View.TRANSLATION_Y, show ? dp(84) : 0));
-                animators.add(ObjectAnimator.ofFloat(shadow, View.TRANSLATION_Y, show ? dp(36) : 0));
-            } else if (!isSoundPicker && !isEmojiPicker && !isExportPicker) {
-                shadow.setTranslationY(dp(36) + botMainButtonOffsetY);
-                animators.add(ObjectAnimator.ofFloat(shadow, View.ALPHA, show ? 1.0f : 0.0f));
-=======
                 animators.add(ObjectAnimator.ofFloat(buttonsRecyclerViewWrapper, View.TRANSLATION_Y, show ? dp(36) : 0));
                 animators.add(ObjectAnimator.ofFloat(buttonsRecyclerViewWrapper, View.ALPHA, show ? 0 : 1f));
->>>>>>> upstream-12.8.1
             }
 
             if (above) {
@@ -5199,12 +5126,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                                 frameLayout2.setVisibility(View.INVISIBLE);
                             }
                             writeButtonContainer.setVisibility(View.INVISIBLE);
-<<<<<<< OctoGram
-                            if (!typeButtonsAvailable && !isSoundPicker && !isEmojiPicker && !isExportPicker) {
-                                shadow.setVisibility(View.INVISIBLE);
-                            }
-=======
->>>>>>> upstream-12.8.1
+
                         } else if (typeButtonsAvailable) {
                             if (currentAttachLayout == null || currentAttachLayout.shouldHideBottomButtons()) {
                                 buttonsRecyclerViewWrapper.setVisibility(View.INVISIBLE);
@@ -6577,13 +6499,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     if (position == galleryButton) {
                         attachButton.setTextAndIcon(1, getString(R.string.ChatGallery), GlassTabView.TabAnimation.GALLERY);
                         attachButton.setTag(1);
-<<<<<<< OctoGram
-                    } else if (position == cameraButton) {
-                        attachButton.setTextAndIcon(itemCameraId, LocaleController.getString(R.string.BottomCamera), getContext().getResources().getDrawable(R.drawable.photo_camera_24px).mutate(), Theme.key_chat_attachGalleryBackground, Theme.key_chat_attachGalleryText);
-                        attachButton.setTag(itemCameraId);
-=======
                         err = !checkPhotoAndCameraPermission(mContext);
->>>>>>> upstream-12.8.1
                     } else if (position == documentButton) {
                         attachButton.setTextAndIcon(4, getString(R.string.ChatDocument), GlassTabView.TabAnimation.FILES);
                         attachButton.setTag(4);
@@ -6731,13 +6647,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 TLRPC.Chat chat = baseFragment instanceof ChatActivity ? ((ChatActivity) baseFragment).getCurrentChat() : null;
                 final boolean paidUser = user != null && ((ChatActivity) baseFragment).getMessagesController().getSendPaidMessagesStars(user.id) > 0;
                 galleryButton = buttonsCount++;
-<<<<<<< OctoGram
                 if (OctoConfig.INSTANCE.cameraPreview.getValue() == CameraPreview.BOTTOM_BAR) cameraButton = buttonsCount++;
-=======
-                if (plainTextEnabled && BuildVars.DEBUG_PRIVATE_VERSION) {
-                    richButton = buttonsCount++;
-                }
->>>>>>> upstream-12.8.1
                 if ((photosEnabled || videosEnabled) && !paidUser && (chat == null || !ChatObject.isMonoForum(chat))) {
                     if (baseFragment instanceof ChatActivity && !((ChatActivity) baseFragment).isInScheduleMode() && !((ChatActivity) baseFragment).isSecretChat() && ((ChatActivity) baseFragment).getChatMode() != ChatActivity.MODE_QUICK_REPLIES) {
                         ChatActivity chatActivity = (ChatActivity) baseFragment;
@@ -7221,7 +7131,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         setCaptionAbove(!captionAbove);
     }
 
-<<<<<<< OctoGram
     private void handleCameraAction() {
         final String TAG = "ChatAttachAlert";
         OctoLogging.d(TAG, "handleCameraAction() called");
@@ -7252,127 +7161,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     public void onCameraButtonLongPress() {
         if ((photosEnabled || videosEnabled || !checkCanRemoveRestrictionsByBoosts()) && delegate != null) {
             OctoUtils.showAlertSystemCameraMode(getContext(), value -> delegate.didPressedButton(value, false, true, 0, 0, 0, false, false, 0));
-=======
-
-
-
-
-    /* Blur */
-
-    private final @Nullable DownscaleScrollableNoiseSuppressor scrollableViewNoiseSuppressor;
-    private final @Nullable BlurredBackgroundSourceRenderNode iBlur3SourceGlassFrosted;
-    private final @Nullable BlurredBackgroundSourceRenderNode iBlur3SourceGlass;
-    private final @NonNull BlurredBackgroundSourceColor iBlur3SourceColor;
-    private final @NonNull BlurredBackgroundDrawableViewFactory iBlur3FactoryLiquidGlass;
-    private final @NonNull BlurredBackgroundDrawableViewFactory iBlur3FactoryFrostedLiquidGlass;
-    private final @NonNull BlurredBackgroundDrawableViewFactory iBlur3FactoryFade;
-
-    private final IBlur3Capture iBlur3Capture;
-
-    private final ArrayList<RectF> iBlur3Positions = new ArrayList<>();
-    private final RectF iBlur3PositionActionBar = new RectF();
-    private final RectF iBlur3PositionMainTabs = new RectF();
-    private final RectF iBlur3PositionFastScroll = new RectF();
-    {
-        iBlur3Positions.add(iBlur3PositionActionBar);
-        iBlur3Positions.add(iBlur3PositionMainTabs);
-        iBlur3Positions.add(iBlur3PositionFastScroll);
-    }
-
-    private final ArrayList<RectF> iBlur3PositionsMerged = new ArrayList<>();
-
-    public void blur3_InvalidateBlur() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || scrollableViewNoiseSuppressor == null) {
-            return;
-        }
-
-        ViewPositionWatcher.computeRectInParent(buttonsRecyclerViewWrapper, containerView, iBlur3PositionMainTabs);
-
-        iBlur3PositionActionBar.set(0, 0, containerView.getMeasuredWidth(), actionBar.getMeasuredHeight());
-        iBlur3PositionActionBar.inset(0, -dp(48));
-
-        final int bottomBlurHeight = Math.max(AndroidUtilities.navigationBarHeight, getEmojiPadding()) + dp(180);
-        iBlur3PositionMainTabs.set(0, containerView.getMeasuredHeight() - bottomBlurHeight, containerView.getMeasuredWidth(), containerView.getMeasuredHeight());
-        iBlur3PositionMainTabs.inset(0, LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) ? 0 : -dp(48));
-
-        boolean hasFastScroll = false;
-        if (currentAttachLayout == photoLayout && photoLayout != null && photoLayout.gridView.getFastScroll() != null) {
-            photoLayout.gridView.getFastScroll().fillDrawablesRect(iBlur3PositionFastScroll);
-
-            ViewPositionWatcher.computeRectInParent(photoLayout.gridView.getFastScroll(), containerView, AndroidUtilities.rectTmp);
-
-            iBlur3PositionFastScroll.offset(AndroidUtilities.rectTmp.left, AndroidUtilities.rectTmp.top);
-            iBlur3PositionFastScroll.inset(-dp(48), -dp(48));
-            iBlur3PositionFastScroll.left = Math.max(0, iBlur3PositionFastScroll.left);
-            iBlur3PositionFastScroll.right = Math.min(containerView.getMeasuredWidth(), iBlur3PositionFastScroll.right);
-            hasFastScroll = true;
-        }
-
-        final int mergedPositionsCount = RectFMergeBounding.mergeOverlapping(iBlur3Positions, hasFastScroll ? 3 : 2, iBlur3PositionsMerged);
-        scrollableViewNoiseSuppressor.setupRenderNodes(iBlur3PositionsMerged, mergedPositionsCount);
-        scrollableViewNoiseSuppressor.invalidateResultRenderNodes(iBlur3Capture, containerView.getMeasuredWidth(), containerView.getMeasuredHeight());
-    }
-
-    @SuppressLint("ViewConstructor")
-    public static class SearchFadeView extends View {
-        private final int bgKeyColor;
-        private final Theme.ResourcesProvider resourcesProvider;
-        private final GradientProtectionDrawable gradientProtectionDrawable = new GradientProtectionDrawable(WindowInsetsCompat.Side.TOP);
-        private final GradientProtectionDrawable gradientProtectionDrawable2 = new GradientProtectionDrawable(WindowInsetsCompat.Side.TOP);
-
-        public SearchFadeView(Context context, int bgKeyColor, Theme.ResourcesProvider resourcesProvider) {
-            super(context);
-            this.resourcesProvider = resourcesProvider;
-            this.bgKeyColor = bgKeyColor;
-        }
-
-        @Override
-        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-            super.onSizeChanged(w, h, oldw, oldh);
-
-            final int statusBar = AndroidUtilities.statusBarHeight;
-            gradientProtectionDrawable.setInsets(0, statusBar + dp(12), 0, 0);
-            gradientProtectionDrawable.setBounds(0, 0, w, statusBar + dp(12 + 40));
-            gradientProtectionDrawable2.setInsets(0, statusBar / 3, 0, 0);
-            gradientProtectionDrawable2.setBounds(0, 0, w, statusBar);
-        }
-
-        @Override
-        protected void onDraw(@NonNull Canvas canvas) {
-            gradientProtectionDrawable.setColor(Theme.multAlpha(Theme.getColor(bgKeyColor, resourcesProvider), 0.5f));
-            gradientProtectionDrawable.draw(canvas);
-            gradientProtectionDrawable2.setColor(Theme.multAlpha(Theme.getColor(bgKeyColor, resourcesProvider), 0.95f));
-            gradientProtectionDrawable2.draw(canvas);
-        }
-    }
-
-    public void onPollAttachFilePicker(Intent data) {
-        if (pollLayout != null) {
-            pollLayout.onPollAttachFilePicker(data);
-        }
-    }
-
-    private void checkUi_fadeTopAlpha() {
-        if (fadeView != null && actionBar != null) {
-            final boolean isDark = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
-            fadeView.setFadeTopAlpha(actionBar.getVisibility() == View.VISIBLE ? (int) ((isDark ? 255 : 160) * actionBar.getAlpha()) : 0);
-        }
-    }
-
-    @SuppressLint("ViewConstructor")
-    public static class AttachSearchField extends FragmentSearchField {
-        private final ChatAttachAlert parentAlert;
-
-        public AttachSearchField(Context context, ChatAttachAlert parentAlert, Theme.ResourcesProvider resourcesProvider) {
-            super(context, resourcesProvider);
-            this.parentAlert = parentAlert;
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(MotionEvent ev) {
-            parentAlert.makeFocusable(editText, true);
-            return super.onInterceptTouchEvent(ev);
->>>>>>> upstream-12.8.1
         }
     }
 }

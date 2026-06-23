@@ -2044,7 +2044,6 @@ public class ViewPagerFixed extends FrameLayout {
                             indicatorX = (int) AndroidUtilities.lerp(lastDrawnIndicatorX, indicatorX, indicatorProgress2);
                             indicatorWidth = (int) AndroidUtilities.lerp(lastDrawnIndicatorW, indicatorWidth, indicatorProgress2);
                         }
-<<<<<<< OctoGram
 
                         int tabStyle = OctoConfig.INSTANCE.tabStyle.getValue();
                         int inlinePadding = 0;
@@ -2093,20 +2092,6 @@ public class ViewPagerFixed extends FrameLayout {
                         //selectorDrawable.setBounds(indicatorX, (int) (height - AndroidUtilities.dpr(4) + hideProgress * AndroidUtilities.dpr(4)), indicatorX + indicatorWidth, (int) (height + hideProgress * AndroidUtilities.dpr(4)));
                         //selectorDrawable.draw(canvas);
                         if (tabStyle != TabStyle.TEXT_ONLY.getValue()) {
-=======
-                        if (selectorType == SELECTOR_TYPE_BUBBLE_STYLE) {
-                            final float TAB_INTERNAL_PADDING = 12.5f;
-                            final float add = additionalTabWidth / 2f;
-                            final int y = height / 2 - dp(14);
-                            selectorDrawable.setBounds(
-                                (int) (indicatorX - dp(TAB_INTERNAL_PADDING) - add), y,
-                                (int) (indicatorX + indicatorWidth + dp(TAB_INTERNAL_PADDING) + add),
-                                y + dp(28));
-                            selectorDrawable.setAlpha(31);
-                            selectorDrawable.draw(canvas);
-                        } else {
-                            selectorDrawable.setBounds(indicatorX, (int) (height - AndroidUtilities.dpr(4) + hideProgress * AndroidUtilities.dpr(4)), indicatorX + indicatorWidth, (int) (height + hideProgress * AndroidUtilities.dpr(4)));
->>>>>>> upstream-12.8.1
                             selectorDrawable.draw(canvas);
                         }
                     }

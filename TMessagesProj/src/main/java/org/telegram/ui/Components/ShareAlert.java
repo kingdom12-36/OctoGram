@@ -1777,16 +1777,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                 return getThemedColor(Theme.key_dialogFloatingButton);
             }
         };
-<<<<<<< OctoGram
         writeButton.setCircleSize(dp(OctoConfig.INSTANCE.useSquaredFab.getValue() ? 64 : 56));
         writeButton.setUseSquaredFab(OctoConfig.INSTANCE.useSquaredFab.getValue());
         writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(100, 100, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 0, 0));
-=======
-        writeButton.setCircleSize(dp(52), dp(38));
-        writeButton.setCirclePadding(dp(1), dp(6));
-        writeButton.newCounterPos = true;
-        writeButtonContainer.addView(writeButton, LayoutHelper.createFrameMatchParent());
->>>>>>> upstream-12.8.1
         writeButton.setOnClickListener(v -> sendInternal(true));
         writeButton.setOnLongClickListener(v -> {
             return onSendLongClick(writeButton);
@@ -2147,9 +2140,6 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         }
     }
 
-<<<<<<< OctoGram
-    private final ForwardContext forwardContext = () -> sendingMessageObjects;
-=======
     private boolean isBotForumWithNotEmptyTopics(TLRPC.User user) {
         if (!UserObject.isBotForum(user)) {
             return false;
@@ -2161,7 +2151,6 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         return topics != null && !topics.isEmpty()
             || !MessagesController.getInstance(currentAccount).getTopicsController().endIsReached(-user.id);
     }
->>>>>>> upstream-12.8.1
 
     @SuppressLint("NotifyDataSetChanged")
     private void collapseTopics() {
@@ -2583,13 +2572,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                         params.monoForumPeer = monoForumPeerId;
                         SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
                     }
-<<<<<<< OctoGram
-                    //result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, forwardContext.getForwardParams().noQuote,forwardContext.getForwardParams().noCaption, withSound, scheduleDate, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId);
-                    //result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName,false, withSound, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
-                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, forwardContext.getForwardParams().noQuote,forwardContext.getForwardParams().noCaption, withSound, scheduleDate, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
-=======
                     result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName,false, withSound, 0, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
->>>>>>> upstream-12.8.1
                     if (result != 0) {
                         removeKeys.add(key);
                     }

@@ -56,7 +56,6 @@ public class ChatActivityMemberRequestsDelegate {
         this.currentAccount = fragment.getCurrentAccount();
     }
 
-<<<<<<< OctoGram
     public View getView() {
         if (root == null) {
             root = new FrameLayout(fragment.getParentActivity()) {
@@ -74,12 +73,6 @@ public class ChatActivityMemberRequestsDelegate {
             root.setBackgroundColor(fragment.getThemedColor(Theme.key_chat_topPanelBackground));
             root.setVisibility(View.GONE);
             pendingRequestsEnterOffset = -getViewHeight();
-=======
-    private ChangeVisibilityDelegate delegate;
-    public interface ChangeVisibilityDelegate {
-        void setVisible(boolean visible, boolean animated);
-    }
->>>>>>> upstream-12.8.1
 
     public void setDelegate(ChangeVisibilityDelegate delegate) {
         this.delegate = delegate;

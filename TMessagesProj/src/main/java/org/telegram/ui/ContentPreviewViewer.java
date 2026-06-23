@@ -112,12 +112,8 @@ import org.telegram.ui.Stories.DarkThemeResourceProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< OctoGram
 import it.octogram.android.EmojiStatus;
 import it.octogram.android.OctoConfig;
-=======
-import me.vkryl.core.reference.ReferenceList;
->>>>>>> upstream-12.8.1
 
 public class ContentPreviewViewer {
 
@@ -288,17 +284,6 @@ public class ContentPreviewViewer {
             return false;
         }
 
-<<<<<<< OctoGram
-        default boolean canPinEmoji() {
-            return false;
-        }
-
-        default void pinEmoji(TLRPC.Document document) {
-
-        }
-
-        default void unpinEmoji(TLRPC.Document document) {
-=======
         @Nullable
         default TLRPC.TL_messageMediaPoll getPoll() {
             return null;
@@ -318,7 +303,6 @@ public class ContentPreviewViewer {
         }
 
         default void sendVote() {
->>>>>>> upstream-12.8.1
 
         }
     }

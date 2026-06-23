@@ -15,10 +15,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-<<<<<<< OctoGram
-import android.animation.StateListAnimator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -668,41 +665,10 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
             }
         });
 
-<<<<<<< OctoGram
-        floatingButtonContainer = new FrameLayout(context);
-        Drawable drawable = CustomFab.createFabBackground();
-        /*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }*/
-        floatingButtonContainer.setBackgroundDrawable(drawable);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-            /*floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });*/
-        }
-        VerticalPositionAutoAnimator.attach(floatingButtonContainer);
-        sizeNotifierFrameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
-        floatingButtonContainer.setOnClickListener(view -> {
-=======
         floatingButton = new FragmentFloatingButton(context, resourceProvider);
         VerticalPositionAutoAnimator.attach(floatingButton);
         sizeNotifierFrameLayout.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());
         floatingButton.setOnClickListener(view -> {
->>>>>>> upstream-12.8.1
             if (donePressed) {
                 return;
             }

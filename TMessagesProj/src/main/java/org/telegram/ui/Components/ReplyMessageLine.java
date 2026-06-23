@@ -440,14 +440,10 @@ public class ReplyMessageLine {
         if ((type == TYPE_REPLY || type == TYPE_LINK || type == TYPE_CONTACT) && messageObject != null && messageObject.overrideLinkEmoji != -1) {
             emojiDocumentId = messageObject.overrideLinkEmoji;
         }
-<<<<<<< OctoGram
         if (!OctoConfig.INSTANCE.repliesLinksShowEmojis.getValue()) {
             emojiDocumentId = 0;
         }
         if (emojiDocumentId != 0 && emoji == null) {
-=======
-        if (emojiDocumentId != 0 && emoji == null && parentView != null) {
->>>>>>> upstream-12.8.1
             emoji = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(parentView, false, dp(20), AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC);
             if (parentView instanceof ChatMessageCell ? ((ChatMessageCell) parentView).isCellAttachedToWindow() : parentView.isAttachedToWindow()) {
                 emoji.attach();

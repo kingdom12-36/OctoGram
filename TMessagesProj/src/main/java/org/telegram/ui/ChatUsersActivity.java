@@ -897,17 +897,8 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                         defaultBannedRights.embed_links = !defaultBannedRights.embed_links;
                     } else if (position == sendPollsRow) {
                         defaultBannedRights.send_polls = !defaultBannedRights.send_polls;
-<<<<<<< OctoGram
-                    } else if (position == sendGifsRow) {
-                        defaultBannedRights.send_gifs = !defaultBannedRights.send_gifs;
-                    } else if (position == sendGamesRow) {
-                        defaultBannedRights.send_games = !defaultBannedRights.send_games;
-                    } else if (position == useInlineBotRow) {
-                        defaultBannedRights.send_inline = !defaultBannedRights.send_inline;
-=======
                     } else if (position == sendReactionsRow) {
                         defaultBannedRights.send_reactions = !defaultBannedRights.send_reactions;
->>>>>>> upstream-12.8.1
                     }
 
                     checkBoxCell.setChecked(!checkBoxCell.isChecked(), true);
@@ -3662,11 +3653,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                     } else if (position == sendMediaRow) {
                         int sentMediaCount = getSendMediaSelectedCount();
                         checkCell.setTextAndCheck(getString("UserRestrictionsSendMedia", R.string.UserRestrictionsSendMedia), sentMediaCount > 0, true, animated);
-<<<<<<< OctoGram
-                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/12", sentMediaCount), !sendMediaExpanded, new Runnable() {
-=======
                         checkCell.setCollapseArrow(String.format(Locale.US, "%d/10", sentMediaCount), !sendMediaExpanded, new Runnable() {
->>>>>>> upstream-12.8.1
                             @Override
                             public void run() {
                                 if (ChatObject.canBlockUsers(currentChat)) {
@@ -3767,25 +3754,12 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                     } else if (position == sendMediaVideoMessagesRow) {
                         checkBoxCell.setText(getString("SendMediaPermissionRound", R.string.SendMediaPermissionRound), "", !defaultBannedRights.send_roundvideos, divider, animated);
                     } else if (position == sendMediaEmbededLinksRow) {
-<<<<<<< OctoGram
-                        checkBoxCell.setText(getString("SendMediaEmbededLinks", R.string.SendMediaEmbededLinks), "", !defaultBannedRights.embed_links && !defaultBannedRights.send_plain, divider, animated);
-                    }else if (position == sendPollsRow) {
-                        checkBoxCell.setText(getString("SendMediaPolls", R.string.SendMediaPolls), "", !defaultBannedRights.send_polls, divider, animated);
-                    } else if (position == sendGifsRow) {
-                        checkBoxCell.setText(getString("SendMediaPermissionGifs", R.string.SendMediaPermissionGifs), "", !defaultBannedRights.send_gifs, divider, animated);
-                    } else if (position == sendGamesRow) {
-                        checkBoxCell.setText(getString("SendMediaPermissionGames", R.string.SendMediaPermissionGames), "", !defaultBannedRights.send_games, divider, animated);
-                    } else if (position == useInlineBotRow) {
-                        checkBoxCell.setText(getString("SendMediaPermissionInline", R.string.SendMediaPermissionInline), "", !defaultBannedRights.send_inline, divider, animated);
-                    }
-=======
                         checkBoxCell.setText(getString("SendMediaEmbededLinks", R.string.SendMediaEmbededLinks), "", !defaultBannedRights.embed_links && !defaultBannedRights.send_plain, true, animated);
                     } else if (position == sendReactionsRow) {
                         checkBoxCell.setText(getString(R.string.UserRestrictionsSendReactions), "", !defaultBannedRights.send_reactions, false, animated);
                     } else if (position == sendPollsRow) {
                         checkBoxCell.setText(getString("SendMediaPolls", R.string.SendMediaPolls), "", !defaultBannedRights.send_polls, true, animated);
                     } else
->>>>>>> upstream-12.8.1
                     //  checkBoxCell.setText(getCheckBoxTitle(item.headerName, percents[item.index < 0 ? 8 : item.index], item.index < 0), AndroidUtilities.formatFileSize(item.size), selected, item.index < 0 ? !collapsed : !item.last);
                     checkBoxCell.setPad(1);
                     break;
@@ -3837,13 +3811,8 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 return 4;
             } else if (position == removedUsersRow) {
                 return 6;
-<<<<<<< OctoGram
-            } else if (position == changeInfoRow || position == addUsersRow || position == pinMessagesRow || position == sendMessagesRow ||
-                   /* position == sendStickersRow ||*/ position == embedLinksRow || position == manageTopicsRow || position == dontRestrictBoostersRow) {
-=======
             } else if (position == changeInfoRow || position == addUsersRow || position == pinMessagesRow || position == editTagRow || position == sendMessagesRow ||
                     position == sendStickersRow || position == embedLinksRow || position == manageTopicsRow || position == dontRestrictBoostersRow) {
->>>>>>> upstream-12.8.1
                 return 7;
             } else if (position == membersHeaderRow || position == contactsHeaderRow || position == botHeaderRow || position == loadingHeaderRow) {
                 return 8;
@@ -3908,13 +3877,8 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
     private boolean isExpandableSendMediaRow(int position) {
         return position == sendMediaPhotosRow || position == sendMediaVideosRow /*|| position == sendMediaStickerGifsRow*/ || position == sendStickersRow ||
                 position == sendMediaMusicRow || position == sendMediaFilesRow || position == sendMediaVoiceMessagesRow ||
-<<<<<<< OctoGram
-                position == sendMediaVideoMessagesRow || position == sendMediaEmbededLinksRow || position == sendPollsRow ||
-                position == sendGifsRow || position == sendGamesRow || position == useInlineBotRow;
-=======
                 position == sendReactionsRow ||
                 position == sendMediaVideoMessagesRow || position == sendMediaEmbededLinksRow || position == sendPollsRow;
->>>>>>> upstream-12.8.1
     }
 
     public DiffCallback saveState() {

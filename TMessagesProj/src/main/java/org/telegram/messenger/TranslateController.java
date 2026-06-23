@@ -30,20 +30,12 @@ import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.Vector;
 import org.telegram.tgnet.tl.TL_stories;
-<<<<<<< OctoGram
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.Bulletin;
-import org.telegram.ui.Components.BulletinFactory;
-import org.telegram.ui.Components.TranslateAlert2;
-import org.telegram.ui.PhotoViewer;
-=======
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.TranslateAlert2;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PremiumPreviewFragment;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.RestrictedLanguagesSelectActivity;
 
 import java.util.ArrayList;
@@ -716,17 +708,7 @@ public class TranslateController extends BaseController {
 
         final String language = getDialogTranslateTo(dialogId);
         MessageObject potentialReplyMessageObject;
-<<<<<<< OctoGram
         if (!keepReply && (messageObject.messageOwner.translatedText == null && messageObject.messageOwner.translatedPoll == null || messageObject.messageOwner.translatedPoll != null && !PollText.isFullyTranslated(messageObject, messageObject.messageOwner.translatedPoll) || !language.equals(messageObject.messageOwner.translatedToLanguage) || messageObject.messageOwner.translatedProviderId != OctoConfig.INSTANCE.translatorProvider.getValue()) && (potentialReplyMessageObject = findReplyMessageObject(dialogId, messageObject.getId())) != null) {
-=======
-        if (!keepReply && (
-                (messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal ? messageObject.messageOwner.translatedVoiceTranscription : messageObject.messageOwner.translatedText) == null && messageObject.messageOwner.translatedPoll == null ||
-                messageObject.messageOwner.translatedPoll != null && !PollText.isFullyTranslated(messageObject, messageObject.messageOwner.translatedPoll) ||
-                !language.equals(messageObject.messageOwner.translatedToLanguage)
-            ) &&
-            (potentialReplyMessageObject = findReplyMessageObject(dialogId, messageObject.getId())) != null
-        ) {
->>>>>>> upstream-12.8.1
             messageObject.messageOwner.translatedToLanguage = potentialReplyMessageObject.messageOwner.translatedToLanguage;
             messageObject.messageOwner.translatedText = potentialReplyMessageObject.messageOwner.translatedText;
             messageObject.messageOwner.translatedPoll = potentialReplyMessageObject.messageOwner.translatedPoll;
@@ -736,29 +718,7 @@ public class TranslateController extends BaseController {
 
         if (onScreen && isTranslatingDialog(dialogId)) {
             final MessageObject finalMessageObject = messageObject;
-<<<<<<< OctoGram
             if (finalMessageObject.messageOwner.translatedText == null && finalMessageObject.messageOwner.translatedPoll == null || finalMessageObject.messageOwner.translatedPoll != null && !PollText.isFullyTranslated(finalMessageObject, finalMessageObject.messageOwner.translatedPoll) || !language.equals(finalMessageObject.messageOwner.translatedToLanguage) || finalMessageObject.messageOwner.translatedProviderId != OctoConfig.INSTANCE.translatorProvider.getValue()) {
-=======
-            if (finalMessageObject.messageOwner.summarizedOpen) {
-                if (finalMessageObject.messageOwner.translatedSummaryText == null || !language.equals(finalMessageObject.messageOwner.translatedSummaryLanguage)) {
-                    pushToSummarize(finalMessageObject, language, text -> {
-                        finalMessageObject.messageOwner.translatedSummaryLanguage = text != null ? language : null;
-                        finalMessageObject.messageOwner.translatedSummaryText = text;
-                        if (text == null) {
-                            finalMessageObject.messageOwner.summarizedOpen = false;
-                        }
-
-                        getMessagesStorage().updateMessageCustomParams(dialogId, finalMessageObject.messageOwner);
-                        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslated, finalMessageObject, true);
-                    });
-                }
-            } else if (
-                (finalMessageObject.messageOwner.voiceTranscriptionOpen && finalMessageObject.messageOwner.voiceTranscriptionFinal ? finalMessageObject.messageOwner.translatedVoiceTranscription : finalMessageObject.messageOwner.translatedText) == null &&
-                finalMessageObject.messageOwner.translatedPoll == null ||
-                finalMessageObject.messageOwner.translatedPoll != null && !PollText.isFullyTranslated(finalMessageObject, finalMessageObject.messageOwner.translatedPoll) ||
-                !language.equals(finalMessageObject.messageOwner.translatedToLanguage)
-            ) {
->>>>>>> upstream-12.8.1
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslating, finalMessageObject);
                 if (MessageObject.getMedia(finalMessageObject) instanceof TLRPC.TL_messageMediaPoll) {
                     pushPollToTranslate(finalMessageObject, language, (id, poll, lang) -> {
@@ -799,16 +759,8 @@ public class TranslateController extends BaseController {
                             FileLog.e("wtf, asked to translate " + finalMessageObject.getId() + " but got " + id + "!");
                         }
                         finalMessageObject.messageOwner.translatedToLanguage = lang;
-<<<<<<< OctoGram
                         finalMessageObject.messageOwner.translatedText = text;
                         finalMessageObject.messageOwner.translatedProviderId = OctoConfig.INSTANCE.translatorProvider.getValue();
-=======
-                        if (isTranscription) {
-                            finalMessageObject.messageOwner.translatedVoiceTranscription = text;
-                        } else {
-                            finalMessageObject.messageOwner.translatedText = text;
-                        }
->>>>>>> upstream-12.8.1
                         finalMessageObject.messageOwner.translatedPoll = null;
                         if (keepReply) {
                             keepReplyMessage(finalMessageObject);
@@ -856,11 +808,7 @@ public class TranslateController extends BaseController {
         }
         messageObject.messageOwner.translatedToLanguage = null;
         messageObject.messageOwner.translatedText = null;
-<<<<<<< OctoGram
-        messageObject.messageOwner.translatedProviderId = -1;
-=======
         messageObject.messageOwner.translatedVoiceTranscription = null;
->>>>>>> upstream-12.8.1
         messageObject.messageOwner.translatedPoll = null;
         messageObject.messageOwner.summaryText = null;
         messageObject.messageOwner.translatedSummaryText = null;
@@ -931,11 +879,7 @@ public class TranslateController extends BaseController {
         keptReplyMessageObjects.clear();
         hideTranslateDialogs.clear();
         loadingTranslations.clear();
-<<<<<<< OctoGram
-        manualTranslationsList.clear();
-=======
         loadingTranscriptionTranslations.clear();
->>>>>>> upstream-12.8.1
     }
 
     public void reset() {
@@ -1084,23 +1028,12 @@ public class TranslateController extends BaseController {
         });
     }
 
-<<<<<<< OctoGram
-    public static class PendingTranslation {
-        public Runnable runnable;
-        public ArrayList<Integer> messageIds = new ArrayList<>();
-        public ArrayList<TLRPC.TL_textWithEntities> messageTexts = new ArrayList<>();
-        public ArrayList<Utilities.Callback3<Integer, TLRPC.TL_textWithEntities, String>> callbacks = new ArrayList<>();
-        public String language;
-
-        public ArrayList<QueueTranslationsHandler> queueHandlers = new ArrayList<>();
-=======
     private static class PendingTranslation {
         Runnable runnable;
         ArrayList<Integer> messageIds = new ArrayList<>();
         ArrayList<TLRPC.TL_textWithEntities> messageTexts = new ArrayList<>();
         ArrayList<Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String>> callbacks = new ArrayList<>();
         String language;
->>>>>>> upstream-12.8.1
 
         int delay = GROUPING_TRANSLATIONS_TIMEOUT;
         int symbolsCount;
@@ -1650,9 +1583,6 @@ public class TranslateController extends BaseController {
         if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.summarizedOpen)
             return loadingSummarizations.contains(Objects.hash(messageObject.getDialogId(), messageObject.getId(), isTranslatingDialog(messageObject.getDialogId()) ? 1 : 0));
         synchronized (this) {
-<<<<<<< OctoGram
-            return messageObject != null && loadingTranslations.contains(messageObject.getId()) && (isTranslatingDialog(messageObject.getDialogId()) || isManualTranslated(messageObject));
-=======
             return (
                 messageObject != null &&
                 messageObject.messageOwner != null &&
@@ -1661,7 +1591,6 @@ public class TranslateController extends BaseController {
                 ).contains(messageObject.getId()) &&
                 isTranslatingDialog(messageObject.getDialogId())
             );
->>>>>>> upstream-12.8.1
         }
     }
 
@@ -1671,18 +1600,6 @@ public class TranslateController extends BaseController {
         }
         /*if (!isTranslatingDialog(messageObject.getDialogId())) {
             return false;
-<<<<<<< OctoGram
-        }*/
-        synchronized (this) {
-            if (loadingTranslations.contains(messageObject.getId())) {
-                if (isTranslatingDialog(messageObject.getDialogId()) || isManualTranslated(messageObject)) {
-                    return true;
-                }
-            }
-            if (group != null) {
-                for (MessageObject message : group.messages) {
-                    if (loadingTranslations.contains(message.getId()) && (isTranslatingDialog(messageObject.getDialogId()) || isManualTranslated(messageObject))) {
-=======
         }
         final boolean isTranscription = messageObject.messageOwner != null && messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal;
         synchronized (this) {
@@ -1692,7 +1609,6 @@ public class TranslateController extends BaseController {
             if (group != null) {
                 for (MessageObject message : group.messages) {
                     if ((isTranscription ? loadingTranscriptionTranslations : loadingTranslations).contains(message.getId())) {
->>>>>>> upstream-12.8.1
                         return true;
                     }
                 }
@@ -2116,7 +2032,6 @@ public class TranslateController extends BaseController {
 
         translatingPhotos.add(key);
 
-<<<<<<< OctoGram
         final long start = System.currentTimeMillis();
         int provider = OctoConfig.INSTANCE.translatorProvider.getValue();
         MainTranslationsHandler.translate(UserConfig.selectedAccount, toLang, messageObject.messageOwner.message, messageObject.messageOwner.entities, new SingleTranslationsHandler.OnTranslationResultCallback() {
@@ -2173,9 +2088,6 @@ public class TranslateController extends BaseController {
         });
 
         /*TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
-=======
-        final TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
->>>>>>> upstream-12.8.1
         req.flags |= 2;
         final TLRPC.TL_textWithEntities text = new TLRPC.TL_textWithEntities();
         text.text = messageObject.messageOwner.message;

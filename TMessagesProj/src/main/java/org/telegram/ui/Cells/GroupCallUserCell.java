@@ -924,12 +924,7 @@ public class GroupCallUserCell extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-<<<<<<< OctoGram
         if (needDivider && !OctoConfig.INSTANCE.disableDividers.getValue()) {
-=======
-        if (needDivider) {
-            int wasAlpha = dividerPaint.getAlpha();
->>>>>>> upstream-12.8.1
             if (progressToAvatarPreview != 0) {
                 dividerPaint.setAlpha((int) ((1.0f - progressToAvatarPreview) * wasAlpha));
             } else {

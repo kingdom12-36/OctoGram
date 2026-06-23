@@ -85,13 +85,8 @@ import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BackupImageView;
-<<<<<<< OctoGram
-import org.telegram.ui.Components.Bulletin;
-import org.telegram.ui.Components.BulletinFactory;
-=======
 import org.telegram.ui.Components.ChatAttachAlertPhotoLayout;
 import org.telegram.ui.Components.CombinedDrawable;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EditTextEmoji;
 import org.telegram.ui.Components.FlickerLoadingView;

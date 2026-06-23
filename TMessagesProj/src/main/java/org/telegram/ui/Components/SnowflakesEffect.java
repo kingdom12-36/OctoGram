@@ -16,12 +16,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.View;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
-=======
-import androidx.core.graphics.ColorUtils;
-
->>>>>>> upstream-12.8.1
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.Utilities;

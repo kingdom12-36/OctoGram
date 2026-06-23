@@ -190,27 +190,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         emptyView.setShowAtCenter(true);
         frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
-<<<<<<< OctoGram
-        listView = new RecyclerListView(context) {
-            @Override
-            protected void dispatchDraw(Canvas canvas) {
-                if (getAdapter() == listAdapter && getItemAnimator() != null && getItemAnimator().isRunning()) {
-                    int backgroundColor = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider);
-                    drawItemBackground(canvas, 0, translateSettingsBackgroundHeight, backgroundColor);
-//                    drawItemBackground(canvas, 1, Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
-                    /*if (listAdapter.settingsFromPosition != -1 && listAdapter.settingsToPosition != -1) {
-                        drawSectionBackground(canvas, listAdapter.settingsFromPosition, listAdapter.settingsToPosition, backgroundColor);
-                    }*/
-                    drawSectionBackground(canvas, 1, 2, backgroundColor);
-                }
-                super.dispatchDraw(canvas);
-            }
-        };
-=======
         listView = new RecyclerListView(context);
         listView.setSections();
         actionBar.setAdaptiveBackground(listView);
->>>>>>> upstream-12.8.1
         listView.setEmptyView(emptyView);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
@@ -231,13 +213,8 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         listView.setOnItemClickListener((view, position) -> {
             try {
                 if (view instanceof TextCheckCell) {
-<<<<<<< OctoGram
-                    /*final boolean prevFullValue = getContextValue() || getChatValue();
-                    if (position == listAdapter.manualTranslationPosition) {
-=======
                     final boolean prevFullValue = getContextValue() || getChatValue();
                     if (position == manualTranslationPosition) {
->>>>>>> upstream-12.8.1
                         boolean value = !getContextValue();
                         getMessagesController().getTranslateController().setContextTranslateEnabled(value);
                         ((TextCheckCell) view).setChecked(value);
@@ -324,12 +301,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 }
                 boolean search = listView.getAdapter() == searchListViewAdapter;
                 if (!search) {
-<<<<<<< OctoGram
-                    // position -= listAdapter.languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
-                    position -= 4;//(7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
-=======
                     position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
->>>>>>> upstream-12.8.1
                 }
                 LocaleController.LocaleInfo localeInfo;
                 if (search) {
@@ -395,12 +367,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 }
                 boolean search = listView.getAdapter() == searchListViewAdapter;
                 if (!search) {
-<<<<<<< OctoGram
-                    //position -= listAdapter.languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
-                    position -= 4;
-=======
                     position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
->>>>>>> upstream-12.8.1
                 }
                 LocaleController.LocaleInfo localeInfo;
                 if (search) {
@@ -685,14 +652,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     break;
                 case VIEW_TYPE_SETTINGS:
                 case VIEW_TYPE_SETTINGS_2:
-<<<<<<< OctoGram
-                    /*TextSettingsCell settingsCell = new TextSettingsCell(mContext);
-                    settingsCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));*/
-                    TextCell settingsCell = new TextCell(mContext);
-                    settingsCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-=======
                     TextSettingsCell settingsCell = new TextSettingsCell(mContext);
->>>>>>> upstream-12.8.1
                     view = settingsCell;
                     break;
                 case VIEW_TYPE_HEADER:
@@ -847,13 +807,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     } else {
                         infoCell.setTopPadding(0);
                         infoCell.setBottomPadding(16);
-<<<<<<< OctoGram
-                        infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo2));
-                        infoCell.setBackground(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
-                    }*/
-=======
                     }
->>>>>>> upstream-12.8.1
                     break;
                 }
                 case VIEW_TYPE_HEADER: {
@@ -864,16 +818,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
             }
         }
 
-<<<<<<< OctoGram
-        /*private int settingsFromPosition = -1;
-        private int settingsToPosition = -1;
-        private int manualTranslationPosition = -1;
-        private int autoTranslationPosition = -1;
-        private int doNotTranslatePosition = -1;
-        private int infoPosition1, infoPosition2;
-        private int languagesStartsPosition;*/
-=======
->>>>>>> upstream-12.8.1
+
         @Override
         public int getItemViewType(int i) {
             final int position = i;

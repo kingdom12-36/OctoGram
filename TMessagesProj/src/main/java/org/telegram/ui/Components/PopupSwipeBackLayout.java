@@ -435,12 +435,8 @@ public class PopupSwipeBackLayout extends FrameLayout {
 
         int s = canvas.save();
         mPath.rewind();
-<<<<<<< OctoGram
         var rad = OctoConfig.INSTANCE.useSmoothContextMenuStyling.getValue() ? AndroidUtilities.dp(20) : AndroidUtilities.dp(6);
         //int rad = AndroidUtilities.dp(10);
-=======
-        int rad = AndroidUtilities.dp(12);
->>>>>>> upstream-12.8.1
         if (stickToRight) {
             mRect.set(getWidth() - w, y, getWidth(), y + h);
         } else {

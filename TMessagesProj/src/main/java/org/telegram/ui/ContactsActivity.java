@@ -13,15 +13,7 @@ import static org.telegram.messenger.AndroidUtilities.lerp;
 import static org.telegram.messenger.LocaleController.getString;
 
 import android.Manifest;
-<<<<<<< OctoGram
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.StateListAnimator;
-import android.animation.ValueAnimator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,12 +42,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< OctoGram
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -108,10 +95,7 @@ import org.telegram.ui.Cells.UserCell;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
-<<<<<<< OctoGram
-=======
 import org.telegram.ui.Components.ContactsEmptyView;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.FlickerLoadingView;
@@ -131,33 +115,11 @@ import org.telegram.ui.Components.inset.WindowAnimatedInsetsProvider;
 
 import java.util.ArrayList;
 
-<<<<<<< OctoGram
 import it.octogram.android.app.ui.components.CustomFab;
 import it.octogram.android.app.ui.components.OutlineProvider;
 import it.octogram.android.utils.chat.RapidActionsHelper;
 
 public class ContactsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
-
-public class ContactsActivity extends BaseFragment implements FactorAnimator.Target, NotificationCenter.NotificationCenterDelegate, MainTabsActivity.TabFragmentDelegate, WindowAnimatedInsetsProvider.Listener {
-    private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
-
-    private static final int ANIMATOR_ID_SEARCH_FIELD_VISIBLE = 0;
-//    private static final int ANIMATOR_ID_SEARCH_FIELD_HEIGHT = 1;
-    private static final int ANIMATOR_ID_SEARCH_HAS_QUERY = 2;
-//
-    private final BoolAnimator animatorSearchFieldVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_FIELD_VISIBLE,
-        this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-//    private final FactorAnimator animatorSearchFieldHeight = new FactorAnimator(ANIMATOR_ID_SEARCH_FIELD_HEIGHT,
-//        this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorSearchHasQuery = new BoolAnimator(ANIMATOR_ID_SEARCH_HAS_QUERY,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-
-    @Keep
-    public int phonebookRow = 0;
->>>>>>> upstream-12.8.1
 
     private ContactsAdapter listViewAdapter;
     private StickerEmptyView emptyView;
@@ -969,39 +931,9 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
                 new NewContactBottomSheet(ContactsActivity.this, getContext()).show();
             });
 
-<<<<<<< OctoGram
-            floatingButton = new RLottieImageView(context);
-            floatingButton.setScaleType(ImageView.ScaleType.CENTER);
-            //Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-            Drawable drawable = CustomFab.createFabBackground();
-            floatingButton.setBackground(drawable);
-            floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-            boolean configAnimationsEnabled = preferences.getBoolean("view_animations", true);
-            if (getMessagesController().storiesEnabled()) {
-                floatingButton.setAnimation(configAnimationsEnabled ? R.raw.write_contacts_fab_icon_camera : R.raw.write_contacts_fab_icon_reverse_camera, 56, 56);
-            } else {
-                floatingButton.setAnimation(configAnimationsEnabled ? R.raw.write_contacts_fab_icon : R.raw.write_contacts_fab_icon_reverse, 52, 52);
-            }
-            floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.CreateNewContact));
-            /*StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButton.setStateListAnimator(animator);
-            floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });*/
-            floatingButton.setOutlineProvider(new OutlineProvider());
-            floatingButtonContainer.addView(floatingButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 10, 6, 10, 0));
-=======
             floatingButton.setAnimation(R.raw.write_contacts_fab_icon, 44);
             floatingButton.imageView.getAnimatedDrawable().setCurrentFrame(floatingButton.imageView.getAnimatedDrawable().getFramesCount() - 1);
             floatingButton.setContentDescription(getString(R.string.CreateNewContact));
->>>>>>> upstream-12.8.1
         }
 
         if (initialSearchString != null) {
@@ -1483,259 +1415,7 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
         this.initialSearchString = initialSearchString;
     }
 
-<<<<<<< OctoGram
-    private void showItemsAnimated() {
-        int from = layoutManager == null ? 0 : layoutManager.findLastVisibleItemPosition();
-        listView.invalidate();
-        listView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                listView.getViewTreeObserver().removeOnPreDrawListener(this);
-                int n = listView.getChildCount();
-                AnimatorSet animatorSet = new AnimatorSet();
-                for (int i = 0; i < n; i++) {
-                    View child = listView.getChildAt(i);
-                    if (listView.getChildAdapterPosition(child) <= from) {
-                        continue;
-                    }
-                    child.setAlpha(0);
-                    int s = Math.min(listView.getMeasuredHeight(), Math.max(0, child.getTop()));
-                    int delay = (int) ((s / (float) listView.getMeasuredHeight()) * 100);
-                    ObjectAnimator a = ObjectAnimator.ofFloat(child, View.ALPHA, 0, 1f);
-                    a.setStartDelay(delay);
-                    a.setDuration(200);
-                    animatorSet.playTogether(a);
-                }
-                animatorSet.start();
-                return true;
-            }
-        });
-    }
 
-    @Override
-    public AnimatorSet onCustomTransitionAnimation(boolean isOpen, Runnable callback) {
-        ValueAnimator valueAnimator = isOpen ? ValueAnimator.ofFloat(1f, 0) : ValueAnimator.ofFloat(0, 1f);
-        ViewGroup parent = (ViewGroup) fragmentView.getParent();
-        BaseFragment previousFragment = parentLayout.getFragmentStack().size() > 1 ? parentLayout.getFragmentStack().get(parentLayout.getFragmentStack().size() - 2) : null;
-        DialogsActivity dialogsActivity = null;
-        if (previousFragment instanceof DialogsActivity) {
-            dialogsActivity = (DialogsActivity) previousFragment;
-        }
-        if (dialogsActivity == null) {
-            return null;
-        }
-        final boolean stories = dialogsActivity.storiesEnabled;
-        RLottieImageView previousFab = dialogsActivity.getFloatingButton();
-        View previousFabContainer = previousFab.getParent() != null ? (View) previousFab.getParent() : null;
-        if (floatingButton != null && (!RapidActionsHelper.canAnimateSendMessageFab() || floatingButtonContainer == null || previousFabContainer == null || previousFab.getVisibility() != View.VISIBLE || Math.abs(previousFabContainer.getTranslationY()) > AndroidUtilities.dp(4) || Math.abs(floatingButtonContainer.getTranslationY()) > AndroidUtilities.dp(4))) {
-            //if (stories) {
-            if (RapidActionsHelper.useCameraAsSendMessageFab(dialogsActivity)) {
-                floatingButton.setAnimation(R.raw.write_contacts_fab_icon_camera, 56, 56);
-            } else {
-                floatingButton.setAnimation(R.raw.write_contacts_fab_icon, 52, 52);
-            }
-            floatingButton.getAnimatedDrawable().setCurrentFrame(floatingButton.getAnimatedDrawable().getFramesCount() - 1);
-            return null;
-        }
-        previousFabContainer.setVisibility(View.GONE);
-        if (isOpen) {
-            parent.setAlpha(0f);
-        }
-        valueAnimator.addUpdateListener(valueAnimator1 -> {
-            float v = (float) valueAnimator.getAnimatedValue();
-            parent.setTranslationX(AndroidUtilities.dp(48) * v);
-            parent.setAlpha(1f - v);
-        });
-        if (floatingButtonContainer != null) {
-            ((ViewGroup) fragmentView).removeView(floatingButtonContainer);
-            parentLayout.getOverlayContainerView().addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(AndroidUtilities.navigationBarHeight));
-        }
-        valueAnimator.setDuration(150);
-        valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
-
-        AnimatorSet animatorSet = new AnimatorSet();
-        DialogsActivity finalDialogsActivity = dialogsActivity;
-        animatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (floatingButtonContainer != null) {
-                    ViewGroup viewParent;
-                    if (floatingButtonContainer.getParent() instanceof ViewGroup) {
-                        viewParent = (ViewGroup) floatingButtonContainer.getParent();
-                        viewParent.removeView(floatingButtonContainer);
-                    }
-                    ((ViewGroup) fragmentView).addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(0));
-
-                    previousFabContainer.setVisibility(View.VISIBLE);
-                    if (!isOpen) {
-                        //if (stories) {
-                        if (RapidActionsHelper.useCameraAsSendMessageFab(finalDialogsActivity)) {
-                            previousFab.setAnimation(R.raw.write_contacts_fab_icon_reverse_camera, 56, 56);
-                        } else {
-                            previousFab.setAnimation(R.raw.write_contacts_fab_icon_reverse, 52, 52);
-                        }
-                        previousFab.getAnimatedDrawable().setCurrentFrame(floatingButton.getAnimatedDrawable().getCurrentFrame());
-                        previousFab.playAnimation();
-                    }
-                }
-                callback.run();
-            }
-        });
-        animatorSet.playTogether(valueAnimator);
-        AndroidUtilities.runOnUIThread(() -> {
-            if (floatingButton == null) {
-                return;
-            }
-            animationIndex = getNotificationCenter().setAnimationInProgress(animationIndex, new int[]{NotificationCenter.diceStickersDidLoad}, false);
-            animatorSet.start();
-            //if (stories) {
-            if (RapidActionsHelper.useCameraAsSendMessageFab(finalDialogsActivity)) {
-                floatingButton.setAnimation(isOpen ? R.raw.write_contacts_fab_icon_camera : R.raw.write_contacts_fab_icon_reverse_camera, 56, 56);
-            } else {
-                floatingButton.setAnimation(isOpen ? R.raw.write_contacts_fab_icon : R.raw.write_contacts_fab_icon_reverse, 52, 52);
-            }
-            floatingButton.playAnimation();
-            if (bounceIconAnimator != null) {
-                bounceIconAnimator.cancel();
-            }
-            bounceIconAnimator = new AnimatorSet();
-            float totalDuration = floatingButton.getAnimatedDrawable().getDuration();
-            long delay = 0;
-            if (isOpen) {
-                for (int i = 0; i < 6; i++) {
-                    AnimatorSet set = new AnimatorSet();
-                    if (i == 0) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1f, 0.9f)
-                        );
-                        set.setDuration((long) (6f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_OUT);
-                    } else if (i == 1) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.06f)
-                        );
-                        set.setDuration((long) (17f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 2) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.06f, 0.9f)
-                        );
-                        set.setDuration((long) (10f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 3) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.03f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 4) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.03f, 0.98f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.98f, 1f)
-                        );
-
-                        set.setDuration((long) (4f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_IN);
-                    }
-                    set.setStartDelay(delay);
-                    delay += set.getDuration();
-                    bounceIconAnimator.playTogether(set);
-                }
-            } else {
-                for (int i = 0; i < 5; i++) {
-                    AnimatorSet set = new AnimatorSet();
-                    if (i == 0) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1f, 0.9f)
-                        );
-                        set.setDuration((long) (7f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_OUT);
-                    } else if (i == 1) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.06f)
-                        );
-                        set.setDuration((long) (8f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 2) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.06f, 0.92f)
-                        );
-                        set.setDuration((long) (7f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 3) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.92f, 1.02f)
-                        );
-                        set.setDuration((long) (9f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.02f, 1f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_IN);
-                    }
-                    set.setStartDelay(delay);
-                    delay += set.getDuration();
-                    bounceIconAnimator.playTogether(set);
-                }
-            }
-            bounceIconAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    floatingButton.setScaleX(1f);
-                    floatingButton.setScaleY(1f);
-                    previousFabContainer.setScaleX(1f);
-                    previousFabContainer.setScaleY(1f);
-                    bounceIconAnimator = null;
-                    getNotificationCenter().onAnimationFinish(animationIndex);
-                }
-            });
-            bounceIconAnimator.start();
-        }, 50);
-        return animatorSet;
-    }
-
-=======
->>>>>>> upstream-12.8.1
     @Override
     public ArrayList<ThemeDescription> getThemeDescriptions() {
         ArrayList<ThemeDescription> themeDescriptions = new ArrayList<>();

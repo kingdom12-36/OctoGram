@@ -511,13 +511,8 @@ public class PollVotesAlert extends BottomSheet {
                 rect.set(cx, cy - dp(4), cx + w, cy + dp(4));
                 canvas.drawRoundRect(rect, dp(4), dp(4), placeholderPaint);
             }
-<<<<<<< OctoGram
             if (needDivider && !OctoConfig.INSTANCE.disableDividers.getValue()) {
                 canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(64), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(64) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
-=======
-            if (needDivider) {
-                canvas.drawLine(LocaleController.isRTL ? 0 : dp(64), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? dp(64) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
->>>>>>> upstream-12.8.1
             }
         }
     }

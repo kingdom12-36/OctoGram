@@ -2381,15 +2381,9 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                                 count++;
                             }
                         } else {
-<<<<<<< OctoGram
-                            count = forum ? 17 : 16;
-                        }
-                        blockCell.setTextAndValueAndIcon(getString(R.string.ChannelPermissions), String.format("%d/%d", count, forum ? 17 : 16), animated, R.drawable.msg_permissions, true);
-=======
                             count = totalCount;
                         }
                         blockCell.setTextAndValueAndIcon(getString(R.string.ChannelPermissions), String.format("%d/%d", count, totalCount), animated, R.drawable.msg_permissions, true);
->>>>>>> upstream-12.8.1
                     }
                     if (memberRequestsCell != null) {
                         memberRequestsCell.setTextAndValueAndIcon(getString("MemberRequests", R.string.MemberRequests), String.format("%d", info.requests_pending), R.drawable.msg_requests, logCell != null && logCell.getVisibility() == View.VISIBLE);

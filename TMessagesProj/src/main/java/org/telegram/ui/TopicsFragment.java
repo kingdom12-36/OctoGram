@@ -35,10 +35,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< OctoGram
-import android.view.animation.AccelerateDecelerateInterpolator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -894,18 +891,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             editText.setCursorColor(getThemedColor(Theme.key_chat_messagePanelCursor));
         }
         other = menu.addItem(0, R.drawable.ic_ab_other, themeDelegate);
-<<<<<<< OctoGram
-        other.addSubItem(toggle_id, R.drawable.msg_discussion, LocaleController.getString(R.string.TopicViewAsMessages));
-        addMemberSubMenu = other.addSubItem(add_member_id, R.drawable.msg_addcontact, LocaleController.getString(R.string.AddMember));
-        boostGroupSubmenu = other.addSubItem(boost_group_id, 0, new RLottieDrawable(R.raw.boosts, "" + R.raw.boosts, AndroidUtilities.dp(24), AndroidUtilities.dp(24)), LocaleController.getString(R.string.BoostingBoostGroupMenu), true, false);
-        createTopicSubmenu = other.addSubItem(create_topic_id, R.drawable.msg_topic_create, LocaleController.getString(R.string.CreateTopic));
-        lockChatSubMenu = other.addSubItem(lock_chat, R.drawable.edit_passcode, LocaleController.getString(R.string.LockChat));
-        unlockChatSubMenu = other.addSubItem(unlock_chat, R.drawable.menu_unlock, LocaleController.getString(R.string.UnLockChat));
-        reportSubmenu = other.addSubItem(report, R.drawable.msg_report, LocaleController.getString(R.string.ReportChat));
-        deleteChatSubmenu = other.addSubItem(delete_chat_id, R.drawable.msg_leave, LocaleController.getString(R.string.LeaveMegaMenu), themeDelegate);
-
-        avatarContainer = new ChatAvatarContainer(context, this, false);
-=======
         other.setContentDescription(getString(R.string.AccDescrMoreOptions));
         other.addSubItem(toggle_id, R.drawable.msg_discussion, getString(R.string.TopicViewAsMessages));
         addMemberSubMenu = other.addSubItem(add_member_id, R.drawable.msg_addcontact, getString(R.string.AddMember));
@@ -915,7 +900,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         deleteChatSubmenu = other.addSubItem(delete_chat_id, R.drawable.msg_leave, getString(R.string.LeaveMegaMenu), themeDelegate);
 
         avatarContainer = new ChatAvatarContainer(context, this, false, resourceProvider);
->>>>>>> upstream-12.8.1
         avatarContainer.getAvatarImageView().setRoundRadius(AndroidUtilities.dp(16));
         avatarContainer.setOccupyStatusBar(!AndroidUtilities.isTablet() && !inPreviewMode);
         avatarContainer.allowDrawStories = getDialogId() < 0;
@@ -1333,51 +1317,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
 
         contentView.addView(recyclerListView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         ((ViewGroup.MarginLayoutParams) recyclerListView.getLayoutParams()).topMargin = -AndroidUtilities.dp(100);
-<<<<<<< OctoGram
-        floatingButtonContainer = new FrameLayout(getContext());
-        floatingButtonContainer.setVisibility(View.VISIBLE);
-        contentView.addView(floatingButtonContainer, LayoutHelper.createFrame((Build.VERSION.SDK_INT >= 21 ? 56 : 60), (Build.VERSION.SDK_INT >= 21 ? 56 : 60), (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
-        floatingButtonContainer.setOnClickListener(v -> {
-            presentFragment(TopicCreateFragment.create(chatId, 0));
-        });
-
-        /*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = ContextCompat.getDrawable(getParentActivity(), R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        } else {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-            floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });
-        }
-        */
-
-        Drawable drawable = CustomFab.createFabBackground();
-        StateListAnimator animator = new StateListAnimator();
-        animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-        animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-        floatingButtonContainer.setStateListAnimator(animator);
-        floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-
-        floatingButtonContainer.setBackground(drawable);
-        floatingButton = new RLottieImageView(context);
-        floatingButton.setImageResource(R.drawable.ic_chatlist_add_2);
-        floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.CreateTopic));
-
-        floatingButtonContainer.addView(floatingButton, LayoutHelper.createFrame(24, 24, Gravity.CENTER));
-=======
         floatingButton = new FragmentFloatingButton(getContext(), resourceProvider);
         contentView.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());
         floatingButton.setOnClickListener(v -> presentFragment(TopicCreateFragment.create(chatId, 0)));
@@ -1385,7 +1324,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         floatingButton.imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         floatingButton.imageView.setPadding(dp(12), dp(12), dp(12), dp(12));
         floatingButton.setContentDescription(getString(R.string.CreateTopic));
->>>>>>> upstream-12.8.1
 
 
         FlickerLoadingView flickerLoadingView = new FlickerLoadingView(context);

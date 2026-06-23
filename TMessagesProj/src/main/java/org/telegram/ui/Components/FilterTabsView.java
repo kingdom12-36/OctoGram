@@ -72,15 +72,11 @@ import org.telegram.ui.Stories.recorder.HintView2;
 import java.util.ArrayList;
 import java.util.Map;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
 import it.octogram.android.TabMode;
 import it.octogram.android.TabStyle;
 import it.octogram.android.utils.appearance.FolderIconController;
 
-=======
-@SuppressLint("ViewConstructor")
->>>>>>> upstream-12.8.1
 public class FilterTabsView extends FrameLayout {
     private TabStyle customTabStyle;
     private TabMode customTabMode;
@@ -325,11 +321,7 @@ public class FilterTabsView extends FrameLayout {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-<<<<<<< OctoGram
-            int w = currentTab.getWidth(false) + FolderIconController.getPaddingTab(customTabMode) + additionalTabWidth;
-=======
             int w = currentTab.getWidth(false) + dp(TAB_PADDING_WIDTH) + additionalTabWidth;
->>>>>>> upstream-12.8.1
             setMeasuredDimension(w, MeasureSpec.getSize(heightMeasureSpec));
         }
 
@@ -424,15 +416,10 @@ public class FilterTabsView extends FrameLayout {
             if (showRemove && (isEditing || editingStartAnimationProgress != 0)) {
                 countWidth = (int) (countWidth + (dp(TAB_COUNTER_HEIGHT) - countWidth) * editingStartAnimationProgress);
             }
-<<<<<<< OctoGram
-            tabWidth = currentTab.iconWidth + currentTab.titleWidth + ((countWidth != 0 && !animateCounterRemove) ? countWidth + AndroidUtilities.dp(6 * (counterText != null ? 1.0f : editingStartAnimationProgress)) : 0);
-            float textX = ((getMeasuredWidth() - tabWidth) / 2f) + currentTab.iconWidth;
-=======
 
             tabCounterVisible = (countWidth != 0 && !animateCounterRemove) ? (counterText != null ? 1.0f : editingStartAnimationProgress) : 0;
             tabWidth = currentTab.titleWidth + ((countWidth != 0 && !animateCounterRemove) ? countWidth + dp(-2 * (counterText != null ? 1.0f : editingStartAnimationProgress)) : 0);
             float textX = (getMeasuredWidth() - tabWidth) / 2f;
->>>>>>> upstream-12.8.1
             if (animateTextX) {
                 textX = textX * changeProgress + animateFromTextX * (1f - changeProgress);
             }
@@ -559,15 +546,9 @@ public class FilterTabsView extends FrameLayout {
                 }
                 int textSpace = (customTabMode != null ? customTabMode.getValue() : OctoConfig.INSTANCE.tabMode.getValue()) != TabMode.ICON.getValue() ? AndroidUtilities.dp(6) : 0;
                 if (animateTextChange && titleAnimateOutLayout == null) {
-<<<<<<< OctoGram
-                    x = textX - titleXOffset + titleOffsetX + titleWidth + textSpace;
-                } else {
-                    x = textX + titleWidth + textSpace;
-=======
                     x = textX - titleXOffset + titleOffsetX + titleWidth + dp(5);
                 } else {
                     x = textX + titleWidth + dp(5);
->>>>>>> upstream-12.8.1
                 }
                 int countTop = (getMeasuredHeight() - dp(TAB_COUNTER_HEIGHT)) / 2;
 
@@ -755,7 +736,6 @@ public class FilterTabsView extends FrameLayout {
             } else {
                 countWidth = 0;
             }
-<<<<<<< OctoGram
             int tabWidth;
             if ((customTabMode != null ? customTabMode.getValue() : OctoConfig.INSTANCE.tabMode.getValue()) != TabMode.ICON.getValue()) {
                 tabWidth = currentTab.iconWidth + currentTab.titleWidth + (countWidth != 0 ? countWidth + AndroidUtilities.dp(6 * 1.0f) : 0);
@@ -763,10 +743,6 @@ public class FilterTabsView extends FrameLayout {
                 tabWidth = currentTab.iconWidth + (countWidth != 0 ? countWidth + AndroidUtilities.dp(6 * 1.0f) : 0);
             }
             int textX = (getMeasuredWidth() - tabWidth) / 2 + currentTab.iconWidth;
-=======
-            int tabWidth = currentTab.titleWidth + (countWidth != 0 ? countWidth + dp(6 * (counterText != null ? 1.0f : editingStartAnimationProgress)) : 0);
-            int textX = (getMeasuredWidth() - tabWidth) / 2;
->>>>>>> upstream-12.8.1
 
             if (textX != lastTextX) {
                 animateTextX = true;
@@ -1197,13 +1173,9 @@ public class FilterTabsView extends FrameLayout {
         };
         itemAnimator.setDelayAnimations(false);
         listView.setItemAnimator(itemAnimator);
-<<<<<<< OctoGram
         int finalTabStyle = customTabStyle != null ? customTabStyle.getValue() : OctoConfig.INSTANCE.tabStyle.getValue();
         listView.setSelectorType(finalTabStyle >= TabStyle.CHIPS.getValue() ? 9 : 8);
         //listView.setSelectorType(8);
-=======
-        listView.setSelectorType(9);
->>>>>>> upstream-12.8.1
         listView.setSelectorRadius(6);
         listView.setSelectorDrawableColor(Theme.getColor(selectorColorKey, resourcesProvider));
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
@@ -1261,13 +1233,8 @@ public class FilterTabsView extends FrameLayout {
             }
             TabView tabView = (TabView) view;
             if (isEditing) {
-<<<<<<< OctoGram
                 if (position != 0 || OctoConfig.INSTANCE.hideOnlyAllChatsFolder.getValue()) {
                     int side = AndroidUtilities.dp(6);
-=======
-                if (position != 0) {
-                    int side = dp(6);
->>>>>>> upstream-12.8.1
                     if (tabView.rect.left - side < x && tabView.rect.right + side > x) {
                         delegate.onDeletePressed(tabView.currentTab.id);
                     }
@@ -1430,11 +1397,7 @@ public class FilterTabsView extends FrameLayout {
         Tab tab = new Tab(id, text(text, entities), emoticon, noanimate);
         tab.isDefault = isDefault;
         tab.isLocked = isLocked;
-<<<<<<< OctoGram
-        allTabsWidth += tab.getWidth(true) + FolderIconController.getPaddingTab(customTabMode);
-=======
         allTabsWidth += tab.getWidth(true) + dp(TAB_PADDING_WIDTH);
->>>>>>> upstream-12.8.1
         tabs.add(tab);
     }
 
@@ -1453,11 +1416,7 @@ public class FilterTabsView extends FrameLayout {
         Tab tab = new Tab(id, text, emoticon, noanimate);
         tab.isDefault = isDefault;
         tab.isLocked = isLocked;
-<<<<<<< OctoGram
-        allTabsWidth += tab.getWidth(true) + FolderIconController.getPaddingTab(customTabMode);
-=======
         allTabsWidth += tab.getWidth(true) + dp(TAB_PADDING_WIDTH);
->>>>>>> upstream-12.8.1
         tabs.add(tab);
     }
 
@@ -1548,11 +1507,7 @@ public class FilterTabsView extends FrameLayout {
             positionToWidth.put(a, tabWidth);
             positionToCount.put(a, tabs.get(a).counter);
             positionToX.put(a, xOffset + additionalTabWidth / 2);
-<<<<<<< OctoGram
-            xOffset += tabWidth + FolderIconController.getPaddingTab(customTabMode) + additionalTabWidth;
-=======
             xOffset += tabWidth + dp(TAB_PADDING_WIDTH) + additionalTabWidth;
->>>>>>> upstream-12.8.1
         }
     }
 
@@ -1560,7 +1515,6 @@ public class FilterTabsView extends FrameLayout {
     protected boolean drawChild(@NonNull Canvas canvas, View child, long drawingTime) {
         boolean result = super.drawChild(canvas, child, drawingTime);
         if (child == listView) {
-<<<<<<< OctoGram
             final int height = getMeasuredHeight();
             selectorDrawable.setAlpha((int) (255 * listView.getAlpha()));
             float indicatorX = 0;
@@ -1654,9 +1608,6 @@ public class FilterTabsView extends FrameLayout {
                 selectorDrawable.draw(canvas);
                 canvas.restore();
             }
-=======
-            drawSelector(canvas);
->>>>>>> upstream-12.8.1
         }
         long newTime = SystemClock.elapsedRealtime();
         long dt = Math.min(17, newTime - lastEditingAnimationTime);
@@ -1711,9 +1662,6 @@ public class FilterTabsView extends FrameLayout {
         return result;
     }
 
-<<<<<<< OctoGram
-    /*@Override
-=======
     private void drawSelector(Canvas canvas) {
         final int height = getMeasuredHeight();
         selectorDrawable.setAlpha((int) (255 * listView.getAlpha()));
@@ -1809,7 +1757,6 @@ public class FilterTabsView extends FrameLayout {
     }
 
     @Override
->>>>>>> upstream-12.8.1
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (!tabs.isEmpty()) {
             final int width = MeasureSpec.getSize(widthMeasureSpec) - listViewPaddingH * 2;
@@ -2041,11 +1988,7 @@ public class FilterTabsView extends FrameLayout {
                     if(defaultTab != null) defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
                 }
                 for (int b = 0; b < N; b++) {
-<<<<<<< OctoGram
-                    allTabsWidth += tabs.get(b).getWidth(true) + FolderIconController.getPaddingTab(customTabMode);
-=======
                     allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
->>>>>>> upstream-12.8.1
                 }
                 break;
             }
@@ -2079,11 +2022,7 @@ public class FilterTabsView extends FrameLayout {
                 if(defaultTab != null) defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
             }
             for (int b = 0, N = tabs.size(); b < N; b++) {
-<<<<<<< OctoGram
-                allTabsWidth += tabs.get(b).getWidth(true) + FolderIconController.getPaddingTab(customTabMode);
-=======
                 allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
->>>>>>> upstream-12.8.1
             }
         }
     }
@@ -2252,26 +2191,16 @@ public class FilterTabsView extends FrameLayout {
         }
 
         @Override
-<<<<<<< OctoGram
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             if (!OctoConfig.INSTANCE.hideOnlyAllChatsFolder.getValue() && MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && (!isEditing || (viewHolder.getAdapterPosition() == 0 && tabs.get(0).isDefault && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium()))) {
-=======
-        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && (!isEditing || (viewHolder.getAdapterPosition() == 0 && tabs.get(0).isDefault && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium()))) {
->>>>>>> upstream-12.8.1
                 return makeMovementFlags(0, 0);
             }
             return makeMovementFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0);
         }
 
         @Override
-<<<<<<< OctoGram
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
             if (!OctoConfig.INSTANCE.hideOnlyAllChatsFolder.getValue() && MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
-=======
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder source, @NonNull RecyclerView.ViewHolder target) {
-            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
->>>>>>> upstream-12.8.1
                 return false;
             }
             adapter.swapElements(source.getAdapterPosition(), target.getAdapterPosition());

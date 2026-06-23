@@ -13,20 +13,11 @@ import static org.telegram.messenger.LocaleController.getString;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-<<<<<<< OctoGram
-import android.animation.StateListAnimator;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
-=======
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
->>>>>>> upstream-12.8.1
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -39,10 +30,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< OctoGram
-import android.view.ViewTreeObserver;
-=======
->>>>>>> upstream-12.8.1
+
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -107,32 +95,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-<<<<<<< OctoGram
 import it.octogram.android.app.ui.components.CustomFab;
 import it.octogram.android.app.ui.components.OutlineProvider;
 
 public class GroupCreateActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, View.OnClickListener {
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
-
-public class GroupCreateActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target, View.OnClickListener, WindowAnimatedInsetsProvider.Listener {
-    private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
-
-    private static final int ANIMATOR_ID_SELECTED_CONTAINER_HEIGHT = 3;
-    private static final int ANIMATOR_ID_CALL_BUTTONS_VISIBLE = 4;
-
-    private final FactorAnimator animatorSelectorContainerHeight = new FactorAnimator(ANIMATOR_ID_SELECTED_CONTAINER_HEIGHT,
-        this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorCallButtonsVisible = new BoolAnimator(ANIMATOR_ID_CALL_BUTTONS_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-
-    private View actionBarBackgroundView;
-    private HeaderShadowView headerShadowView;
-    private FragmentSearchField searchField;
-
-    private FragmentSpansContainer spansContainer;
->>>>>>> upstream-12.8.1
 
     private RecyclerListView listView;
     private LinearLayoutManager layoutManager;
@@ -681,50 +647,13 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
         });
         listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
 
-<<<<<<< OctoGram
-        floatingButton = new ImageView(context);
-        floatingButton.setScaleType(ImageView.ScaleType.CENTER);
-
-        /*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }*/
-        var drawable = CustomFab.createFabBackground();
-        floatingButton.setBackgroundDrawable(drawable);
-        floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-=======
         floatingButton = new FragmentFloatingButton(context, resourceProvider);
->>>>>>> upstream-12.8.1
         if (isNeverShare || isAlwaysShare || addToGroup) {
             floatingButton.imageView.setImageResource(R.drawable.floating_check);
         } else {
             BackDrawable backDrawable = new BackDrawable(false);
             backDrawable.setArrowRotation(180);
-<<<<<<< OctoGram
-            floatingButton.setImageDrawable(backDrawable);
-        }
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButton.setStateListAnimator(animator);
-            floatingButton.setOutlineProvider(new OutlineProvider());
-/*
-            floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });
-*/
-=======
             floatingButton.imageView.setImageDrawable(backDrawable);
->>>>>>> upstream-12.8.1
         }
         if (!isCall) {
             contentView.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());

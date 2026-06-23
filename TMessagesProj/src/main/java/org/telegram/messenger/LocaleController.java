@@ -700,19 +700,6 @@ public class LocaleController {
         languagesDict.put(localeInfo.shortName, localeInfo);
 
         localeInfo = new LocaleInfo();
-<<<<<<< OctoGram
-        localeInfo.name = "日本語";
-        localeInfo.nameEnglish = "Japanese";
-        localeInfo.shortName = "ja_raw";
-        localeInfo.baseLangCode = null;
-        localeInfo.isRtl = false;
-        localeInfo.pathToFile = "unofficial";
-        localeInfo.pluralLangCode = "ja";
-        localeInfo.builtIn = true;
-        languages.add(localeInfo);
-        languagesDict.put(localeInfo.getKey(), localeInfo);
-        languagesDict.put("ja", localeInfo);
-=======
         localeInfo.name = "Українська";
         localeInfo.nameEnglish = "Ukrainian";
         localeInfo.shortName = localeInfo.pluralLangCode = "uk";
@@ -729,7 +716,6 @@ public class LocaleController {
         localeInfo.builtIn = true;
         languages.add(localeInfo);
         languagesDict.put(localeInfo.shortName, localeInfo);
->>>>>>> upstream-12.8.1
 
         loadOtherLanguages();
         if (remoteLanguages.isEmpty()) {

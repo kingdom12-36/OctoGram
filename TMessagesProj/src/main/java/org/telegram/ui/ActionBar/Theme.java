@@ -2639,21 +2639,12 @@ public class Theme {
                 }
 
                 //override default themes
-<<<<<<< OctoGram
-                if (isHome(themeAccent) && name.equals("Dark Blue") || name.equals("Night") || "Amoled".equals(name)) {
-                    themeAccent.myMessagesAccentColor = 0xff6573f8;
-                    themeAccent.myMessagesGradientAccentColor1 = 0xff7644cb;
-                    themeAccent.myMessagesGradientAccentColor2 = 0xff8849b4;
-                    themeAccent.myMessagesGradientAccentColor3 = 0xffa751a8;
-                    if (name.equals("Night") || "Amoled".equals(name)) {
-=======
                 if (isHome(themeAccent) && name.equals("Dark Blue") || name.equals("Night")) {
                     themeAccent.myMessagesAccentColor = 0xff258DE5;
                     themeAccent.myMessagesGradientAccentColor1 = 0xff4272DF;
                     themeAccent.myMessagesGradientAccentColor2 = 0xff8146D7;
                     themeAccent.myMessagesGradientAccentColor3 = 0xff9F3EAA;
                     if (name.equals("Night")) {
->>>>>>> upstream-12.8.1
                         themeAccent.patternIntensity = -0.57f;
                         themeAccent.backgroundOverrideColor = 0xff6c7fa6;
                         themeAccent.backgroundGradientOverrideColor1 = 0xff2e344b;
@@ -7336,15 +7327,11 @@ public class Theme {
                 switchingNightTheme = false;
             }
         } else {
-<<<<<<< OctoGram
-            if (currentTheme != currentDayTheme && (currentTheme == null || currentDayTheme != null && currentTheme.isDark() != currentDayTheme.isDark())) {
-=======
             ThemeInfo dayTheme = currentDayTheme;
             if (dayTheme != null && dayTheme.isDark() && selectedAutoNightType != AUTO_NIGHT_TYPE_NONE && defaultTheme != null) {
                 dayTheme = defaultTheme;
             }
             if (currentTheme != dayTheme && (currentTheme == null || dayTheme != null && currentTheme.isDark() != dayTheme.isDark())) {
->>>>>>> upstream-12.8.1
                 isInNigthMode = false;
                 lastThemeSwitchTime = SystemClock.elapsedRealtime();
                 switchingNightTheme = true;

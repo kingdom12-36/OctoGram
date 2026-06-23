@@ -32,12 +32,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-<<<<<<< OctoGram
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,10 +41,7 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.DialogObject;
-<<<<<<< OctoGram
-=======
 import org.telegram.messenger.LiteMode;
->>>>>>> upstream-12.8.1
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
@@ -83,10 +75,7 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.ColoredImageSpan;
-<<<<<<< OctoGram
-=======
 import org.telegram.ui.Components.DialogsActivityTopPanelLayout;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.FlickerLoadingView;
 import org.telegram.ui.Components.FragmentFloatingButton;
 import org.telegram.ui.Components.FragmentContextView;
@@ -103,8 +92,6 @@ import org.telegram.ui.Components.ScaleStateListAnimator;
 import org.telegram.ui.Components.ShareAlert;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.TextHelper;
-<<<<<<< OctoGram
-=======
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
@@ -117,7 +104,6 @@ import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundPro
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor;
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode;
 import org.telegram.ui.Components.chat.ViewPositionWatcher;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.voip.VoIPHelper;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 import org.telegram.ui.Stories.recorder.HintView2;
@@ -137,15 +123,10 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-<<<<<<< OctoGram
 import it.octogram.android.app.ui.components.CustomFab;
 import it.octogram.android.app.ui.components.OutlineProvider;
 
 public class CallLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
-=======
-public class CallLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, MainTabsActivity.TabFragmentDelegate {
-	private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
->>>>>>> upstream-12.8.1
 
 	private EmptyTextProgressView emptyView;
 	private LinearLayoutManager layoutManager;
@@ -910,41 +891,6 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 			emptyView.showTextView();
 		}
 
-<<<<<<< OctoGram
-		floatingButton = new ImageView(context);
-		floatingButton.setVisibility(View.VISIBLE);
-		floatingButton.setScaleType(ImageView.ScaleType.CENTER);
-
-		/*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-		if (Build.VERSION.SDK_INT < 21) {
-			Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-			shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-			CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-			combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-			drawable = combinedDrawable;
-		}*/
-		floatingButton.setBackgroundDrawable(CustomFab.createFabBackground());
-		floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-		floatingButton.setImageResource(R.drawable.filled_calls_plus);
-		floatingButton.setContentDescription(getString(R.string.Call));
-		if (Build.VERSION.SDK_INT >= 21) {
-			StateListAnimator animator = new StateListAnimator();
-			animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-			animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-			floatingButton.setStateListAnimator(animator);
-			floatingButton.setOutlineProvider(new OutlineProvider());
-			/*floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-				@SuppressLint("NewApi")
-				@Override
-				public void getOutline(View view, Outline outline) {
-					outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-				}
-			});*/
-		}
-		frameLayout.addView(floatingButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
-		floatingButton.setOnClickListener(v -> {
-			openCreateCall();
-=======
 		floatingButton = new FragmentFloatingButton(context, resourceProvider);
 		floatingButton.imageView.setImageResource(R.drawable.filled_calls_plus);
 		floatingButton.setContentDescription(getString(R.string.Call));
@@ -956,7 +902,6 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		topPanelLayout.setOnAnimatedHeightChangedListener(() -> {
 			blur3_InvalidateBlur();
 			checkUi_listViewPadding();
->>>>>>> upstream-12.8.1
 		});
 
 		BlurredBackgroundDrawable topPanelLayoutBackground = iBlur3FactoryLiquidGlass.create(topPanelLayout, BlurredBackgroundProviderImpl.topPanel(resourceProvider));

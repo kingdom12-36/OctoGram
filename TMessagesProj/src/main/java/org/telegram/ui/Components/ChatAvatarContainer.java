@@ -71,13 +71,8 @@ import org.telegram.ui.TopicsFragment;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-<<<<<<< OctoGram
 import it.octogram.android.utils.CustomEmojiStatuses;
 import it.octogram.android.utils.OctoLogging;
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
->>>>>>> upstream-12.8.1
 
 public class ChatAvatarContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -662,7 +657,6 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-<<<<<<< OctoGram
         int padding = isCentered() ? dp(isPreviewMode() ? 35 : 10) : 0;
         int width = MeasureSpec.getSize(widthMeasureSpec) + (isCentered() ? 0 : titleTextView.getPaddingRight());
         int availableWidth = width - dp(((avatarImageView.getVisibility() == VISIBLE || isCentered()) ? 54 : 0) + 16);
@@ -671,12 +665,6 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
 
         avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(42), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(42), MeasureSpec.EXACTLY));
         titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth - padding, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8) + titleTextView.getPaddingRight(), MeasureSpec.AT_MOST));
-=======
-        int width = MeasureSpec.getSize(widthMeasureSpec) + titleTextView.getPaddingRight();
-        int availableWidth = width - dp((avatarImageView.getVisibility() == VISIBLE ? 54 : 0) + 16);
-        avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp), MeasureSpec.EXACTLY));
-        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8) + titleTextView.getPaddingRight(), MeasureSpec.AT_MOST));
->>>>>>> upstream-12.8.1
         if (subtitleTextView != null) {
             subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth - padding, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
         } else if (animatedSubtitleTextView != null) {
@@ -712,13 +700,8 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         titleTextLargerCopyView = new SimpleTextView(getContext());
         this.titleTextLargerCopyView.set(titleTextLargerCopyView);
         titleTextLargerCopyView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
-<<<<<<< OctoGram
-        titleTextLargerCopyView.setTextSize(18);
-        titleTextLargerCopyView.setGravity(isCentered() ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT);
-=======
         titleTextLargerCopyView.setTextSizePx(dp(glassMode ? 17.5f : 18));
         titleTextLargerCopyView.setGravity(Gravity.LEFT);
->>>>>>> upstream-12.8.1
         titleTextLargerCopyView.setTypeface(AndroidUtilities.bold());
         titleTextLargerCopyView.setLeftDrawableTopPadding(-dp(1.3f));
         titleTextLargerCopyView.setRightDrawable(titleTextView.getRightDrawable());
@@ -743,13 +726,8 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         this.subtitleTextLargerCopyView.set(subtitleTextLargerCopyView);
         subtitleTextLargerCopyView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
         subtitleTextLargerCopyView.setTag(Theme.key_actionBarDefaultSubtitle);
-<<<<<<< OctoGram
-        subtitleTextLargerCopyView.setTextSize(14);
-        subtitleTextLargerCopyView.setGravity(isCentered() ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT);
-=======
         subtitleTextLargerCopyView.setTextSizePx(dp(glassMode ? 13.5f : 14));
         subtitleTextLargerCopyView.setGravity(Gravity.LEFT);
->>>>>>> upstream-12.8.1
         if (subtitleTextView != null) {
             subtitleTextLargerCopyView.setText(subtitleTextView.getText());
         } else if (animatedSubtitleTextView != null) {
@@ -783,7 +761,6 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-<<<<<<< OctoGram
         int actionBarHeight = ActionBar.getCurrentActionBarHeight();
         int viewTop = (actionBarHeight - dp(42)) / 2 + (Build.VERSION.SDK_INT >= 21 && occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
 
@@ -806,14 +783,6 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
 
         OctoLogging.d("AVATARCONTAINER2", "UPDATED VIEW: "+titleTextView.getMeasuredWidth());
 
-=======
-        final int actionBarHeight = ActionBar.getCurrentActionBarHeight();
-        final int viewTop = (actionBarHeight - avatarImageView.getMeasuredHeight()) / 2 + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
-        final int subtitleTop = viewTop + dp(glassMode ? 23.66f : 24);
-
-        avatarImageView.layout(leftPadding, viewTop, leftPadding + avatarImageView.getMeasuredWidth(), viewTop + avatarImageView.getMeasuredHeight());
-        int l = leftPadding + (avatarImageView.getVisibility() == VISIBLE ? dp(glassMode ? 48.66f : 54) : dp(glassMode ? 12 : 0)) + rightAvatarPadding;
->>>>>>> upstream-12.8.1
         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
         if (getSubtitleTextView().getVisibility() != GONE) {
             titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
@@ -995,13 +964,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
         }
         titleTextView.setText(value);
-<<<<<<< OctoGram
-        titleTextView.setScrollNonFitText(scrollable || isCentered());
-
-        //titleTextView.setScrollNonFitText(scrollable);
-=======
         rightDrawableIsScam = false;
->>>>>>> upstream-12.8.1
         if (scam || fake) {
             rightDrawableIsScam = true;
             if (!(titleTextView.getRightDrawable() instanceof ScamDrawable)) {
@@ -1045,14 +1008,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             emojiStatusDrawable.setColor(getThemedColor(Theme.key_profile_verifiedBackground));
             titleTextView.setRightDrawable(emojiStatusDrawable);
             rightDrawableIsScamOrVerified = false;
-<<<<<<< OctoGram
-            rightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
-            if (isCentered()) {
-                titleTextView.setRightDrawable2(null);
-            }
-=======
             rightDrawableContentDescription = getString(R.string.AccDescrPremium);
->>>>>>> upstream-12.8.1
         } else {
             titleTextView.setRightDrawable(null);
             rightDrawableContentDescription = null;

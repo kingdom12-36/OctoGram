@@ -72,12 +72,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-<<<<<<< OctoGram
-=======
 import android.window.BackEvent;
 import android.window.OnBackAnimationCallback;
 import android.window.OnBackInvokedCallback;
->>>>>>> upstream-12.8.1
 import android.window.OnBackInvokedDispatcher;
 
 import androidx.activity.BackEventCompat;
@@ -303,15 +300,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     private ArrayList<TLRPC.User> contactsToSend;
     private Uri contactsToSendUri;
     private int currentConnectionState;
-<<<<<<< OctoGram
-    public final static ArrayList<BaseFragment> mainFragmentsStack = new ArrayList<>();
-    private final static ArrayList<BaseFragment> layerFragmentsStack = new ArrayList<>();
-    private final static ArrayList<BaseFragment> rightFragmentsStack = new ArrayList<>();
-=======
     private final ArrayList<BaseFragment> mainFragmentsStack = new ArrayList<>();
     private final ArrayList<BaseFragment> layerFragmentsStack = new ArrayList<>();
     private final ArrayList<BaseFragment> rightFragmentsStack = new ArrayList<>();
->>>>>>> upstream-12.8.1
     private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
     private ArrayList<Parcelable> importingStickers;
     private ArrayList<String> importingStickersEmoji;
@@ -326,21 +317,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     private final IPipActivityHandler pipActivityHandler = pipActivityController.getHandler();
 
     private ImageView themeSwitchImageView;
-<<<<<<< OctoGram
-    private View themeSwitchSunView;
-    private RLottieDrawable themeSwitchSunDrawable;
-    //private ActionBarLayout actionBarLayout;
-    //private ActionBarLayout layersActionBarLayout;
-    //private ActionBarLayout rightActionBarLayout;
-    private ActionBarOverride actionBarLayout;
-    private ActionBarOverride layersActionBarLayout;
-    private ActionBarOverride rightActionBarLayout;
-=======
     private ImageView themeSwitchSunView;
     public ActionBarLayout actionBarLayout;
     private ActionBarLayout layersActionBarLayout;
     public ActionBarLayout rightActionBarLayout;
->>>>>>> upstream-12.8.1
     private RelativeLayout launchLayout;
     private FrameLayout shadowTablet;
     private FrameLayout shadowTabletSide;
@@ -420,21 +400,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
     public static LaunchActivity instance;
 
-<<<<<<< OctoGram
-    private AssetManager iconsAsset;
-    private IconsResources customResources;
-
-    @Override
-    public Resources getResources() {
-        if (iconsAsset != super.getResources().getAssets()) {
-            customResources = new IconsResources(super.getResources());
-            iconsAsset = super.getResources().getAssets();
-        }
-        return customResources;
-    }
-=======
     public boolean voipLaunchedInBackground;
->>>>>>> upstream-12.8.1
 
     public WindowAnimatedInsetsProvider getRootAnimatedInsetsListener() {
         return rootAnimatedInsetsListener;
@@ -608,7 +574,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         });
         setupActionBarLayout();
-<<<<<<< OctoGram
         sideMenuContainer = new DrawerContainer(this);
         sideMenu = new RecyclerListView(this) {
             @Override
@@ -900,8 +865,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             return false;
         });
         updateLayout = new DrawerPageUpdateButtonCell(this, sideMenu, sideMenuContainer);
-=======
->>>>>>> upstream-12.8.1
         drawerLayoutContainer.setParentActionBarLayout(actionBarLayout);
         actionBarLayout.setDrawerLayoutContainer(drawerLayoutContainer);
         actionBarLayout.setFragmentStack(mainFragmentsStack);
@@ -1047,12 +1010,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         MediaController.getInstance().setBaseActivity(this, true);
         ApplicationLoader.startAppCenter(this);
-<<<<<<< OctoGram
-//        if (updateLayout != null) {
-//            updateLayout.updateAppUpdateViews(currentAccount, false);
-//        }
-=======
->>>>>>> upstream-12.8.1
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             FingerprintController.checkKeyReady();
@@ -1095,144 +1053,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         BackupAgent.requestBackup(this);
         RestrictedLanguagesSelectActivity.checkRestrictedLanguages(false);
-<<<<<<< OctoGram
 
         if (!OctoConfig.INSTANCE.usePredictiveGestures.getValue()) {
             attachBackEvent();
-=======
-        if (Build.VERSION.SDK_INT >= 34) {
-            if (onBackAnimationCallback == null) {
-                onBackAnimationCallback =  new OnBackAnimationCallback() {
-                    private AnimationNotificationsLocker locker = new AnimationNotificationsLocker();
-                    private boolean locked;
-
-                    private boolean started = false;
-                    private boolean invoked = false;
-
-                    @Override
-                    public void onBackInvoked() {
-                        invoked = true;
-                        if (locked) {
-                            locker.unlock();
-                            locked = false;
-                        }
-
-                        if (AndroidUtilities.isTablet()) {
-                            onBackPressed();
-                            return;
-                        }
-                        if (!onBackPressed(true))
-                            return;
-                        if (actionBarLayout != null) {
-                            actionBarLayout.onBackInvoked();
-                        } else {
-                            onBackPressed();
-                        }
-                    }
-
-                    @Override
-                    public void onBackStarted(@NonNull BackEvent backEvent) {
-                        started = true;
-                        invoked = false;
-                        predictiveBackStarted = false;
-                    }
-
-                    private void onBackStartedInternal(BackEvent backEvent) {
-                        if (AndroidUtilities.isTablet()) return;
-                        if (!onBackPressed(false)) return;
-                        if (actionBarLayout != null) {
-                            boolean started = actionBarLayout.onBackStarted(backEvent.getTouchX(), backEvent.getTouchY());
-                            if (started && !locked) {
-                                locker.lock();
-                                locked = true;
-                            }
-                        }
-                    }
-
-                    private static final float LAZY_START = 0.015f;
-                    private boolean predictiveBackStarted;
-                    private boolean predictiveBackInvoked;
-
-                    @Override
-                    public void onBackProgressed(@NonNull BackEvent backEvent) {
-                        if (started && invoked) return;
-
-                        final float progress = backEvent.getProgress();
-                        if (!predictiveBackStarted && progress > LAZY_START) {
-                            predictiveBackStarted = true;
-                            onBackStartedInternal(backEvent);
-                        }
-
-                        final float fixedProgress = Math.max(0, progress - LAZY_START) / (1 - LAZY_START);
-
-                        if (AndroidUtilities.isTablet()) return;
-                        if (actionBarLayout != null) {
-                            actionBarLayout.onBackProgress(fixedProgress);
-                        }
-                    }
-
-                    @Override
-                    public void onBackCancelled() {
-                        started = false;
-                        invoked = false;
-                        if (locked) {
-                            locker.unlock();
-                            locked = false;
-                        }
-
-                        if (AndroidUtilities.isTablet()) return;
-                        if (actionBarLayout != null) {
-                            actionBarLayout.onBackCancelled();
-                        }
-                    }
-                };
-            }
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                (OnBackAnimationCallback) onBackAnimationCallback
-            );
-        } else if (Build.VERSION.SDK_INT >= 33) {
-            if (onBackInvokedCallback == null) {
-                onBackInvokedCallback = new OnBackInvokedCallback() {
-                    @Override
-                    public void onBackInvoked() {
-                        if (AndroidUtilities.isTablet()) {
-                            onBackPressed();
-                            return;
-                        }
-                        if (!onBackPressed(true))
-                            return;
-                        if (actionBarLayout != null) {
-                            actionBarLayout.onBackInvoked();
-                        } else {
-                            onBackPressed();
-                        }
-                    }
-                };
-            }
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                (OnBackInvokedCallback) onBackInvokedCallback
-            );
-        }
-
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        //    refreshRateController = new RefreshRateController(this);
-        //}
-        checkFrameMetrics();
-    }
-
-    public void checkFrameMetrics() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (frameMetricsOverlayView == null && SharedConfig.frameMetricsEnabled) {
-                frameMetricsOverlayView = FrameMetricsOverlayView.attachToActivityCorner(this,
-                        Gravity.CENTER_VERTICAL | Gravity.START, 12, frameLayout);
-            }
-            if (frameMetricsOverlayView != null && !SharedConfig.frameMetricsEnabled) {
-                frameMetricsOverlayView.detach();
-                frameMetricsOverlayView = null;
-            }
->>>>>>> upstream-12.8.1
         }
     }
 
@@ -1374,13 +1197,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
             launchLayout.addView(actionBarLayout.getView());
 
-<<<<<<< OctoGram
-            //rightActionBarLayout = new ActionBarLayout(this, false);
-            rightActionBarLayout = new ActionBarOverride(this, false);
-=======
             rightActionBarLayout = new ActionBarLayout(this, false);
             rightActionBarLayout.setIsRightLayout();
->>>>>>> upstream-12.8.1
             rightActionBarLayout.setFragmentStack(rightFragmentsStack);
             rightActionBarLayout.setDelegate(this);
             launchLayout.addView(rightActionBarLayout.getView());
@@ -1466,150 +1284,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return new IntroActivity();
     }
 
-<<<<<<< OctoGram
-    public void showSelectStatusDialog() {
-        if (selectAnimatedEmojiDialog != null || SharedConfig.appLocked) {
-            return;
-        }
-        BaseFragment fragment = actionBarLayout.getLastFragment();
-        if (fragment == null) {
-            return;
-        }
-        final View profileCell = sideMenu.getChildAt(0);
-        final SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow[] popup = new SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow[1];
-        TLRPC.User user = MessagesController.getInstance(UserConfig.selectedAccount).getUser(UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId());
-        int xoff = 0, yoff = 0;
-        boolean hasEmoji = false;
-        AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable scrimDrawable = null;
-        View scrimDrawableParent = null;
-        DrawerProfileCell profileCellCasted = null;
-        if (profileCell instanceof DrawerProfileCell) {
-            profileCellCasted = (DrawerProfileCell) profileCell;
-            scrimDrawable = profileCellCasted.getEmojiStatusDrawable();
-            if (scrimDrawable != null) {
-                scrimDrawable.play();
-            }
-            scrimDrawableParent = profileCellCasted.getEmojiStatusDrawableParent();
-            hasEmoji = scrimDrawable != null && scrimDrawable.getDrawable() instanceof AnimatedEmojiDrawable;
-            profileCellCasted.getEmojiStatusLocation(AndroidUtilities.rectTmp2);
-            yoff = -(profileCell.getHeight() - AndroidUtilities.rectTmp2.centerY()) - AndroidUtilities.dp(16);
-            xoff = AndroidUtilities.rectTmp2.centerX();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    getWindow() != null &&
-                    getWindow().getDecorView() != null &&
-                    getWindow().getDecorView().getRootWindowInsets() != null
-            ) {
-                xoff -= getWindow().getDecorView().getRootWindowInsets().getStableInsetLeft();
-            }
-        }
-        SelectAnimatedEmojiDialog popupLayout = new SelectAnimatedEmojiDialog(fragment, this, true, xoff, SelectAnimatedEmojiDialog.TYPE_EMOJI_STATUS, null) {
-            @Override
-            public void onSettings() {
-                if (drawerLayoutContainer != null) {
-                    drawerLayoutContainer.closeDrawer();
-                }
-            }
-            @Override
-            protected boolean willApplyEmoji(View view, Long documentId, TLRPC.Document document, TL_stars.TL_starGiftUnique gift, Integer until) {
-                if (gift != null) {
-                    final TL_stars.SavedStarGift savedStarGift = StarsController.getInstance(currentAccount).findUserStarGift(gift.id);
-                    return savedStarGift == null || MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) >= 2;
-                }
-                return true;
-            }
 
-            @Override
-            protected void onEmojiSelected(View emojiView, Long documentId, TLRPC.Document document, TL_stars.TL_starGiftUnique gift, Integer until) {
-                TLRPC.EmojiStatus emojiStatus;
-                if (documentId == null) {
-                    emojiStatus = new TLRPC.TL_emojiStatusEmpty();
-                } else if (gift != null) {
-                    final TL_stars.SavedStarGift savedStarGift = StarsController.getInstance(currentAccount).findUserStarGift(gift.id);
-                    if (savedStarGift != null && MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) < 2) {
-                        MessagesController.getGlobalMainSettings().edit().putInt("statusgiftpage", MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) + 1).apply();
-                        new StarGiftSheet(getContext(), currentAccount, UserConfig.getInstance(currentAccount).getClientUserId(), null)
-                            .set(savedStarGift, null)
-                            .setupWearPage()
-                            .show();
-                        if (popup[0] != null) {
-                            selectAnimatedEmojiDialog = null;
-                            popup[0].dismiss();
-                        }
-                        return;
-                    }
-                    final TLRPC.TL_inputEmojiStatusCollectible status = new TLRPC.TL_inputEmojiStatusCollectible();
-                    status.collectible_id = gift.id;
-                    if (until != null) {
-                        status.flags |= 1;
-                        status.until = until;
-                    }
-                    emojiStatus = status;
-                } else {
-                    final TLRPC.TL_emojiStatus status = new TLRPC.TL_emojiStatus();
-                    if (until != null) {
-                        status.flags |= 1;
-                        status.until = until;
-                    }
-                    status.document_id = documentId;
-                    emojiStatus = status;
-                }
-                MessagesController.getInstance(currentAccount).updateEmojiStatus(emojiStatus, gift);
-                TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
-                if (user != null) {
-                    for (int i = 0; i < sideMenu.getChildCount(); ++i) {
-                        View child = sideMenu.getChildAt(i);
-                        if (child instanceof DrawerUserCell) {
-                            ((DrawerUserCell) child).setAccount(((DrawerUserCell) child).getAccountNumber());
-                        } else if (child instanceof DrawerProfileCell) {
-                            if (documentId != null) {
-                                ((DrawerProfileCell) child).animateStateChange(documentId);
-                            }
-                            ((DrawerProfileCell) child).setUser(user, drawerLayoutAdapter.isAccountsShown());
-                        } else if (child instanceof DrawerPreviewCell) {
-                            if (documentId != null) {
-                                ((DrawerPreviewCell) child).getView().animateStateChange(documentId);
-                            }
-                            ((DrawerPreviewCell) child).getView().setUser(user, drawerLayoutAdapter.isAccountsShown());
-                        } else if (child instanceof DrawerActionCell && drawerLayoutAdapter.getId(sideMenu.getChildAdapterPosition(child)) == 15) {
-                            boolean hasStatus = user != null && DialogObject.getEmojiStatusDocumentId(user.emoji_status) != 0;
-                            ((DrawerActionCell) child).updateTextAndIcon(
-                                getString(hasStatus ? R.string.ChangeEmojiStatus : R.string.SetEmojiStatus),
-                                hasStatus ?
-                                    R.drawable.msg_status_edit :
-                                    R.drawable.msg_status_set
-                            );
-                        }
-                    }
-                }
-                if (popup[0] != null) {
-                    selectAnimatedEmojiDialog = null;
-                    popup[0].dismiss();
-                }
-            }
-        };
-        if (user != null) {
-            popupLayout.setExpireDateHint(DialogObject.getEmojiStatusUntil(user.emoji_status));
-        }
-        if (profileCellCasted != null && profileCellCasted.getEmojiStatusGiftId() != null) {
-            popupLayout.setSelected(profileCellCasted.getEmojiStatusGiftId());
-        } else {
-            popupLayout.setSelected(scrimDrawable != null && scrimDrawable.getDrawable() instanceof AnimatedEmojiDrawable ? ((AnimatedEmojiDrawable) scrimDrawable.getDrawable()).getDocumentId() : null);
-        }
-        popupLayout.setSaveState(2);
-        popupLayout.setScrimDrawable(scrimDrawable, scrimDrawableParent);
-        popup[0] = selectAnimatedEmojiDialog = new SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow(popupLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT) {
-            @Override
-            public void dismiss() {
-                super.dismiss();
-                selectAnimatedEmojiDialog = null;
-            }
-        };
-        popup[0].showAsDropDown(sideMenu.getChildAt(0), 0, yoff, Gravity.TOP);
-        popup[0].dimBehind();
-    }
-
-=======
->>>>>>> upstream-12.8.1
     public FireworksOverlay getFireworksOverlay() {
         return fireworksOverlay;
     }
@@ -1900,24 +1575,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
     }
 
-<<<<<<< OctoGram
-//    private void showUpdateActivity(int account, TLRPC.TL_help_appUpdate update, boolean check) {
-//        if (blockingUpdateView == null) {
-//            blockingUpdateView = new BlockingUpdateView(LaunchActivity.this) {
-//                @Override
-//                public void setVisibility(int visibility) {
-//                    super.setVisibility(visibility);
-//                    if (visibility == View.GONE) {
-//                        drawerLayoutContainer.setAllowOpenDrawer(true, false);
-//                    }
-//                }
-//            };
-//            drawerLayoutContainer.addView(blockingUpdateView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-//        }
-//        blockingUpdateView.show(account, update, check);
-//        drawerLayoutContainer.setAllowOpenDrawer(false, false);
-//    }
-=======
     private void showUpdateActivity(int account, TLRPC.TL_help_appUpdate update, boolean check) {
         if (blockingUpdateView == null) {
             blockingUpdateView = new BlockingUpdateView(LaunchActivity.this);
@@ -1925,7 +1582,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         blockingUpdateView.show(account, update, check);
     }
->>>>>>> upstream-12.8.1
 
     private void showTosActivity(int account, TLRPC.TL_help_termsOfService tos) {
         if (termsOfServiceView == null) {
@@ -4022,22 +3678,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 }
                 fragment.setSharedMedia(shareEntries, sendingText);
             }
-<<<<<<< OctoGram
-        };
-        fragment.forwardContext = new ForwardContext() {
-            @Override
-            public ArrayList<MessageObject> getForwardingMessages() {
-                return null;
-            }
-
-            @Override
-            public boolean forceShowScheduleAndSound() {
-                return true;
-            }
-        };
-        fragment.setDelegate(this);
-        boolean removeLast;
-=======
         } else if (!TextUtils.isEmpty(sendingText)) {
             final String url = ShareTopView.extractFirstUrl(sendingText);
             if (url != null) {
@@ -4047,7 +3687,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         }
         final boolean removeLast;
->>>>>>> upstream-12.8.1
         if (AndroidUtilities.isTablet()) {
             removeLast = !layersActionBarLayout.getFragmentStack().isEmpty() && layersActionBarLayout.getFragmentStack().get(layersActionBarLayout.getFragmentStack().size() - 1) instanceof MainTabsActivity;
         } else {
@@ -6927,15 +6566,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     @Override
-<<<<<<< OctoGram
-    public boolean didSelectDialogs(DialogsActivity dialogsFragment, ArrayList<MessagesStorage.TopicKey> dids, CharSequence message, boolean param, boolean _notify, int _scheduleDate, TopicsFragment topicsFragment) {
-        return didSelectDialogs(dialogsFragment, dids, message, param, _notify, _scheduleDate, topicsFragment, false);
-    }
-
-    public boolean didSelectDialogs(DialogsActivity dialogsFragment, ArrayList<MessagesStorage.TopicKey> dids, CharSequence message, boolean param, boolean _notify, int _scheduleDate, TopicsFragment topicsFragment, boolean forced) {
-=======
     public boolean didSelectDialogs(DialogsActivity dialogsFragment, ArrayList<MessagesStorage.TopicKey> dids, CharSequence message, boolean param, boolean _notify, int _scheduleDate, int scheduleRepeatPeriod, TopicsFragment topicsFragment) {
->>>>>>> upstream-12.8.1
         final int account = dialogsFragment != null ? dialogsFragment.getCurrentAccount() : currentAccount;
 
         if (!forced && dids.size() <= 1) {
@@ -8188,17 +7819,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         themeSwitchSunView.setVisibility(View.VISIBLE);
                         themeSwitchSunView.invalidate();
                     }
-<<<<<<< OctoGram
-                    if (sideMenu != null && sideMenu.getChildCount() > 0) {
-                        View firstChild = sideMenu.getChildAt(0);
-                        if (firstChild instanceof DrawerProfileCell) {
-                            ((DrawerProfileCell) firstChild).updateSunDrawable(toDark);
-                        } else if (firstChild instanceof DrawerPreviewCell) {
-                            ((DrawerPreviewCell) firstChild).getView().updateSunDrawable(toDark);
-                        }
-                    }
-=======
->>>>>>> upstream-12.8.1
+
                     themeSwitchImageView.setImageBitmap(bitmap);
                     themeSwitchImageView.setVisibility(View.VISIBLE);
                     float finalRadius = (float) Math.max(Math.sqrt((w - pos[0]) * (w - pos[0]) + (h - pos[1]) * (h - pos[1])), Math.sqrt(pos[0] * pos[0] + (h - pos[1]) * (h - pos[1])));
@@ -8276,24 +7897,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             } catch (Throwable ignore) {
 
             }
-<<<<<<< OctoGram
-//        } else if (id == NotificationCenter.appUpdateLoading) {
-//            if (updateLayout != null) {
-//                updateLayout.updateFileProgress(null);
-//                updateLayout.updateAppUpdateViews(currentAccount, true);
-//            }
         } else if (id == NotificationCenter.fileLoaded) {
             String path = (String) args[0];
-//            if (SharedConfig.isAppUpdateAvailable()) {
-//                String name = FileLoader.getAttachFileName(SharedConfig.pendingAppUpdate.document);
-//                if (name.equals(path) && updateLayout != null) {
-//                    updateLayout.updateAppUpdateViews(currentAccount, true);
-//                }
-//            }
-=======
-        } else if (id == NotificationCenter.fileLoaded) {
-            String path = (String) args[0];
->>>>>>> upstream-12.8.1
             if (loadingThemeFileName != null) {
                 if (loadingThemeFileName.equals(path)) {
                     loadingThemeFileName = null;
@@ -8359,15 +7964,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             if (path.equals(loadingThemeFileName) || path.equals(loadingThemeWallpaperName)) {
                 onThemeLoadFinish();
             }
-<<<<<<< OctoGram
-//            if (SharedConfig.isAppUpdateAvailable()) {
-//                String name = FileLoader.getAttachFileName(SharedConfig.pendingAppUpdate.document);
-//                if (name.equals(path) && updateLayout != null) {
-//                    updateLayout.updateAppUpdateViews(currentAccount, true);
-//                }
-//            }
-=======
->>>>>>> upstream-12.8.1
+
         } else if (id == NotificationCenter.screenStateChanged) {
             if (ApplicationLoader.mainInterfacePaused) {
                 return;
@@ -8470,17 +8067,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         } else if (id == NotificationCenter.groupCallUpdated) {
             checkWasMutedByAdmin(false);
-<<<<<<< OctoGram
-        } else if (id == NotificationCenter.fileLoadProgressChanged) {
-//            if (updateLayout != null) {
-//                updateLayout.updateFileProgress(args);
-//            }
-        } else if (id == NotificationCenter.appUpdateAvailable) {
-//            if (updateLayout != null) {
-//                updateLayout.updateAppUpdateViews(currentAccount, mainFragmentsStack.size() == 1);
-//            }
-=======
->>>>>>> upstream-12.8.1
+
         } else if (id == NotificationCenter.currentUserShowLimitReachedDialog) {
             if (!mainFragmentsStack.isEmpty()) {
                 BaseFragment fragment = mainFragmentsStack.get(mainFragmentsStack.size() - 1);
@@ -10019,38 +9606,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return pipActivityController;
     }
 
-<<<<<<< OctoGram
-    private boolean hasAttachedBackEvent = false;
-    public void attachBackEvent() {
-        if (hasAttachedBackEvent || !ActionBarLayout.CAN_USE_PREDICTIVE_GESTURES) {
-            return;
-        }
-        hasAttachedBackEvent = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-                @Override
-                public void handleOnBackPressed() {
-                    LaunchActivity.instance.onBackPressed();
-                }
-
-                @Override
-                public void handleOnBackProgressed(@NonNull BackEventCompat backEvent) {
-                    super.handleOnBackProgressed(backEvent);
-                    Log.e("ev", "prgf"+backEvent.getProgress());
-                }
-            });
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_OVERLAY, actionBarLayout.getInstance());
-        }
-    }
-
-    public void detachBackEvent() {
-        if (!hasAttachedBackEvent || !ActionBarLayout.CAN_USE_PREDICTIVE_GESTURES) {
-            return;
-        }
-        hasAttachedBackEvent = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(actionBarLayout.getInstance());
-=======
 
 
     private int reasonsToHideMainContent = 0;
@@ -10124,7 +9679,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         public void hide() {
             setHidden(true);
->>>>>>> upstream-12.8.1
         }
     }
 }

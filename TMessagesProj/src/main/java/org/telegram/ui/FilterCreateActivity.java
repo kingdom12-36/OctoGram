@@ -941,19 +941,7 @@ public class FilterCreateActivity extends BaseFragment {
     }
 
     @Override
-<<<<<<< OctoGram
-    public void onPause() {
-        super.onPause();
-        try {
-            iconStyleSelectorCell.dismiss();
-        } catch (Exception ignored) {}
-    }
-
-    @Override
-    public boolean onBackPressed() {
-=======
     public boolean onBackPressed(boolean invoked) {
->>>>>>> upstream-12.8.1
         if (nameEditTextCell != null && nameEditTextCell.editTextEmoji != null && nameEditTextCell.editTextEmoji.isPopupShowing()) {
             if (invoked) nameEditTextCell.editTextEmoji.hidePopup(true);
             return false;
@@ -2996,14 +2984,6 @@ public class FilterCreateActivity extends BaseFragment {
             ScaleStateListAnimator.apply(rightTextView, 0.04f, 1.2f);
         }
     }
-<<<<<<< OctoGram
-    private void updateFolderVisibleToConfig() {
-        if (filter == null) {
-            return;
-        }
-
-        FolderUtils.updateFilterVisibility(filter.id, showFolder);
-=======
 
     @Override
     public boolean isSupportEdgeToEdge() {
@@ -3016,6 +2996,5 @@ public class FilterCreateActivity extends BaseFragment {
         if (undoView != null) {
             undoView.setTranslationY(-bottom);
         }
->>>>>>> upstream-12.8.1
     }
 }

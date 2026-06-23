@@ -52,11 +52,7 @@ import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.HeaderCell;
-<<<<<<< OctoGram
-import org.telegram.ui.Cells.RadioCell;
-import org.telegram.ui.Cells.ShadowSectionCell;
-=======
->>>>>>> upstream-12.8.1
+
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;

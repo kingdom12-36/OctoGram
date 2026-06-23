@@ -56,26 +56,9 @@ import org.telegram.ui.Components.poll.PollAttachButton;
 
 import java.util.ArrayList;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
 
 public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.AnchorViewDelegate {
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
-
-@SuppressLint("ViewConstructor")
-public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.AnchorViewDelegate, FactorAnimator.Target {
-    private static final int ANIMATOR_ID_CHECKBOX_MULTISELECT = 0;
-    private static final int ANIMATOR_ID_EMOJI_BUTTON_VISIBLE = 1;
-
-    private final BoolAnimator animatorCheckboxMultiselect = new BoolAnimator(ANIMATOR_ID_CHECKBOX_MULTISELECT,
-        this, CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-
-    private final BoolAnimator animatorEmojiButtonVisible = new BoolAnimator(ANIMATOR_ID_EMOJI_BUTTON_VISIBLE,
-        this, CubicBezierInterpolator.EASE_OUT_QUINT, 380L);
-
->>>>>>> upstream-12.8.1
 
     public static final int TYPE_DEFAULT = 0;
     public static final int TYPE_EMOJI = 1;
@@ -508,15 +491,9 @@ public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.An
     }
 
     @Override
-<<<<<<< OctoGram
     protected void onDraw(Canvas canvas) {
         if (needDivider && drawDivider() && !OctoConfig.INSTANCE.disableDividers.getValue()) {
             canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(moveImageView != null ? 63 : 20), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(moveImageView != null ? 63 : 20) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
-=======
-    protected void onDraw(@NonNull Canvas canvas) {
-        if (needDivider && drawDivider()) {
-            canvas.drawLine(LocaleController.isRTL ? 0 : dp(moveImageView != null ? 58 : 20), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? dp(moveImageView != null ? 58 : 20) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
->>>>>>> upstream-12.8.1
         }
     }
 

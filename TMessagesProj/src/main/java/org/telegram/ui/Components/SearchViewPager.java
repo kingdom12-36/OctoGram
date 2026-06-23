@@ -47,11 +47,7 @@ import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BackDrawable;
-<<<<<<< OctoGram
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.INavigationLayout;
-=======
->>>>>>> upstream-12.8.1
+
 import org.telegram.ui.ActionBar.MenuDrawable;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
@@ -81,13 +77,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-<<<<<<< OctoGram
 import it.octogram.android.utils.config.SearchOptionsOrderController;
 
 public class SearchViewPager extends ViewPagerFixed implements FilteredSearchView.UiCallback, NotificationCenter.NotificationCenterDelegate {
-=======
-public class SearchViewPager extends ViewPagerFixed implements FilteredSearchView.UiCallback, NotificationCenter.NotificationCenterDelegate, IBlur3Capture {
->>>>>>> upstream-12.8.1
 
     protected final ViewPagerAdapter viewPagerAdapter;
     public FrameLayout searchContainer;
@@ -1451,9 +1443,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         return -1;
     }
 
-<<<<<<< OctoGram
-    public class ViewPagerAdapter extends ViewPagerFixed.Adapter {
-=======
 
     private RecyclerListView getRecyclerViewFromPage(View page) {
         if (page == null) {
@@ -1491,7 +1480,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
     }
 
     private class ViewPagerAdapter extends ViewPagerFixed.Adapter {
->>>>>>> upstream-12.8.1
 
         ArrayList<Item> items = new ArrayList<>();
 

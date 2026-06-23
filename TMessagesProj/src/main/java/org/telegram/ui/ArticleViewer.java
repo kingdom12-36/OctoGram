@@ -2847,32 +2847,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         if (richText == null) {
             return null;
         }
-<<<<<<< OctoGram
-        if (richText instanceof TLRPC.TL_textFixed) {
-            return getLastRichText(((TLRPC.TL_textFixed) richText).text);
-        } else if (richText instanceof TLRPC.TL_textItalic) {
-            return getLastRichText(((TLRPC.TL_textItalic) richText).text);
-        } else if (richText instanceof TLRPC.TL_textBold) {
-            return getLastRichText(((TLRPC.TL_textBold) richText).text);
-        } else if (richText instanceof TLRPC.TL_textUnderline) {
-            return getLastRichText(((TLRPC.TL_textUnderline) richText).text);
-        } else if (richText instanceof TLRPC.TL_textStrike) {
-            return getLastRichText(((TLRPC.TL_textStrike) richText).text);
-        } else if (richText instanceof TLRPC.TL_textEmail) {
-            return getLastRichText(((TLRPC.TL_textEmail) richText).text);
-        } else if (richText instanceof TLRPC.TL_textUrl) {
-            return getLastRichText(((TLRPC.TL_textUrl) richText).text);
-        } else if (richText instanceof TLRPC.TL_textAnchor) {
-            return getLastRichText(((TLRPC.TL_textAnchor) richText).text);
-        } else if (richText instanceof TLRPC.TL_textSubscript) {
-            return getLastRichText(((TLRPC.TL_textSubscript) richText).text);
-        } else if (richText instanceof TLRPC.TL_textSuperscript) {
-            return getLastRichText(((TLRPC.TL_textSuperscript) richText).text);
-        } else if (richText instanceof TLRPC.TL_textMarked) {
-            return getLastRichText(((TLRPC.TL_textMarked) richText).text);
-        } else if (richText instanceof TLRPC.TL_textPhone) {
-            return getLastRichText(((TLRPC.TL_textPhone) richText).text);
-=======
         if (richText instanceof TL_iv.textFixed) {
             return getLastRichText(((TL_iv.textFixed) richText).text);
         } else if (richText instanceof TL_iv.textItalic) {
@@ -2899,7 +2873,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
             return getLastRichText(((TL_iv.textPhone) richText).text);
         } else if (richText instanceof TL_iv.textSpoiler) {
             return getLastRichText(((TL_iv.textSpoiler) richText).text);
->>>>>>> upstream-12.8.1
         }
         return richText;
     }
@@ -2911,9 +2884,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         return getText(parent, adapter != null ? adapter.currentPage : null, parentView, parentRichText, richText, parentBlock, maxWidth);
     }
 
-<<<<<<< OctoGram
-    public CharSequence getText(TLRPC.WebPage page, View parentView, TLRPC.RichText parentRichText, TLRPC.RichText richText, TLRPC.PageBlock parentBlock, int maxWidth) {
-=======
     private CharSequence getText(TLRPC.WebPage page, View parentView, TL_iv.RichText parentRichText, TL_iv.RichText richText, TL_iv.PageBlock parentBlock, int maxWidth) {
         return getText(this, page, parentView, parentRichText, richText, parentBlock, maxWidth);
     }
@@ -2926,7 +2896,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         TL_iv.PageBlock parentBlock,
         int maxWidth
     ) {
->>>>>>> upstream-12.8.1
         if (richText == null) {
             return null;
         }
@@ -2962,7 +2931,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                 spannableStringBuilder.setSpan(span, 0, spannableStringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             return spannableStringBuilder;
-<<<<<<< OctoGram
         } else if (richText instanceof TLRPC.TL_textPlain) {
             String finalText = ((TLRPC.TL_textPlain) richText).text;
             if (isPageTranslated && ArticleTranslationsHandler.getTranslatedText(finalText) != null) {
@@ -2975,13 +2943,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         } else if (richText instanceof TLRPC.TL_textAnchor) {
             TLRPC.TL_textAnchor textAnchor = (TLRPC.TL_textAnchor) richText;
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getText(page, parentView, parentRichText, textAnchor.text, parentBlock, maxWidth));
-=======
-        } else if (richText instanceof TL_iv.textPlain) {
-            return ((TL_iv.textPlain) richText).text;
-        } else if (richText instanceof TL_iv.textAnchor) {
-            TL_iv.textAnchor textAnchor = (TL_iv.textAnchor) richText;
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getText(parent, page, parentView, parentRichText, textAnchor.text, parentBlock, maxWidth));
->>>>>>> upstream-12.8.1
             spannableStringBuilder.setSpan(new AnchorSpan(textAnchor.name), 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             return spannableStringBuilder;
         } else if (richText instanceof TL_iv.textEmpty) {
@@ -3133,39 +3094,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         return "not supported " + richText;
     }
 
-<<<<<<< OctoGram
-    public static CharSequence getPlainText(TLRPC.RichText richText) {
-        return getPlainText(richText, false);
-    }
-
-    public static CharSequence getPlainText(TLRPC.RichText richText, boolean translate) {
-        if (richText == null) {
-            return "";
-        }
-        if (richText instanceof TLRPC.TL_textFixed) {
-            return getPlainText(((TLRPC.TL_textFixed) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textItalic) {
-            return getPlainText(((TLRPC.TL_textItalic) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textBold) {
-            return getPlainText(((TLRPC.TL_textBold) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textUnderline) {
-            return getPlainText(((TLRPC.TL_textUnderline) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textStrike) {
-            return getPlainText(((TLRPC.TL_textStrike) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textEmail) {
-            return getPlainText(((TLRPC.TL_textEmail) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textUrl) {
-            return getPlainText(((TLRPC.TL_textUrl) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textPlain) {
-            String finalText = ((TLRPC.TL_textPlain) richText).text;
-            if (translate && ArticleTranslationsHandler.getTranslatedText(finalText) != null) {
-                finalText = ArticleTranslationsHandler.getTranslatedText(finalText);
-            }
-            return finalText;
-        } else if (richText instanceof TLRPC.TL_textAnchor) {
-            return getPlainText(((TLRPC.TL_textAnchor) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textEmpty) {
-=======
     public static CharSequence getPlainText(TL_iv.RichText richText) {
         if (richText == null) {
             return "";
@@ -3189,7 +3117,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         } else if (richText instanceof TL_iv.textAnchor) {
             return getPlainText(((TL_iv.textAnchor) richText).text);
         } else if (richText instanceof TL_iv.textEmpty) {
->>>>>>> upstream-12.8.1
             return "";
         } else if (richText instanceof TL_iv.textConcat) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -3198,17 +3125,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                 stringBuilder.append(getPlainText(richText.texts.get(a), translate));
             }
             return stringBuilder;
-<<<<<<< OctoGram
-        } else if (richText instanceof TLRPC.TL_textSubscript) {
-            return getPlainText(((TLRPC.TL_textSubscript) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textSuperscript) {
-            return getPlainText(((TLRPC.TL_textSuperscript) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textMarked) {
-            return getPlainText(((TLRPC.TL_textMarked) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textPhone) {
-            return getPlainText(((TLRPC.TL_textPhone) richText).text, translate);
-        } else if (richText instanceof TLRPC.TL_textImage) {
-=======
         } else if (richText instanceof TL_iv.textSubscript) {
             return getPlainText(((TL_iv.textSubscript) richText).text);
         } else if (richText instanceof TL_iv.textSuperscript) {
@@ -3218,7 +3134,6 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         } else if (richText instanceof TL_iv.textPhone) {
             return getPlainText(((TL_iv.textPhone) richText).text);
         } else if (richText instanceof TL_iv.textImage) {
->>>>>>> upstream-12.8.1
             return "";
         }
         return "";
@@ -5210,17 +5125,12 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         textSelectionHelper.setParentView(pages[0].listView);
         if (MessagesController.getInstance(currentAccount).getTranslateController().isContextTranslateEnabled()) {
             textSelectionHelper.setOnTranslate((text, fromLang, toLang, onAlertDismiss) -> {
-<<<<<<< OctoGram
-                MainTranslationsHandler.initTranslationItem(parentActivity, parentFragment, null, currentAccount, null, 0, fromLang, toLang, text, null, false, null, onAlertDismiss);
-                //TranslateAlert2.showAlert(parentActivity, parentFragment, currentAccount, fromLang, toLang, text, null, false, null, onAlertDismiss);
-=======
                 TranslateAlert2.showAlert(parentActivity, parentFragment, currentAccount, fromLang, toLang, text, null, false, null, onAlertDismiss);
 //                final TranslateAlert3 alert =
 //                    new TranslateAlert3(parentActivity, parentFragment != null ? parentFragment.getResourceProvider() : getResourcesProvider())
 //                        .setText(fromLang, text);
 //                alert.setOnDismissListener(onAlertDismiss);
 //                alert.show();
->>>>>>> upstream-12.8.1
             });
         }
         textSelectionHelper.layoutManager = pages[0].layoutManager;
@@ -6565,13 +6475,8 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
         private HashMap<String, TL_iv.textAnchor> anchorsParent = new HashMap<>();
         private HashMap<TL_iv.pageBlockAudio, MessageObject> audioBlocks = new HashMap<>();
         private ArrayList<MessageObject> audioMessages = new ArrayList<>();
-<<<<<<< OctoGram
-        public HashMap<Object, TLRPC.PageBlock> textToBlocks = new HashMap<>();
-        public ArrayList<Object> textBlocks = new ArrayList<>();
-=======
         private HashMap<Object, TL_iv.PageBlock> textToBlocks = new HashMap<>();
         private ArrayList<Object> textBlocks = new ArrayList<>();
->>>>>>> upstream-12.8.1
         private HashMap<String, Integer> searchTextOffset = new HashMap<>();
 
         private TLRPC.WebPage currentPage;
@@ -12046,13 +11951,8 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
                 textLayout2.draw(canvas, this);
             }
             canvas.restore();
-<<<<<<< OctoGram
             if (divider && !OctoConfig.INSTANCE.disableDividers.getValue()) {
                 canvas.drawLine(parentAdapter.isRtl ? 0 : dp(17), getMeasuredHeight() - 1, getMeasuredWidth() - (parentAdapter.isRtl ? dp(17) : 0), getMeasuredHeight() - 1, dividerPaint);
-=======
-            if (divider) {
-                canvas.drawLine(adapter != null && adapter.isRtl ? 0 : dp(17), getMeasuredHeight() - 1, getMeasuredWidth() - (adapter != null && adapter.isRtl ? dp(17) : 0), getMeasuredHeight() - 1, dividerPaint);
->>>>>>> upstream-12.8.1
             }
         }
 

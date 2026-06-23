@@ -33,15 +33,11 @@ import android.view.accessibility.AccessibilityNodeProvider;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-<<<<<<< OctoGram
-import androidx.core.graphics.ColorUtils;
-=======
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
->>>>>>> upstream-12.8.1
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildConfig;
@@ -57,12 +53,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
 
-=======
-@SuppressLint("ViewConstructor")
->>>>>>> upstream-12.8.1
 public class ProfileActionsView extends View {
 
     private final List<Action> actions = new ArrayList<>();
@@ -182,9 +174,6 @@ public class ProfileActionsView extends View {
         this.onActionClickListener = onActionClickListener;
     }
 
-<<<<<<< OctoGram
-    private boolean didEstablishedState = false;
-=======
     public void setParentExpanded(float expanded) {
         if (parentExpanded != expanded) {
             parentExpanded = expanded;
@@ -193,7 +182,6 @@ public class ProfileActionsView extends View {
         }
     }
 
->>>>>>> upstream-12.8.1
     public void setActionsColor(int color, boolean hasColorById) {
         if (radialGradient == null || this.color != color || this.hasColorById != hasColorById) {
             this.color = color;
@@ -333,13 +321,9 @@ public class ProfileActionsView extends View {
                     action.rect.width() / 2.0f * (1.0f - action.getScale()),
                     action.rect.height() / 2.0f * (1.0f - action.getScale())
                 );
-<<<<<<< OctoGram
                 if (OctoConfig.INSTANCE.md3ChatActions.getValue()) {
                     AndroidUtilities.rectTmp.bottom = AndroidUtilities.rectTmp.top + getMeasuredHeight() / 2f;
                 }
-=======
-                AndroidUtilities.rectTmp.inset(-1, -1);
->>>>>>> upstream-12.8.1
                 clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CCW);
             }
         }
@@ -452,7 +436,6 @@ public class ProfileActionsView extends View {
 
         action.text.setMaxWidth(action.rect.width() - dp(2));
         action.textScale = action.text.getLineCount() >= 3 ? 0.75f : action.text.getLineCount() >= 2 ? 0.85f : 1.0f;
-<<<<<<< OctoGram
         float drawableTop = Math.max(0, (targetHeight - action.text.getHeight() * action.textScale) / 3f);
 
         if (OctoConfig.INSTANCE.md3ChatActions.getValue()) {
@@ -460,10 +443,6 @@ public class ProfileActionsView extends View {
         }
 
         action.drawable.setBounds(
-=======
-        final float drawableTop = Math.max(0, (targetHeight - action.text.getHeight() * action.textScale) / 3f + dpf2(1.33f));
-        action.setBounds(
->>>>>>> upstream-12.8.1
             (int) (cx - drawableR),
             (int) (drawableTop),
             (int) (cx + drawableR),
@@ -501,7 +480,6 @@ public class ProfileActionsView extends View {
 
         updateBounds(action);
 
-<<<<<<< OctoGram
         float textY = action.drawable.getBounds().bottom + action.drawable.getBounds().top - action.text.getHeight() * action.textScale / 2.0f - dp(2);
         if (OctoConfig.INSTANCE.md3ChatActions.getValue()) {
             textY = getTop() + getMeasuredHeight() - getMeasuredHeight() / 4f - action.text.getHeight() * action.textScale / 2.0f;
@@ -511,12 +489,6 @@ public class ProfileActionsView extends View {
         canvas.save();
         canvas.scale(action.textScale, action.textScale, cx, textY + action.text.getHeight() * action.textScale / 2.0f);
         action.text.draw(canvas, cx - action.text.getWidth() / 2f, textY, (usedCustomColorHandling && !_lastBlurState) ? 0xFF000000 : 0xFFFFFFFF, alpha);
-=======
-        final float textY = action.bounds.bottom + action.bounds.top - action.text.getHeight() * action.textScale / 2.0f - dp(4.66f);
-        canvas.save();
-        canvas.scale(action.textScale, action.textScale, cx, textY + action.text.getHeight() * action.textScale / 2.0f);
-        action.text.draw(canvas, cx - action.text.getWidth() / 2f, textY, textColor, alpha);
->>>>>>> upstream-12.8.1
         canvas.restore();
 
         if (OctoConfig.INSTANCE.md3ChatActions.getValue()) {
@@ -598,7 +570,6 @@ public class ProfileActionsView extends View {
         }
 
         if (action.loadingDrawable != null) {
-<<<<<<< OctoGram
             AndroidUtilities.rectTmp.set(action.rect);
             if (OctoConfig.INSTANCE.md3ChatActions.getValue()) {
                 AndroidUtilities.rectTmp.bottom = AndroidUtilities.rectTmp.top + getMeasuredHeight() / 2f;
@@ -607,22 +578,14 @@ public class ProfileActionsView extends View {
             action.loadingDrawable.setRadiiDp(OctoConfig.INSTANCE.md3ChatActions.getValue() ? 25 : 8);
             //action.loadingDrawable.setBounds(action.rect);
             //action.loadingDrawable.setRadiiDp(8);
-=======
-            action.loadingDrawable.setBounds(action.rect);
-            action.loadingDrawable.setRadii(getRoundRadius());
->>>>>>> upstream-12.8.1
             action.loadingDrawable.setAlpha((int) (0xFF * alpha));
             action.loadingDrawable.draw(canvas);
         }
     }
 
     public float getRoundRadius() {
-<<<<<<< OctoGram
         //return dp(10);
         return dp(OctoConfig.INSTANCE.md3ChatActions.getValue() ? 25 : 8);
-=======
-        return dp(16);
->>>>>>> upstream-12.8.1
     }
 
     private Action hit = null;
@@ -1215,28 +1178,9 @@ public class ProfileActionsView extends View {
         @Deprecated
         public void updateDrawable(boolean animated, int drawableRes) {
             if (animated) {
-<<<<<<< OctoGram
-                RLottieDrawable drawable = new RLottieDrawable(
-                    drawableRes,
-                    String.valueOf(drawableRes),
-                    dp(56),
-                    dp(56),
-                    false, null
-                );
-                drawable.setMasterParent(ProfileActionsView.this);
-                drawable.setColorFilter(new PorterDuffColorFilter((usedCustomColorHandling && !_lastBlurState) ? Color.BLACK : Color.WHITE, PorterDuff.Mode.SRC_IN));
-                drawable.start();
-                this.drawable = drawable;
-            } else {
-                this.drawable = getResources().getDrawable(drawableRes).mutate();
-                if (usedCustomColorHandling && !_lastBlurState) {
-                    drawable.setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN));
-                }
-=======
                 updateDrawable(drawableRes, 0, 0);
             } else {
                 updateDrawable(0, drawableRes, drawableRes);
->>>>>>> upstream-12.8.1
             }
         }
 

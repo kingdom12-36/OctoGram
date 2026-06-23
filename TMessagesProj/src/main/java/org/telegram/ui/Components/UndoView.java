@@ -493,11 +493,7 @@ public class UndoView extends FrameLayout {
         currentInfoObject = infoObject;
         currentInfoObject2 = infoObject2;
         lastUpdateTime = SystemClock.elapsedRealtime();
-<<<<<<< OctoGram
-        undoTextView.setText(LocaleController.getString(R.string.Undo).toUpperCase());
-=======
         undoTextView.setText(LocaleController.getString(R.string.UndoNoCaps));
->>>>>>> upstream-12.8.1
         undoImageView.setVisibility(VISIBLE);
         leftImageView.setPadding(0, 0, 0, 0);
         leftImageView.setScaleX(1);

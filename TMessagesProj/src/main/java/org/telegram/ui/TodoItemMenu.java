@@ -355,31 +355,6 @@ public class TodoItemMenu extends Dialog {
             final int finalWidth = width;
             final int finalHeight = height;
 
-<<<<<<< OctoGram
-            if (taskId != -1) {
-                myTaskCell = new ChatMessageCell(getContext(), UserConfig.selectedAccount, false, null, cell.getResourcesProvider()) {
-                    @Override
-                    public void setPressed(boolean pressed) {}
-
-                    private final Path clipPath = new Path();
-                    private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    @Override
-                    protected void onDraw(@NonNull Canvas canvas) {
-                        canvas.save();
-                        final int index = getTodoIndex(taskId);
-                        final float top = getPollButtonTop(index);
-                        final float bottom = getPollButtonBottom(index);
-                        AndroidUtilities.rectTmp.set(getPollButtonsLeft(), top, getPollButtonsRight(), bottom);
-                        clipPath.rewind();
-                        clipPath.addRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), Path.Direction.CW);
-                        shadowPaint.setColor(0);
-                        shadowPaint.setShadowLayer(dp(2), 0, dp(.66f), Theme.multAlpha(0xFF000000, .20f * openProgress));
-                        canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), shadowPaint);
-                        canvas.clipPath(clipPath);
-                        super.onDraw(canvas);
-                        canvas.restore();
-                    }
-=======
             myTaskCell = new ChatMessageCell(getContext(), UserConfig.selectedAccount, false, null, cell.getResourcesProvider()) {
                 @Override
                 public void setPressed(boolean pressed) {}
@@ -422,7 +397,6 @@ public class TodoItemMenu extends Dialog {
                 public boolean canPerformActions() {
                     return false;
                 }
->>>>>>> upstream-12.8.1
 
                     @Override
                     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -460,15 +434,10 @@ public class TodoItemMenu extends Dialog {
                 }
 
                 @Override
-<<<<<<< OctoGram
-                public boolean needDrawAvatar() {
-                    return messageCell.isAvatarVisible || messageCell.needDrawAvatar();
-=======
                 public void drawOverlays(Canvas canvas) {
                     firstVisiblePollButton = 0;
                     lastVisiblePollButton = pollButtons.size() - 1;
                     super.drawOverlays(canvas);
->>>>>>> upstream-12.8.1
                 }
             };
             cell.copyVisiblePartTo(myCell);
@@ -581,14 +550,6 @@ public class TodoItemMenu extends Dialog {
                                 i--;
                             }
                         }
-<<<<<<< OctoGram
-                        for (int i = 0; i < media.completions.size(); ++i) {
-                            final TLRPC.TodoCompletion c = media.completions.get(i);
-                            if (c.id == taskId) {
-                                media.completions.remove(i);
-                                i--;
-                            }
-=======
                     }
                     for (int i = 0; i < media.completions.size(); ++i) {
                         final TLRPC.TodoCompletion c = media.completions.get(i);
@@ -598,7 +559,6 @@ public class TodoItemMenu extends Dialog {
                                 media.flags &=~ 1;
                             }
                             i--;
->>>>>>> upstream-12.8.1
                         }
                         messageObject.messageOwner.media = media;
                         chatActivity.getSendMessagesHelper().editMessage(messageObject, null, null, null, null, null, null, false, false, null);
@@ -609,14 +569,6 @@ public class TodoItemMenu extends Dialog {
                 }
             }
 
-<<<<<<< OctoGram
-            taskOptions.setupSelectors();
-            taskOptionsView = taskOptions.getLayout();
-            taskOptionsView.setPivotX(0);
-            taskOptionsView.setPivotY(0);
-            menuContainer.addView(taskOptionsView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT));
-        }
-=======
         taskOptions.setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));
         taskOptions.setBlurBackground(iBlur3Factory, BlurredBackgroundProviderImpl.scrimMenuBackground(resourcesProvider), false);
         taskOptions.setupSelectors();
@@ -624,7 +576,6 @@ public class TodoItemMenu extends Dialog {
         taskOptionsView.setPivotX(0);
         taskOptionsView.setPivotY(0);
         menuContainer.addView(taskOptionsView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT));
->>>>>>> upstream-12.8.1
     }
 
     public void setupMessageOptions(

@@ -1932,14 +1932,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
             }
         };
         setOnDismissListener(dialog -> {
-<<<<<<< OctoGram
-            if (parentActivity.getActionBarLayout().getFragmentStack().isEmpty()) {
-                return;
-            }
-            BaseFragment fragment = parentActivity.getActionBarLayout().getFragmentStack().get(parentActivity.getActionBarLayout().getFragmentStack().size() - 1);
-=======
             final BaseFragment fragment = LaunchActivity.getSafeLastFragment();
->>>>>>> upstream-12.8.1
             if (anyEnterEventSent) {
                 if (fragment instanceof ChatActivity) {
                     ((ChatActivity) fragment).onEditTextDialogClose(true, true);

@@ -820,14 +820,10 @@ public class ScrollSlidingTextTabStrip extends HorizontalScrollView implements T
                 getPaddingLeft() + (int) r - dp(4),
                 height - getPaddingBottom() - dp(4)
             );
-<<<<<<< OctoGram
-            selectorDrawable.draw(canvas);*/
-=======
             selectorDrawable.draw(canvas);
             selectorDrawable.setAlpha(wasAlpha);
 
             return result;
->>>>>>> upstream-12.8.1
         }
         return super.drawChild(canvas, child, drawingTime);
     }

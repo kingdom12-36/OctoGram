@@ -723,42 +723,9 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         });
         page1.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
 
-<<<<<<< OctoGram
-        floatingButton = new ImageView(context);
-        floatingButton.setScaleType(ImageView.ScaleType.CENTER);
-
-        Drawable drawable = CustomFab.createFabBackground();
-        /*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(dp(56), getThemedColor(Theme.key_chats_actionBackground), getThemedColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(dp(56), dp(56));
-            drawable = combinedDrawable;
-        }*/
-        floatingButton.setBackgroundDrawable(drawable);
-        floatingButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-        floatingButton.setImageResource(R.drawable.floating_pencil);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, dp(2), dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, dp(4), dp(2)).setDuration(200));
-            floatingButton.setStateListAnimator(animator);
-            floatingButton.setOutlineProvider(new OutlineProvider());
-            /*floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, dp(56), dp(56));
-                }
-            });*/
-        }
-        page1.addView(floatingButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
-=======
         floatingButton = new FragmentFloatingButton(context, resourceProvider);
         floatingButton.setImageResource(R.drawable.floating_pencil);
         page1.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());
->>>>>>> upstream-12.8.1
 
         dialogsAdapter = new DialogsAdapter(context);
         listView.setAdapter(dialogsAdapter);

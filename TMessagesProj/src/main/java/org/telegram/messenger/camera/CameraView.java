@@ -126,12 +126,7 @@ public class CameraView extends BaseCameraView implements TextureView.SurfaceTex
     private int focusAreaSize;
     private Drawable thumbDrawable;
 
-<<<<<<< OctoGram
-    // private final boolean useCamera2 = false && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && SharedConfig.isUsingCamera2(UserConfig.selectedAccount);
-    private final boolean useCamera2 = SharedConfig.isUsingCamera2(UserConfig.selectedAccount);
-=======
     private final boolean useCamera2 = false && SharedConfig.isUsingCamera2(UserConfig.selectedAccount);
->>>>>>> upstream-12.8.1
     private final CameraSessionWrapper[] cameraSession = new CameraSessionWrapper[2];
     private CameraSessionWrapper cameraSessionRecording;
 

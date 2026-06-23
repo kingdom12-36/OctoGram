@@ -730,34 +730,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
         }
 
-<<<<<<< OctoGram
-        floatingButtonContainer = new FrameLayout(context);
-        floatingButtonContainer.setVisibility(doneButtonVisible[DONE_TYPE_FLOATING] ? View.VISIBLE : View.GONE);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-            /*floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });*/
-        }
-        floatingAutoAnimator = VerticalPositionAutoAnimator.attach(floatingButtonContainer);
-        sizeNotifierFrameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
-//        ScaleStateListAnimator.apply(floatingButtonContainer, .1f, 1.4f);
-        floatingButtonContainer.setOnClickListener(view -> onDoneButtonPressed());
-=======
         floatingButton = new FragmentFloatingButton(context, resourceProvider);
         floatingButton.setButtonVisible(doneButtonVisible[DONE_TYPE_FLOATING], false);
         floatingAutoAnimator = VerticalPositionAutoAnimator.attach(floatingButton);
         sizeNotifierFrameLayout.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParamsBig());
         floatingButton.setOnClickListener(view -> onDoneButtonPressed());
->>>>>>> upstream-12.8.1
         floatingAutoAnimator.addUpdateListener((animation, value, velocity) -> {
             if (phoneNumberConfirmView != null) {
                 phoneNumberConfirmView.updateFabPosition();
@@ -2504,11 +2481,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 });
             }
 
-<<<<<<< OctoGram
-            final boolean allowTestBackend = true; // (BuildVars.DEBUG_VERSION || TEST_BACKEND_IN_STORE) || getConnectionsManager().isTestBackend();
-=======
             final boolean allowTestBackend = (BuildVars.DEBUG_VERSION || TEST_BACKEND_IN_STORE && !BuildConfig.BUNDLE) || getConnectionsManager().isTestBackend();
->>>>>>> upstream-12.8.1
             if (allowTestBackend && activityMode == MODE_LOGIN) {
                 testBackendCheckBox = new CheckBoxCell(context, 2);
                 testBackendCheckBox.setText(getString(R.string.DebugTestBackend), "", testBackend = getConnectionsManager().isTestBackend(), false);
@@ -8549,21 +8522,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private void updateColors() {
         fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
-<<<<<<< OctoGram
-        var drawable = CustomFab.createFabBackground();
-       /* Context context = getParentActivity();
-        Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }*/
-        floatingButtonContainer.setBackground(drawable);
 
-=======
->>>>>>> upstream-12.8.1
         backButtonView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         backButtonView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
 
@@ -8748,13 +8707,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             numberView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
             editTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
             confirmTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
-<<<<<<< OctoGram
-            //popupFabContainer.setBackground(Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground)));
-            popupFabContainer.setBackground(CustomFab.createFabBackground());
-            floatingProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon));
-=======
             fabButton.updateColors();
->>>>>>> upstream-12.8.1
         }
 
         @Override

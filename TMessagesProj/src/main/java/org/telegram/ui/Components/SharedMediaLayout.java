@@ -2249,13 +2249,8 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                 forwardNoQuoteItem.setVisibility(OctoConfig.INSTANCE.contextNoQuoteForward.getValue() ? View.VISIBLE:View.GONE);
 
                 forwardItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarActionModeDefaultSelector), getThemedColor(Theme.key_actionBarActionModeDefaultIcon), false);
-<<<<<<< OctoGram
                 forwardItem.setIcon(OctoConfig.INSTANCE.contextNoQuoteForward.getValue() ? R.drawable.msg_forward_quote:R.drawable.msg_forward);
                 forwardItem.setContentDescription(getString("Forward", R.string.Forward));
-=======
-                forwardItem.setIcon(R.drawable.msg_forward);
-                forwardItem.setContentDescription(getString(R.string.Forward));
->>>>>>> upstream-12.8.1
                 forwardItem.setDuplicateParentStateEnabled(false);
                 actionModeLayout.addView(forwardItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
                 actionModeViews.add(forwardItem);
@@ -5336,9 +5331,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                 actionBar.closeSearchField();
                 cantDeleteMessagesCount = 0;
             }, null, resourcesProvider);
-<<<<<<< OctoGram
-        } else if (id == forward || id == forward_noquote) {
-=======
         } else if (id == forward) {
             if (userInfo != null) {
                 if (profileActivity.getMessagesController().isUserNoForwards(userInfo)) {
@@ -5349,7 +5341,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                     return;
                 }
             }
->>>>>>> upstream-12.8.1
             if (info != null) {
                 TLRPC.Chat chat = profileActivity.getMessagesController().getChat(info.id);
                 if (profileActivity.getMessagesController().isChatNoForwards(chat)) {
@@ -5374,16 +5365,8 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             args.putBoolean("canSelectTopics", true);
             args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
             DialogsActivity fragment = new DialogsActivity(args);
-<<<<<<< OctoGram
-            var fmessages = new ArrayList<MessageObject>();
-            fragment.forwardContext = () -> fmessages;
-            ForwardContext.ForwardParams forwardParams = fragment.forwardContext.getForwardParams();
-            forwardParams.noQuote = id == forward_noquote;
-            fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, topicsFragment) -> {
-=======
             fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, scheduleRepeatPeriod, topicsFragment) -> {
                 ArrayList<MessageObject> fmessages = new ArrayList<>();
->>>>>>> upstream-12.8.1
                 for (int a = 1; a >= 0; a--) {
                     ArrayList<Integer> ids = new ArrayList<>();
                     for (int b = 0; b < selectedFiles[a].size(); b++) {

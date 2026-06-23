@@ -1411,11 +1411,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
             FileLog.e(e);
         }
 
-<<<<<<< OctoGram
-        if (!isSoundPicker && !isEmojiPicker && !isExportPicker) {
-=======
         if (!isSoundPicker && (parentAlert == null || !parentAlert.isPollAttach)) {
->>>>>>> upstream-12.8.1
             fs = new ListItem();
             fs.title = LocaleController.getString(R.string.Gallery);
             fs.subtitle = LocaleController.getString(R.string.GalleryInfo);

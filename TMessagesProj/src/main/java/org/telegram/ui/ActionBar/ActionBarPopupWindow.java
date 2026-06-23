@@ -18,27 +18,16 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-<<<<<<< OctoGram
-//import android.graphics.Paint;
-import android.graphics.LinearGradient;
-=======
 import android.graphics.ColorFilter;
 import android.graphics.Outline;
->>>>>>> upstream-12.8.1
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
-<<<<<<< OctoGram
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-=======
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
->>>>>>> upstream-12.8.1
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -62,10 +51,7 @@ import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
-<<<<<<< OctoGram
-=======
 import org.telegram.messenger.utils.ViewOutlineProviderImpl;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.PopupSwipeBackLayout;
 

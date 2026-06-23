@@ -461,9 +461,6 @@ public class CheckBoxBase {
             if (backgroundType == 12 || backgroundType == 13) {
                 //draw nothing
             } else if (backgroundType == 8 || backgroundType == 10 || backgroundType == 14) {
-<<<<<<< OctoGram
-                superDrawCircle(canvas, cx, cy, rad - dp(1.5f), backgroundPaint);
-=======
                 if (customRadius > 0) {
                     final float r = rad - dp(1.5f);
                     final float rr = lerp(r, customRadius, customRadiusFactor);
@@ -471,7 +468,6 @@ public class CheckBoxBase {
                 } else {
                     canvas.drawCircle(cx, cy, rad - dp(1.5f), backgroundPaint);
                 }
->>>>>>> upstream-12.8.1
             } else if (backgroundType == 6 || backgroundType == 7) {
                 superDrawCircle(canvas, cx, cy, rad - dp(1), paint);
                 superDrawCircle(canvas, cx, cy, rad - dp(1.5f), backgroundPaint);
@@ -610,16 +606,11 @@ public class CheckBoxBase {
                     }
                 } else {
                     rad -= dp(0.5f);
-<<<<<<< OctoGram
-                    superDrawCircle(canvas, sizeHalf, sizeHalf, rad, circlePaint);
-                    superDrawCircle(canvas, sizeHalf, sizeHalf, rad * (1.0f - roundProgress), eraser);
-=======
                     canvas.drawCircle(sizeHalf, sizeHalf, rad, circlePaint);
                     final float r = rad * (1.0f - roundProgress);
                     if (needSaveLayer && r > 0) {
                         canvas.drawCircle(sizeHalf, sizeHalf, r, Theme.PAINT_CLEAR);
                     }
->>>>>>> upstream-12.8.1
                 }
                 canvas.restoreToCount(restoreCount);
             }

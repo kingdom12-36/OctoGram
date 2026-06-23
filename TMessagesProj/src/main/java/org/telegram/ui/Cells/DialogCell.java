@@ -4874,10 +4874,6 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
     }
 
-<<<<<<< OctoGram
-    private static boolean isNeedInvalidate(boolean needInvalidate) {
-        return needInvalidate;
-=======
     private TextPaint getTimeTextPaint() {
         return drawCount ? (isCounterMuted() ? Theme.dialogs_timePaintBold : Theme.dialogs_timePaintBoldAccent) : Theme.dialogs_timePaint;
     }
@@ -4906,7 +4902,6 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             reorderGradientPaint.setShader(shader);
         }
         return reorderGradientPaint;
->>>>>>> upstream-12.8.1
     }
 
     private PremiumGradient.PremiumGradientTools premiumGradient;

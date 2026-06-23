@@ -135,34 +135,14 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         CharSequence text, ArrayList<TLRPC.MessageEntity> entities,
         Theme.ResourcesProvider resourcesProvider
     ) {
-<<<<<<< OctoGram
-        this(context, fromLanguage, toLanguage, text, entities, null, 0, resourcesProvider, null);
-    }
-
-    public TranslateAlert2(
-        Context context,
-        String fromLanguage, String toLanguage,
-        CharSequence text, ArrayList<TLRPC.MessageEntity> entities,
-        Theme.ResourcesProvider resourcesProvider,
-        MessageObject messageObject
-    ) {
-        this(context, fromLanguage, toLanguage, text, entities, null, 0, resourcesProvider, messageObject);
-=======
         this(context, fromLanguage, toLanguage, text, entities, null, 0, false, resourcesProvider);
->>>>>>> upstream-12.8.1
     }
 
     private TranslateAlert2(
         Context context,
         String fromLanguage, String toLanguage,
-<<<<<<< OctoGram
-        CharSequence text, ArrayList<TLRPC.MessageEntity> entities, TLRPC.InputPeer peer, int messageId,
-        Theme.ResourcesProvider resourcesProvider,
-        MessageObject messageObject
-=======
         CharSequence text, ArrayList<TLRPC.MessageEntity> entities, TLRPC.InputPeer peer, int messageId, boolean sum,
         Theme.ResourcesProvider resourcesProvider
->>>>>>> upstream-12.8.1
     ) {
         super(context, false, resourcesProvider);
 
@@ -1955,13 +1935,8 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         }
     }
 
-<<<<<<< OctoGram
-    public static TranslateAlert2 showAlert(Context context, BaseFragment fragment, int currentAccount, TLRPC.InputPeer peer, int msgId, String fromLanguage, String toLanguage, CharSequence text, ArrayList<TLRPC.MessageEntity> entities, boolean noforwards, Utilities.CallbackReturn<URLSpan, Boolean> onLinkPress, Runnable onDismiss, MessageObject messageObject) {
-        TranslateAlert2 alert = new TranslateAlert2(context, fromLanguage, toLanguage, text, entities, peer, msgId, null, messageObject) {
-=======
     public static TranslateAlert2 showAlert(Context context, BaseFragment fragment, int currentAccount, TLRPC.InputPeer peer, int msgId, boolean sum, String fromLanguage, String toLanguage, CharSequence text, ArrayList<TLRPC.MessageEntity> entities, boolean noforwards, Utilities.CallbackReturn<URLSpan, Boolean> onLinkPress, Runnable onDismiss) {
         TranslateAlert2 alert = new TranslateAlert2(context, fromLanguage, toLanguage, text, entities, peer, msgId, sum, null) {
->>>>>>> upstream-12.8.1
             @Override
             public void dismiss() {
                 super.dismiss();

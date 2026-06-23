@@ -97,16 +97,12 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
 import it.octogram.android.utils.account.FingerprintUtils;
 import it.octogram.android.utils.OctoUtils;
 import it.octogram.android.utils.appearance.NotificationColorize;
 
 public class NotificationsController extends BaseController {
-=======
-public class NotificationsController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
->>>>>>> upstream-12.8.1
 
     public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
     public static String OTHER_NOTIFICATIONS_CHANNEL = null;
@@ -1906,14 +1902,10 @@ public class NotificationsController extends BaseController implements Notificat
             return LocaleController.getString(R.string.NotificationHiddenMessage);
         } else {
             boolean isChannel = ChatObject.isChannel(chat) && !chat.megagroup;
-<<<<<<< OctoGram
-            if (dialogPreviewEnabled && !mustHideContent(messageObject) && (chat_id == 0 && fromId != 0 && preferences.getBoolean("EnablePreviewAll", true) || chat_id != 0 && (!isChannel && preferences.getBoolean("EnablePreviewGroup", true) || isChannel && preferences.getBoolean("EnablePreviewChannel", true)))) {
-=======
             if (messageObject.messageOwner != null && messageObject.messageOwner.rich_message != null) {
                 return messageObject.messageText.toString();
             }
             if (dialogPreviewEnabled && (chat_id == 0 && fromId != 0 && preferences.getBoolean("EnablePreviewAll", true) || chat_id != 0 && (!isChannel && preferences.getBoolean("EnablePreviewGroup", true) || isChannel && preferences.getBoolean("EnablePreviewChannel", true)))) {
->>>>>>> upstream-12.8.1
                 if (messageObject.messageOwner instanceof TLRPC.TL_messageService) {
                     userName[0] = null;
                     if (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSetSameChatWallPaper) {

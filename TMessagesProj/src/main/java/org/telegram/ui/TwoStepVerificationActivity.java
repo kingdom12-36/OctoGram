@@ -14,18 +14,12 @@ import static org.telegram.messenger.LocaleController.getString;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-<<<<<<< OctoGram
-import android.animation.StateListAnimator;
-=======
->>>>>>> upstream-12.8.1
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-<<<<<<< OctoGram
-import android.os.Build;
-=======
->>>>>>> upstream-12.8.1
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -354,58 +348,19 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
         cancelResetButton.setOnClickListener(v -> cancelPasswordReset());
         VerticalPositionAutoAnimator.attach(cancelResetButton);
 
-<<<<<<< OctoGram
-        floatingButtonContainer = new FrameLayout(context);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-            /*
-            floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });
-             */
-        }
-        VerticalPositionAutoAnimator.attach(floatingButtonContainer);
-        floatingButtonContainer.setOnClickListener(view -> processDone());
-=======
         floatingButton = new FragmentFloatingButton(context, resourceProvider);
         VerticalPositionAutoAnimator.attach(floatingButton);
         floatingButton.setOnClickListener(view -> processDone());
->>>>>>> upstream-12.8.1
 
         floatingButtonIcon = new TransformableLoginButtonView(context);
         floatingButtonIcon.setTransformType(TransformableLoginButtonView.TRANSFORM_ARROW_CHECK);
         floatingButtonIcon.setProgress(0f);
         floatingButtonIcon.setColor(Theme.getColor(Theme.key_chats_actionIcon));
         floatingButtonIcon.setDrawBackground(false);
-<<<<<<< OctoGram
-        floatingButtonContainer.setContentDescription(getString(R.string.Next));
-        floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60));
-
-        var drawable = CustomFab.createFabBackground();
-        /*Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }*/
-        floatingButtonContainer.setBackground(drawable);
-        frameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
-=======
         floatingButton.setContentDescription(getString(R.string.Next));
         floatingButton.addView(floatingButtonIcon, LayoutHelper.createFrame(56, 56, Gravity.CENTER));
         floatingButton.addAdditionalView(floatingButtonIcon);
         frameLayout.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());
->>>>>>> upstream-12.8.1
 
         emptyView = new EmptyTextProgressView(context);
         emptyView.showProgress();

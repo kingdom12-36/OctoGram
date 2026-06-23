@@ -512,17 +512,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         public boolean isCropped;
         public int ttl;
         public long effectId;
-<<<<<<< OctoGram
         public boolean highQuality = PhotoResolution.Companion.fromInt(OctoConfig.INSTANCE.photoResolution.getValue()).isHigh();
-=======
-        @Nullable
-        public Boolean highQuality;
-        public boolean isHighQuality() {
-            if (highQuality == null)
-                return SharedConfig.photoHighQualityDefault;
-            return highQuality;
-        }
->>>>>>> upstream-12.8.1
 
         public CropState cropState;
 
@@ -551,11 +541,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             savedFilterState = null;
             stickers = null;
             cropState = null;
-<<<<<<< OctoGram
             highQuality = PhotoResolution.Companion.fromInt(OctoConfig.INSTANCE.photoResolution.getValue()).isHigh();
-=======
-            highQuality = null;
->>>>>>> upstream-12.8.1
         }
 
         public void copyFrom(MediaEditState state) {

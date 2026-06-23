@@ -58,14 +58,10 @@ import org.telegram.ui.ChatBackgroundDrawable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-<<<<<<< OctoGram
 import it.octogram.android.OctoConfig;
 import it.octogram.android.utils.OctoLogging;
 
 public class SizeNotifierFrameLayout extends FrameLayout {
-=======
-public class SizeNotifierFrameLayout extends FrameLayout implements Theme.Colorable {
->>>>>>> upstream-12.8.1
 
     public boolean DRAW_USING_RENDERNODE() {
         return Build.VERSION.SDK_INT >= 31 && SharedConfig.useNewBlur;
@@ -978,24 +974,11 @@ public class SizeNotifierFrameLayout extends FrameLayout implements Theme.Colora
 
     public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top, boolean skipBlur) {
         int blurAlpha = Color.alpha(Theme.getColor(DRAW_USING_RENDERNODE() && SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH ? Theme.key_chat_BlurAlpha : Theme.key_chat_BlurAlphaSlow, getResourceProvider()));
-<<<<<<< OctoGram
         if (OctoConfig.INSTANCE.forceChatBlurEffect.getValue()) {
             blurAlpha = OctoConfig.INSTANCE.blurEffectStrength.getValue();
         }
         if (!SharedConfig.chatBlurEnabled() || skipBlur) {
             OctoLogging.d("SizeNotifierFrameLayout", "skip blur");
-=======
-        drawBlurRect(canvas, y, rectTmp, blurScrimPaint, top, blurAlpha);
-    }
-
-    public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top, float alpha) {
-        int blurAlpha = Color.alpha(Theme.getColor(DRAW_USING_RENDERNODE() && SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH ? Theme.key_chat_BlurAlpha : Theme.key_chat_BlurAlphaSlow, getResourceProvider()));
-        drawBlurRect(canvas, y, rectTmp, blurScrimPaint, top, lerp(0xFF, blurAlpha, alpha));
-    }
-
-    public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top, int blurAlpha) {
-        if (!SharedConfig.chatBlurEnabled()) {
->>>>>>> upstream-12.8.1
             canvas.drawRect(rectTmp, blurScrimPaint);
             return;
         }

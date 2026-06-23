@@ -3658,7 +3658,6 @@ public class MessageObject {
         final TLRPC.TL_textWithEntities summarizedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.summaryText : null;
         final TLRPC.TL_textWithEntities summarizeTranslatedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.translatedSummaryText : null;
         if (
-<<<<<<< OctoGram
             //TranslateController.isTranslatable(this) &&
             /*translateController.isTranslatingDialog(getDialogId()) &&
             // ADDED ON TGA 10.14
@@ -3668,59 +3667,13 @@ public class MessageObject {
             (messageOwner.translatedText != null || messageOwner.translatedPoll != null) &&
             messageOwner.translatedProviderId == OctoConfig.INSTANCE.translatorProvider.getValue() &&
             TextUtils.equals(translateController.isManualTranslated(this) ? TranslateAlert2.getToLanguage() : translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedToLanguage)
-=======
-            summarizeTranslatedText != null &&
-            messageOwner != null &&
-            messageOwner.summarizedOpen &&
-            TranslateController.isSummarizable(this) &&
-            TranslateController.isTranslatable(this) &&
-            translateController.isTranslatingDialog(getDialogId()) &&
-            !translateController.isTranslateDialogHidden(getDialogId()) &&
-            TextUtils.equals(translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedSummaryLanguage)
-        ) {
-            if (summarized && translated) {
-                return replyUpdated || false;
-            }
-            summarized = true;
-            translated = true;
-            applyNewText(summarizeTranslatedText.text);
-            generateCaption();
-            return replyUpdated || true;
-        } else if (
-            messageOwner != null &&
-            messageOwner.summarizedOpen &&
-            TranslateController.isSummarizable(this) &&
-            summarizedText != null
-        ) {
-            if (summarized && !translated) {
-                return replyUpdated || false;
-            }
-            summarized = true;
-            translated = false;
-            applyNewText(summarizedText.text);
-            generateCaption();
-            return replyUpdated || true;
-        } else if (
-            messageOwner != null &&
-            TranslateController.isTranslatable(this) &&
-            translateController.isTranslatingDialog(getDialogId()) &&
-            !translateController.isTranslateDialogHidden(getDialogId()) &&
-            (translatedText != null || messageOwner.translatedPoll != null) &&
-            TextUtils.equals(translateController.getDialogTranslateTo(getDialogId()), messageOwner.translatedToLanguage)
->>>>>>> upstream-12.8.1
         ) {
             if (translated && !summarized) {
                 return replyUpdated || false;
             }
             translated = true;
-<<<<<<< OctoGram
             if (messageOwner.translatedText != null) {
                 applyNewText(OctoUtils.handleTranslatorShowOriginal(messageOwner.message, messageOwner.translatedText.text));
-=======
-            summarized = false;
-            if (translatedText != null) {
-                applyNewText(translatedText.text);
->>>>>>> upstream-12.8.1
                 generateCaption();
             }
             return replyUpdated || true;
@@ -3749,14 +3702,8 @@ public class MessageObject {
             fromUser = MessagesController.getInstance(currentAccount).getUser(messageOwner.from_id.user_id);
         }
         messageText = text;
-<<<<<<< OctoGram
-        ArrayList<TLRPC.MessageEntity> entities = translated && messageOwner.translatedText != null ? reparseMessageEntities(messageOwner.translatedText.entities) : messageOwner.entities;
-        //ArrayList<TLRPC.MessageEntity> entities = translated && messageOwner.translatedText != null ? messageOwner.translatedText.entities : messageOwner.entities;
-        TextPaint paint;
-=======
         final ArrayList<TLRPC.MessageEntity> entities = getEntities();
         final TextPaint paint;
->>>>>>> upstream-12.8.1
         if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGame) {
             paint = Theme.chat_msgGameTextPaint;
         } else {
@@ -7617,31 +7564,10 @@ public class MessageObject {
         } else if (hasExtendedMedia()) {
             text = messageOwner.message = messageOwner.media.description;
         }
-<<<<<<< OctoGram
         if (messageOwner.translatedText != null && (captionTranslated = translated)) {
             text = OctoUtils.handleTranslatorShowOriginal(text, messageOwner.translatedText.text);
             //entities = messageOwner.translatedText.entities;
             entities = reparseMessageEntities(messageOwner.translatedText.entities);
-=======
-        if (messageOwner.translatedSummaryText != null && summarized && translated) {
-            captionSummarized = true;
-            captionTranslated = true;
-            text = messageOwner.translatedSummaryText.text;
-            entities = messageOwner.translatedSummaryText.entities;
-        } else if (messageOwner.summaryText != null && summarized) {
-            captionSummarized = true;
-            captionTranslated = false;
-            text = messageOwner.summaryText.text;
-            entities = messageOwner.summaryText.entities;
-        } else if (messageOwner.translatedText != null && translated) {
-            captionSummarized = false;
-            captionTranslated = true;
-            text = messageOwner.translatedText.text;
-            entities = messageOwner.translatedText.entities;
-        } else {
-            captionSummarized = false;
-            captionTranslated = false;
->>>>>>> upstream-12.8.1
         }
         if (!isMediaEmpty() && !(getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGame) && !TextUtils.isEmpty(text)) {
             caption = Emoji.replaceEmoji(text, Theme.chat_msgTextPaint.getFontMetricsInt(), false);
@@ -7937,22 +7863,7 @@ public class MessageObject {
             entities.add(entityItalic);
             return addEntitiesToText(text, entities, isOutOwner(), true, photoViewer, useManualParse);
         } else {
-<<<<<<< OctoGram
-            ArrayList<TLRPC.MessageEntity> entities;
-            if (translated) {
-                if (messageOwner.translatedText == null) {
-                    entities = null;
-                } else {
-                    //entities = messageOwner.translatedText.entities;
-                    entities = reparseMessageEntities(messageOwner.translatedText.entities);
-                }
-            } else {
-                entities = messageOwner.entities;
-            }
-            return addEntitiesToText(text, entities, isOutOwner(), true, photoViewer, useManualParse);
-=======
             return addEntitiesToText(text, getEntities(), isOutOwner(), true, photoViewer, useManualParse);
->>>>>>> upstream-12.8.1
         }
     }
 
@@ -8565,12 +8476,7 @@ public class MessageObject {
 
     private boolean applyEntities() {
         generateLinkDescription();
-<<<<<<< OctoGram
 
-        //ArrayList<TLRPC.MessageEntity> entities = translated && messageOwner.translatedText != null ? messageOwner.translatedText.entities : messageOwner.entities;
-        ArrayList<TLRPC.MessageEntity> entities = translated && messageOwner.translatedText != null ? reparseMessageEntities(messageOwner.translatedText.entities) : messageOwner.entities;
-=======
->>>>>>> upstream-12.8.1
         spoilLoginCode();
 
         boolean hasEntities;

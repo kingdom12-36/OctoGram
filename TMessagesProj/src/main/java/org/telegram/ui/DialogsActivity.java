@@ -58,13 +58,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
-<<<<<<< OctoGram
-import android.transition.ChangeBounds;
-import android.transition.TransitionManager;
-import android.util.Log;
-=======
 import android.text.style.ImageSpan;
->>>>>>> upstream-12.8.1
 import android.util.LongSparseArray;
 import android.util.Property;
 import android.util.StateSet;
@@ -278,7 +272,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-<<<<<<< OctoGram
 import it.octogram.android.ActionBarTitleOption;
 import it.octogram.android.InterfaceRapidButtonsActions;
 import it.octogram.android.OctoConfig;
@@ -303,54 +296,6 @@ import it.octogram.android.utils.config.FolderUtils;
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 
     public final static boolean DISPLAY_SPEEDOMETER_IN_DOWNLOADS_SEARCH = true;
-=======
-import me.vkryl.android.animator.BoolAnimator;
-import me.vkryl.android.animator.FactorAnimator;
-
-public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider, FactorAnimator.Target, MainTabsActivity.TabFragmentDelegate {
-    private final int ADDITIONAL_LIST_HEIGHT_DP = Build.VERSION.SDK_INT >= 31 ? 48 : 0;
-
-    private static final boolean TMP_DISABLE_TOPICS_TWO_COLUMNS = false;
-
-    public static final int MAIN_TABS_HEIGHT = 56;
-    public static final int MAIN_TABS_MARGIN = 8;
-    public static final int MAIN_TABS_HEIGHT_WITH_MARGINS = MAIN_TABS_HEIGHT + MAIN_TABS_MARGIN * 2;
-    public static final int FILTER_TABS_HEIGHT = 36;
-    public static final int SEARCH_TABS_HEIGHT = 36 + 7 + 7;
-    public static final int SEARCH_FIELD_HEIGHT = 48;
-
-    private final int ANIMATOR_ID_SEARCH_VISIBLE = 1;
-    private final int ANIMATOR_ID_DONE_BUTTON_VISIBLE = 2;
-    private final int ANIMATOR_ID_SPEED_BUTTON_VISIBLE = 3;
-    private final int ANIMATOR_ID_SHADOW_VISIBLE = 4;
-    private final int ANIMATOR_ID_SEARCH_BUTTON_VISIBLE = 5;
-    private final int ANIMATOR_ID_ACTION_MODE_VISIBLE = 6;
-    private final int ANIMATOR_ID_FORWARD_BUTTON_VISIBLE = 7;
-    private final int ANIMATOR_ID_FILTER_TABS_VISIBLE = 8;
-    private final int ANIMATOR_ID_SEARCH_FILTER_TABS_VISIBLE = 9;
-
-    private final BoolAnimator animatorSearchVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorDoneButtonVisible = new BoolAnimator(ANIMATOR_ID_DONE_BUTTON_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorSpeedButtonVisible = new BoolAnimator(ANIMATOR_ID_SPEED_BUTTON_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorShadowVisible = new BoolAnimator(ANIMATOR_ID_SHADOW_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorSearchButtonVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_BUTTON_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorActionModeVisible = new BoolAnimator(ANIMATOR_ID_ACTION_MODE_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorForwardButtonVisible = new BoolAnimator(ANIMATOR_ID_FORWARD_BUTTON_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorFilterTabsVisible = new BoolAnimator(ANIMATOR_ID_FILTER_TABS_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-    private final BoolAnimator animatorSearchFilterTabsVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_FILTER_TABS_VISIBLE,
-            this, CubicBezierInterpolator.EASE_OUT_QUINT, 350);
-
-
-    private final WindowInsetsStateHolder windowInsetsStateHolder = new WindowInsetsStateHolder(this::checkInsets);
->>>>>>> upstream-12.8.1
 
     private boolean canShowFilterTabsView;
     private int initialSearchType = -1;
@@ -615,13 +560,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Nullable
     private ActionBarMenuSubItem blockItem;
 
-<<<<<<< OctoGram
-    @Nullable
-    private ActionBarMenuSubItem lockUnlockItem;
 
-    private IUpdateButton updateButton;
-=======
->>>>>>> upstream-12.8.1
     private float additionalFloatingTranslation;
     private float floatingButtonPanOffset;
 
@@ -3226,10 +3165,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         topPanelLayout = null;
 
         ActionBarMenu menu = actionBar.createMenu();
-<<<<<<< OctoGram
-        if (!onlySelect && searchString == null && folderId == 0 && !isHiddenChats()) {
-            doneItem = new ActionBarMenuItem(context, null, Theme.getColor(Theme.key_actionBarDefaultSelector), Theme.getColor(Theme.key_actionBarDefaultIcon), true);
-=======
         searchItem = menu.addItem(0, R.drawable.outline_header_search).setIsSearchField(true, false);
         searchItem.setOnClickListener(v -> {
             showSearch(true, false, true);
@@ -3264,7 +3199,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (!onlySelect && searchString == null && folderId == 0) {
             doneItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarDefaultSelector), getThemedColor(Theme.key_actionBarDefaultIcon), true);
->>>>>>> upstream-12.8.1
             doneItem.setText(LocaleController.getString(R.string.Done).toUpperCase());
             actionBar.addView(doneItem, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.RIGHT, 0, 0, 10, 0));
             doneItem.setOnClickListener(v -> {
@@ -3397,7 +3331,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 searchWas = false;
                 if (viewPages[0] != null) {
                     viewPages[0].listView.setEmptyView(folderId == 0 ? viewPages[0].progressView : null);
-<<<<<<< OctoGram
                     if (!onlySelect) {
                         floatingButtonContainer.setVisibility(RapidActionsHelper.isButtonHiddenAsCustomConfig(true) ? View.GONE : View.VISIBLE);
                         if (floatingButton2Container != null) {
@@ -3408,8 +3341,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         floatingButtonHideProgress = 1f;
                         updateFloatingButtonOffset();
                     }
-=======
->>>>>>> upstream-12.8.1
                     showSearch(false, false, true);
                 }
                 updateProxyButton(false, false);
@@ -3461,16 +3392,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         });
-<<<<<<< OctoGram
-        if (initialDialogsType == DIALOGS_TYPE_ADD_USERS_TO || isHiddenChats() || isArchive() && getDialogsArray(currentAccount, initialDialogsType, folderId, false).isEmpty()) {
-            searchItem.setVisibility(View.GONE);
-        }
-        if (isArchive()) {
-=======
         fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
 
         if (initialDialogsType == DIALOGS_TYPE_DEFAULT) {
->>>>>>> upstream-12.8.1
             optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
             optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
             optionsItem.setOnClickListener(v -> {
@@ -3483,15 +3407,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 return true;
             });
         }
-<<<<<<< OctoGram
-        if (isHiddenChats()) {
-            optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
-            optionsItem.addSubItem(180, R.drawable.msg_customize, getString(R.string.Settings)).setColors(getThemedColor(Theme.key_actionBarDefaultSubmenuItem), getThemedColor(Theme.key_actionBarDefaultSubmenuItem));
-            optionsItem.addSubItem(181, R.drawable.msg_help, getString(R.string.HowDoesItWork)).setColors(getThemedColor(Theme.key_actionBarDefaultSubmenuItem), getThemedColor(Theme.key_actionBarDefaultSubmenuItem));
-        }
-=======
 
->>>>>>> upstream-12.8.1
         searchItem.setSearchFieldHint(getString(R.string.Search));
         searchItem.setContentDescription(getString(R.string.Search));
         if (onlySelect) {
@@ -3547,7 +3463,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                 statusDrawable.center = true;
-<<<<<<< OctoGram
                 if (OctoConfig.INSTANCE.actionBarTitleOption.getValue() == ActionBarTitleOption.ACCOUNT_NAME.getValue()) {
                     TLRPC.User selfUser = UserConfig.getInstance(currentAccount).getCurrentUser();
                     actionBar.setTitle((selfUser.first_name + " " + (selfUser.last_name != null ? selfUser.last_name : "")), statusDrawable);
@@ -3561,14 +3476,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     actionBar.setTitle(LocaleController.getString(R.string.BuildAppName), statusDrawable);
                 }
-=======
-                logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
-                logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
-                logoDrawable.setColorFilter(getThemedColor(Theme.key_telegram_color_dialogsLogo), PorterDuff.Mode.MULTIPLY);
-                SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
-                ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                actionBar.setTitle(ssb, statusDrawable);
->>>>>>> upstream-12.8.1
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -4042,32 +3949,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     checkUi_itemPasscodeVisibility();
                 } else if (id == 3) {
                     showSearch(true, true, true);
-<<<<<<< OctoGram
-                    actionBar.openSearchField(true);
-                } else if (id == 5) {
-                    presentFragment(new ArchiveSettingsActivity());
-                } else if (id == 6) {
-                    showArchiveHelp();
-                } else if (id == 180) {
-                    presentFragment(new PreferencesFragment(new OctoPrivacySettingsUI(), "lockedChats"));
-                } else if (id == 181) {
-                    showLockedChatsHelp();
-                } else if (id >= 10 && id < 10 + UserConfig.MAX_ACCOUNT_COUNT) {
-                    if (getParentActivity() == null) {
-                        return;
-                    }
-                    DialogsActivityDelegate oldDelegate = delegate;
-                    LaunchActivity launchActivity = (LaunchActivity) getParentActivity();
-                    launchActivity.switchToAccount(id - 10, true);
-
-                    DialogsActivity dialogsActivity = new DialogsActivity(arguments);
-                    dialogsActivity.setDelegate(oldDelegate);
-                    launchActivity.presentFragment(dialogsActivity, false, true);
-=======
                     fragmentSearchFieldWatcher.toggleSearch(true);
                 } else if (id == 11) {
                     openAccountSelector(switchItem);
->>>>>>> upstream-12.8.1
                 } else if (id == add_to_folder) {
                     FiltersListBottomSheet sheet = new FiltersListBottomSheet(DialogsActivity.this, selectedDialogs);
                     sheet.setDelegate((filter, checked) -> {
@@ -4892,7 +4776,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             filtersView.cancelClickRunnables(true);
             addSearchFilter(filtersView.getFilterAt(position));
         });
-<<<<<<< OctoGram
         contentView.addView(filtersView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
         filtersView.setVisibility(View.GONE);
 
@@ -4954,19 +4837,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         floatingButtonContainer.setVisibility(onlySelect && initialDialogsType != 10 || folderId != 0 || isHiddenChats() || RapidActionsHelper.isButtonHiddenAsCustomConfig(true)  ? View.GONE : View.VISIBLE);
         contentView.addView(floatingButtonContainer, LayoutHelper.createFrame(56, 56, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
         floatingButtonContainer.setOnClickListener(v -> {
-=======
-        searchTabsAndFiltersLayout.addView(filtersView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP));
-
-        floatingButtonStories = new FragmentFloatingButton(context, resourceProvider, true);
-        floatingButtonStories.setContentDescription(getString(R.string.StoryPrivacyButtonPost));
-        floatingButtonStories.setImageResource(R.drawable.outline_fab_story_24);
-        floatingButtonStories.setOnClickListener(v -> openStoriesRecorder());
-        contentView.addView(floatingButtonStories, FragmentFloatingButton.createSubButtonLayoutParams());
-
-        floatingButton3 = new FragmentFloatingButton(context, resourceProvider);
-        contentView.addView(floatingButton3, FragmentFloatingButton.createDefaultLayoutParams());
-        floatingButton3.setOnClickListener(v -> {
->>>>>>> upstream-12.8.1
             if (parentLayout != null && parentLayout.isInPreviewMode()) {
                 finishPreviewFragment();
                 return;
@@ -4981,34 +4851,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
                 delegate.didSelectDialogs(DialogsActivity.this, topicKeys, null, false, notify, scheduleDate, scheduleRepeatPeriod, null);
             } else {
-<<<<<<< OctoGram
-                if (floatingButton.getVisibility() != View.VISIBLE) {
-                    return;
-                }
 
-                if (RapidActionsHelper.hasCustomHandling()) {
-                    RapidActionsHelper.handleAction(this, true, false);
-                    return;
-                }
-
-                if (!storiesEnabled) {
-                    Bundle args = new Bundle();
-                    args.putBoolean("destroyAfterSelect", true);
-                    presentFragment(new ContactsActivity(args));
-                    return;
-                }
-
-                if (storyHint != null) {
-                    storyHint.hide();
-                }
-
-                final StoriesController.StoryLimit storyLimit = MessagesController.getInstance(currentAccount).getStoriesController().checkStoryLimit();
-                if (storyLimit != null) {
-                    showDialog(new LimitReachedBottomSheet(this, getContext(), storyLimit.getLimitReachedType(), currentAccount, null));
-                    return;
-                }
-=======
->>>>>>> upstream-12.8.1
                 if (MessagesController.getInstance(currentAccount).isFrozen()) {
                     AccountFrozenAlert.show(currentAccount);
                     return;
@@ -5050,27 +4893,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
-<<<<<<< OctoGram
-        floatingButton = new RLottieImageView(context);
-        floatingButton.setScaleType(ImageView.ScaleType.CENTER);
-        floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-        /*StateListAnimator animator = new StateListAnimator();
-        animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, dp(2), dp(4)).setDuration(200));
-        animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, dp(4), dp(2)).setDuration(200));
-        floatingButtonContainer.setStateListAnimator(animator);
-        floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-            @SuppressLint("NewApi")
-            @Override
-            public void getOutline(View view, Outline outline) {
-                outline.setOval(0, 0, dp(56), dp(56));
-            }
-        });*/
-        floatingButtonContainer.setOutlineProvider(new OutlineProvider());
-        Drawable drawable = Theme.createSimpleSelectorCircleDrawable(dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
-        floatingButtonContainer.addView(floatingButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        updateFloatingButtonColor();
-=======
->>>>>>> upstream-12.8.1
+
         updateStoriesPosting();
 
         searchTabsView = null;
@@ -5401,20 +5224,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     info.setClickable(true);
                 }
             };
-<<<<<<< OctoGram
             var squaredFab = OctoConfig.INSTANCE.useSquaredFab.getValue();
             writeButton.setCircleSize(dp(squaredFab ? 64 : 56));
             writeButton.setUseSquaredFab(squaredFab);
             writeButton.setCirclePadding(dp(8), dp(8));
             contentView.addView(writeButton, LayoutHelper.createFrame(110, 110, Gravity.RIGHT | Gravity.BOTTOM));
 
-=======
-            writeButton.setCircleSize(dp(52), dp(38));
-            writeButton.setCirclePadding(dp(7), dp(8));
-            writeButton.newCounterPos = true;
-            contentView.addView(writeButton, LayoutHelper.createFrame(110, 50, Gravity.RIGHT | Gravity.BOTTOM));
-            writeButton.setScrimViewBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
->>>>>>> upstream-12.8.1
             writeButton.setOnClickListener(v -> {
                 if (delegate == null || selectedDialogs.isEmpty()) {
                     return;
@@ -5629,24 +5444,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             contentView.addView(fragmentSearchField, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP, 7, -2, 7, 0));
         }
 
-<<<<<<< OctoGram
-        if (searchString == null && initialDialogsType == DIALOGS_TYPE_DEFAULT) {
-            updateButton = new DialogsPageUpdateButtonCell(context);
-            if (updateButton != null) {
-                contentView.addView(updateButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM));
-                updateButton.onTranslationUpdate(ty -> {
-                    additionalFloatingTranslation2 = dp(48) - ty;
-                    if (additionalFloatingTranslation2 < 0) {
-                        additionalFloatingTranslation2 = 0;
-                    }
-                    if (!floatingHidden) {
-                        updateFloatingButtonOffset();
-                    }
-                });
-            }
-        }
-=======
->>>>>>> upstream-12.8.1
+
 
         undoViewIndex = contentView.getChildCount();
         undoView[0] = null;
@@ -5730,7 +5528,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             FilesMigrationService.checkBottomSheet(this);
         }
-<<<<<<< OctoGram
         if (!OctoConfig.INSTANCE.welcomeNewUserShownBottomSheet.getValue()) {
             OctoConfig.INSTANCE.welcomeNewUserShownBottomSheet.updateValue(true);
             TL_chatlists.TL_chatlists_checkChatlistInvite req = new TL_chatlists.TL_chatlists_checkChatlistInvite();
@@ -5758,8 +5555,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             AppLinkVerifyBottomSheet.checkBottomSheet(this);
         }
         //updateMenuButton(false);
-=======
->>>>>>> upstream-12.8.1
         actionBar.setDrawBlurBackground(contentView);
 
         rightSlidingDialogContainer = new RightSlidingDialogContainer(context) {
@@ -5776,14 +5571,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void openAnimationStarted(boolean open) {
-<<<<<<< OctoGram
-                if (!isArchive() && !isHiddenChats()) {
-                    actionBar.setBackButtonDrawable(menuDrawable = new MenuDrawable());
-                    menuDrawable.setRoundCap();
-                }
 
-=======
->>>>>>> upstream-12.8.1
                 rightFragmentTransitionInProgress = true;
                 rightFragmentTransitionIsOpen = open;
                 contentView.requestLayout();
@@ -6302,29 +6090,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 false,
                 true
             );
-<<<<<<< OctoGram
-            updateAuthHintCellVisibility(false);
-        }else if (folderId == 0 && Crashlytics.hasPendingCrash()) {
-            dialogsHintCellVisible = true;
-            dialogsHintCell.setVisibility(View.VISIBLE);
-            dialogsHintCell.setCompact(true);
-            dialogsHintCell.setText(LocaleController.getString(R.string.OctoCrashedTitle), LocaleController.getString(R.string.OctoCrashedDesc));
-            dialogsHintCell.setOnClickListener(v -> {
-                OctoLogsSettingsUI ui = new OctoLogsSettingsUI();
-                ui.setForceCrashedRecentlyPage(true);
-                ui.setOnCrashedRecentlyHideRunnable(() -> updateDialogsHint());
-                presentFragment(new PreferencesFragment(ui));
-            });
-            dialogsHintCell.setOnCloseListener(v -> {
-                Crashlytics.resetPendingCrash();
-                ChangeBounds transition = new ChangeBounds();
-                transition.setDuration(200);
-                TransitionManager.beginDelayedTransition((ViewGroup) dialogsHintCell.getParent(), transition);
-                updateDialogsHint();
-            });
-            updateAuthHintCellVisibility(false);
-        }else if (folderId == 0 && getMessagesController().pendingSuggestions.contains("PREMIUM_GRACE")) {
-=======
         } else if (folderId == 0 && getMessagesController().pendingSuggestions.contains("SETUP_PASSKEY")) {
             dialogsHintCellVisible = true;
             dialogsHintCell.setOnClickListener(v -> {
@@ -6336,7 +6101,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 updateDialogsHint();
             });
         } else if (folderId == 0 && getMessagesController().pendingSuggestions.contains("PREMIUM_GRACE")) {
->>>>>>> upstream-12.8.1
             dialogsHintCellVisible = true;
             dialogsHintCell.setOnClickListener(v -> {
                 Browser.openUrl(getContext(), getMessagesController().premiumManageSubscriptionUrl);
@@ -7176,13 +6940,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             filterOptions.dismiss();
             filterOptions = null;
         }
-<<<<<<< OctoGram
-        ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
-        if (filters.size() > 1 && FolderUtils.areThereFolders()) {
-=======
         final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
         if (filters.size() > 1) {
->>>>>>> upstream-12.8.1
             if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                 boolean animatedUpdateItems = animated;
                 if (filterTabsView.getVisibility() != View.VISIBLE) {
@@ -7442,7 +7201,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (getParentActivity() == null) {
                 return;
             }
-<<<<<<< OctoGram
             if (MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
                 return;
             }
@@ -7451,11 +7209,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             showDialog(new AlertDialog.Builder(getParentActivity())
                     .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground))
-=======
-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
-                showDialog(new AlertDialog.Builder(getParentActivity())
-                    .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
->>>>>>> upstream-12.8.1
                     .setMessage(getString(R.string.PermissionXiaomiLockscreen))
                     .setPositiveButton(getString(R.string.PermissionOpenSettings), (dialog, which) -> {
                         Intent intent = XiaomiUtilities.getPermissionManagerIntent();
@@ -7480,7 +7233,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (getParentActivity() == null) {
                 return;
             }
-<<<<<<< OctoGram
             if (MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
                 return;
             }
@@ -7498,21 +7250,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             getParentActivity().startActivity(intent);
                         } catch (Exception x) {
                             FileLog.e(x);
-=======
-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
-                showDialog(new AlertDialog.Builder(getParentActivity())
-                    .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
-                    .setMessage(getString(R.string.PermissionFSILockscreen))
-                    .setPositiveButton(getString(R.string.PermissionOpenSettings), (dialog, which) -> {
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
-                        intent.setData(Uri.parse("package:" + ApplicationLoader.applicationContext.getPackageName()));
-                        if (intent != null) {
-                            try {
-                                getParentActivity().startActivity(intent);
-                            } catch (Exception x) {
-                                FileLog.e(x);
-                            }
->>>>>>> upstream-12.8.1
                         }
                     })
                     .setNegativeButton(getString(R.string.ContactsPermissionAlertNotNow), (dialog, which) -> MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askedAboutFSILockscreen", true).commit())
@@ -7738,7 +7475,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 showArchiveHelp();
             }
         }
-<<<<<<< OctoGram
         if (isHiddenChats()) {
             boolean shownHiddenChatsHint = OctoConfig.INSTANCE.shownHiddenChatsHint.getValue();
             final boolean isEmpty = getDialogsArray(currentAccount, initialDialogsType, folderId, false).isEmpty();
@@ -7757,8 +7493,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         }
         updateFloatingButtonOffset();
-=======
->>>>>>> upstream-12.8.1
         if (canShowStoryHint && !storyHintShown && storyHint != null && storiesEnabled) {
             storyHintShown = true;
             canShowStoryHint = false;
@@ -7836,17 +7570,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 dialogStoriesCell.setVisibility(View.GONE);
             }
         }
-<<<<<<< OctoGram
         if (floatingButtonContainer != null) {
             floatingButtonContainer.setVisibility(onlySelect && initialDialogsType != 10 || folderId != 0 || isHiddenChats() || isInPreviewMode || RapidActionsHelper.isButtonHiddenAsCustomConfig(true) ? View.GONE : View.VISIBLE);
         }
         if (floatingButton2Container != null) {
             floatingButton2Container.setVisibility(onlySelect && initialDialogsType != 10 || folderId != 0 || isHiddenChats() || (searchItem != null && searchItem.isSearchFieldVisible()) || isInPreviewMode || (OctoConfig.INSTANCE.rapidActionsDefaultConfig.getValue() ? !storiesEnabled : RapidActionsHelper.isButtonHiddenAsCustomConfig(false)) ? View.GONE : View.VISIBLE);
         }
-=======
-
-        updateFloatingButtonVisibility(true);
->>>>>>> upstream-12.8.1
         updateDialogsHint();
     }
 
@@ -9257,14 +8986,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     public boolean storiesEnabled = true;
     private void updateStoriesPosting() {
         final boolean storiesEnabled = getMessagesController().storiesEnabled();
-<<<<<<< OctoGram
-        /*if (this.storiesEnabled != storiesEnabled) {
-            if (floatingButton2Container != null) {
-                floatingButton2Container.setVisibility(onlySelect && initialDialogsType != 10 || folderId != 0 || !storiesEnabled || (searchItem != null && searchItem.isSearchFieldVisible()) || isInPreviewMode() ? View.GONE : View.VISIBLE);
-            }
-=======
         if (this.storiesEnabled != storiesEnabled) {
->>>>>>> upstream-12.8.1
             updateFloatingButtonOffset();
             if (!this.storiesEnabled && storiesEnabled && storyHint != null) {
                 storyHint.show();
@@ -9283,49 +9005,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
-<<<<<<< OctoGram
-        this.storiesEnabled = storiesEnabled;
-
-        if (floatingButton == null || floatingButtonContainer == null) {
-=======
         if (floatingButton3 == null) {
->>>>>>> upstream-12.8.1
             return;
         }
 
         if (initialDialogsType == DIALOGS_TYPE_WIDGET) {
-<<<<<<< OctoGram
-            floatingButton.setImageResource(R.drawable.floating_check);
-            floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.Done));
-        } else if (storiesEnabled) {
-            floatingButton.setAnimation(R.raw.write_contacts_fab_icon_camera, 56, 56);
-            floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.AccDescrCaptureStory));
-
-            if (floatingButton2 != null) {
-                floatingButton2.setImageResource(R.drawable.fab_compose_small);
-                floatingButton2Container.setContentDescription(LocaleController.getString(R.string.NewMessageTitle));
-//                if (floatingButtonContainer.getVisibility() == View.VISIBLE) {
-//                    floatingButton2Container.setVisibility(View.VISIBLE);
-//                }
-            }
-        } else {
-            floatingButton.setAnimation(R.raw.write_contacts_fab_icon, 52, 52);
-            floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.NewMessageTitle));
-
-            if (floatingButton2 != null) {
-                floatingButton2.setImageResource(R.drawable.filled_premium_camera);
-                floatingButton2Container.setContentDescription(LocaleController.getString(R.string.AccDescrCaptureStory));
-//                if (floatingButtonContainer.getVisibility() == View.VISIBLE) {
-//                    floatingButton2Container.setVisibility(View.VISIBLE);
-//                }
-            }
-=======
             floatingButton3.setImageResource(R.drawable.floating_check);
             floatingButton3.setContentDescription(LocaleController.getString(R.string.Done));
         } else {
             floatingButton3.setImageResource(R.drawable.filled_fab_compose_32);
             floatingButton3.setContentDescription(LocaleController.getString(R.string.NewMessageTitle));
->>>>>>> upstream-12.8.1
         }
 
         if (initialDialogsType != DIALOGS_TYPE_WIDGET && !OctoConfig.INSTANCE.rapidActionsDefaultConfig.getValue()) {
@@ -10668,11 +10357,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 break;
             }
         }
-<<<<<<< OctoGram
         if (!searching && (OctoConfig.INSTANCE.alwaysShowDownloads.getValue() || getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
-=======
-        if ((getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
->>>>>>> upstream-12.8.1
             downloadsItemVisible = true;
         } else {
             downloadsItemVisible = false;
@@ -11193,19 +10878,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
             SuggestClearDatabaseBottomSheet.dismissDialog();
-<<<<<<< OctoGram
-//        } else if (id == NotificationCenter.appUpdateAvailable || id == NotificationCenter.appUpdateLoading) {
-//            updateMenuButton(true);
-//        } else if (id == NotificationCenter.fileLoaded || id == NotificationCenter.fileLoadFailed || id == NotificationCenter.fileLoadProgressChanged) {
-//            String name = (String) args[0];
-//            if (SharedConfig.isAppUpdateAvailable()) {
-//                String fileName = FileLoader.getAttachFileName(SharedConfig.pendingAppUpdate.document);
-//                if (fileName.equals(name)) {
-//                    updateMenuButton(true);
-//                }
-//            }
-=======
->>>>>>> upstream-12.8.1
+
         } else if (id == NotificationCenter.onDatabaseMigration) {
             boolean startMigration = (boolean) args[0];
             if (fragmentView != null) {
@@ -11301,47 +10974,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     View databaseMigrationHint;
 
-<<<<<<< OctoGram
-//    private void updateMenuButton(boolean animated) {
-//        if (menuDrawable == null || updateButton == null) {
-//            return;
-//        }
-//        int type;
-//        float downloadProgress;
-//        if (ApplicationLoader.applicationLoaderInstance.isCustomUpdate()) {
-//            if (ApplicationLoader.applicationLoaderInstance.getUpdate() != null) {
-//                if (ApplicationLoader.applicationLoaderInstance.isDownloadingUpdate()) {
-//                    type = MenuDrawable.TYPE_UDPATE_DOWNLOADING;
-//                    downloadProgress = ApplicationLoader.applicationLoaderInstance.getDownloadingUpdateProgress();
-//                } else {
-//                    type = MenuDrawable.TYPE_UDPATE_AVAILABLE;
-//                    downloadProgress = 0.0f;
-//                }
-//            } else {
-//                type = MenuDrawable.TYPE_DEFAULT;
-//                downloadProgress = 0.0f;
-//            }
-//        } else if (SharedConfig.isAppUpdateAvailable()) {
-//            String fileName = FileLoader.getAttachFileName(SharedConfig.pendingAppUpdate.document);
-//            if (FileLoader.getInstance(UpdatesManager.INSTANCE.getFirstAccountId()).isLoadingFile(fileName)) {
-//                type = MenuDrawable.TYPE_UDPATE_DOWNLOADING;
-//                Float p = ImageLoader.getInstance().getFileProgress(fileName);
-//                downloadProgress = p != null ? p : 0.0f;
-//            } else {
-//                type = MenuDrawable.TYPE_UDPATE_AVAILABLE;
-//                downloadProgress = 0.0f;
-//            }
-//        } else {
-//            type = MenuDrawable.TYPE_DEFAULT;
-//            downloadProgress = 0.0f;
-//        }
-//        updateButton.update(animated);
-//        menuDrawable.setType(type, animated);
-//        menuDrawable.setUpdateDownloadProgress(downloadProgress, animated);
-//    }
 
-=======
->>>>>>> upstream-12.8.1
     private String showingSuggestion;
 
     private void showNextSupportedSuggestion() {
@@ -11631,124 +11264,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (hide && floatingForceVisible) {
             return;
         }
-<<<<<<< OctoGram
-        boolean hasLockedAccount = FingerprintUtils.hasLockedAccounts() && FingerprintUtils.hasFingerprintCached() && FingerprintUtils.isAccountLockedByNumber(UserConfig.selectedAccount);
-        if ((SharedConfig.passcodeHash.length() != 0 || hasLockedAccount) && !searching) {
-            if (doneItem == null || doneItem.getVisibility() != View.VISIBLE) {
-                passcodeItem.setVisibility(View.VISIBLE);
-            }
-            passcodeItem.setIcon(passcodeDrawable);
-            passcodeItemVisible = true;
-        } else {
-            passcodeItem.setVisibility(View.GONE);
-            passcodeItemVisible = false;
-        }
-    }
-
-    private void setFloatingProgressVisible(boolean visible, boolean animate) {
-        if (floatingButton2 == null || floating2ProgressView == null) {
-            return;
-        }
-        if (animate) {
-            if (visible == floatingProgressVisible) {
-                return;
-            }
-            if (floatingProgressAnimator != null) {
-                floatingProgressAnimator.cancel();
-            }
-
-            floatingProgressVisible = visible;
-
-            floatingProgressAnimator = new AnimatorSet();
-            floatingProgressAnimator.playTogether(
-                    ObjectAnimator.ofFloat(floatingButton2, View.ALPHA, visible ? 0f : 1f),
-                    ObjectAnimator.ofFloat(floatingButton2, View.SCALE_X, visible ? 0.1f : 1f),
-                    ObjectAnimator.ofFloat(floatingButton2, View.SCALE_Y, visible ? 0.1f : 1f),
-                    ObjectAnimator.ofFloat(floating2ProgressView, View.ALPHA, visible ? 1f : 0f),
-                    ObjectAnimator.ofFloat(floating2ProgressView, View.SCALE_X, visible ? 1f : 0.1f),
-                    ObjectAnimator.ofFloat(floating2ProgressView, View.SCALE_Y, visible ? 1f : 0.1f)
-            );
-            floatingProgressAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    floating2ProgressView.setVisibility(View.VISIBLE);
-                    floatingButton2.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (animation == floatingProgressAnimator) {
-                        if (visible) {
-                            if (floatingButton2 != null) {
-                                floatingButton2.setVisibility(View.GONE);
-                            }
-                        } else {
-                            if (floatingButton2 != null) {
-                                floating2ProgressView.setVisibility(View.GONE);
-                            }
-                        }
-                        floatingProgressAnimator = null;
-                    }
-                }
-            });
-            floatingProgressAnimator.setDuration(150);
-            floatingProgressAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
-            floatingProgressAnimator.start();
-        } else {
-            if (floatingProgressAnimator != null) {
-                floatingProgressAnimator.cancel();
-            }
-
-            floatingProgressVisible = visible;
-            if (visible) {
-                floatingButton2.setAlpha(0f);
-                floatingButton2.setScaleX(0.1f);
-                floatingButton2.setScaleY(0.1f);
-                floatingButton2.setVisibility(View.GONE);
-
-                floating2ProgressView.setAlpha(1f);
-                floating2ProgressView.setScaleX(1f);
-                floating2ProgressView.setScaleY(1f);
-                floating2ProgressView.setVisibility(View.VISIBLE);
-            } else {
-                floatingButton2.setAlpha(1f);
-                floatingButton2.setScaleX(1f);
-                floatingButton2.setScaleY(1f);
-                floatingButton2.setVisibility(View.VISIBLE);
-
-                floating2ProgressView.setAlpha(0f);
-                floating2ProgressView.setScaleX(0.1f);
-                floating2ProgressView.setScaleY(0.1f);
-                floating2ProgressView.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void hideFloatingButton(boolean hide) {
-        if (rightSlidingDialogContainer.hasFragment()) {
-            hide = true;
-        }
-        if (floatingHidden == hide || hide && floatingForceVisible) {
-            return;
-        }
-        floatingHidden = hide;
-        AnimatorSet animatorSet = new AnimatorSet();
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(floatingButtonHideProgress, floatingHidden ? 1f : 0f);
-        valueAnimator.addUpdateListener(animation -> {
-            floatingButtonHideProgress = (float) animation.getAnimatedValue();
-            floatingButtonTranslation = dp(100) * floatingButtonHideProgress;
-            updateFloatingButtonOffset();
-        });
-        animatorSet.playTogether(valueAnimator);
-        animatorSet.setDuration(300);
-        animatorSet.setInterpolator(floatingInterpolator);
-        floatingButtonContainer.setClickable(!hide);
-        animatorSet.start();
-=======
 
         floatingButtonHidden = hide;
         updateFloatingButtonVisibility(true);
->>>>>>> upstream-12.8.1
 
         if (hide) {
             if (storyHint != null) {
@@ -12505,36 +12023,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private boolean onSendLongClick(View view) {
-<<<<<<< OctoGram
-        final Activity parentActivity = getParentActivity();
-        final Theme.ResourcesProvider resourcesProvider = getResourceProvider();
-        if (parentActivity == null) {
-            return false;
-        }
-        ForwardContext forwardContext = delegate instanceof ForwardContext ? (ForwardContext) delegate : this.forwardContext;
-        if (forwardContext == null) {
-            return false;
-        }
-        boolean hasEncrypted = false;
-        for (Long did : selectedDialogs) {
-            if (DialogObject.isEncryptedDialog(did)) {
-                hasEncrypted = true;
-                break;
-            }
-        }
-        SendMessageOptions layout = new SendMessageOptions(parentActivity, this, forwardContext, selectedDialogs.size() > 1 && !hasEncrypted, selectedDialogs.size() > 1, () -> {
-            if (delegate == null || selectedDialogs.isEmpty()) {
-                return;
-            }
-            ArrayList<MessagesStorage.TopicKey> topicKeys = new ArrayList<>();
-            for (int i = 0; i < selectedDialogs.size(); i++) {
-                topicKeys.add(MessagesStorage.TopicKey.of(selectedDialogs.get(i), 0));
-            }
-            delegate.didSelectDialogs(DialogsActivity.this, topicKeys, commentView.getFieldText(), false, notify, scheduleDate, null);
-        }, commentView, resourcesProvider);
-=======
         if (getParentActivity() == null) return false;
->>>>>>> upstream-12.8.1
 
         /*boolean onlyMyself = false;
         boolean canSchedule = true;
@@ -12582,34 +12071,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             })
             .show();
 
-<<<<<<< OctoGram
-        layout.addView(sendPopupLayout2, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));*/
-
-        sendPopupWindow = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
-        sendPopupWindow.setAnimationEnabled(false);
-        sendPopupWindow.setAnimationStyle(R.style.PopupContextAnimation2);
-        sendPopupWindow.setOutsideTouchable(true);
-        sendPopupWindow.setClippingEnabled(true);
-        sendPopupWindow.setInputMethodMode(ActionBarPopupWindow.INPUT_METHOD_NOT_NEEDED);
-        sendPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
-        sendPopupWindow.getContentView().setFocusableInTouchMode(true);
-        SharedConfig.removeScheduledOrNoSoundHint();
-
-        layout.setSendPopupWindow(sendPopupWindow);
-        layout.measure(View.MeasureSpec.makeMeasureSpec(dp(1000), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(dp(1000), View.MeasureSpec.AT_MOST));
-        sendPopupWindow.setFocusable(true);
-        int[] location = new int[2];
-        view.getLocationInWindow(location);
-        int y = location[1] - layout.getMeasuredHeight() - dp(2);
-        sendPopupWindow.showAtLocation(view, Gravity.LEFT | Gravity.TOP, location[0] + view.getMeasuredWidth() - layout.getMeasuredWidth() + dp(8), y);
-        sendPopupWindow.dimBehind();
-        try {
-            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        } catch (Exception ignored) {}
-=======
         return true;
     }
->>>>>>> upstream-12.8.1
 
     private float getRightSlidingProgress() {
         if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
@@ -13163,22 +12626,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         return arrayList;
     }
 
-<<<<<<< OctoGram
-    private void updateFloatingButtonColor() {
-        if (getParentActivity() == null) {
-            return;
-        }
-        if (floatingButtonContainer != null) {
-            floatingButtonContainer.setBackground(CustomFab.createFabBackground());
-        }
 
-        if (floatingButton2Container != null) {
-            floatingButton2Container.setBackground(CustomFab.createFabBackground(40, getThemedColor(Theme.key_chats_actionBackground), getThemedColor(Theme.key_chats_actionPressedBackground)));
-        }
-    }
-
-=======
->>>>>>> upstream-12.8.1
     float slideFragmentProgress = 1f;
     final int slideAmplitudeDp = 40;
     boolean slideFragmentLite;
@@ -13397,14 +12845,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     public void updateStoriesVisibility(boolean animated) {
-<<<<<<< OctoGram
         if (OctoConfig.INSTANCE.hideStories.getValue() || isHiddenChats()) {
             return;
         }
         if (dialogStoriesCell == null || storiesVisibilityAnimator != null || rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment() || searchIsShowed || actionBar.isActionModeShowed() || onlySelect) {
-=======
-        if (dialogStoriesCell == null || storiesVisibilityAnimator != null || rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment() || searchIsShowed || actionBar == null || actionBar.isActionModeShowed() || onlySelect) {
->>>>>>> upstream-12.8.1
             return;
         }
         if (StoryRecorder.isVisible() || (getLastStoryViewer() != null && getLastStoryViewer().isFullyVisible())) {

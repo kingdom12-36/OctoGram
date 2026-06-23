@@ -48,11 +48,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
-<<<<<<< OctoGram
-import org.telegram.ui.Components.Bulletin;
-=======
 import org.telegram.ui.Components.ChatSearchTabs;
->>>>>>> upstream-12.8.1
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CheckBoxSquare;
 import org.telegram.ui.Components.LayoutHelper;
@@ -141,13 +137,9 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         this(context, padding, checkbox, admin, needAddButton, null, needMutualIcon);
     }
 
-<<<<<<< OctoGram
-    public UserCell(Context context, int padding, int checkbox, boolean admin, boolean needAddButton, Theme.ResourcesProvider resourcesProvider, boolean needMutualIcon) {
-=======
     private final int padding;
 
     public UserCell(Context context, int padding, int checkbox, boolean admin, boolean needAddButton, Theme.ResourcesProvider resourcesProvider) {
->>>>>>> upstream-12.8.1
         super(context);
         this.resourcesProvider = resourcesProvider;
 
@@ -775,22 +767,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
         avatarImageView.setRoundRadius(currentChat != null && currentChat.forum ? dp(14) : dp(24));
 
         nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-<<<<<<< OctoGram
-        if (adminTextView != null) {
-            adminTextView.setTextColor(Theme.getColor(Theme.key_profile_creatorIcon, resourcesProvider));
-        }
 
-        if (mutualView != null) {
-            if (currentUser != null && currentUser.mutual_contact) {
-                mutualView.setVisibility(VISIBLE);
-                nameTextView.setContentDescription(nameTextView.getText() + " (" + LocaleController.getString("MutualContact", R.string.MutualContact) + ")");
-            } else {
-                mutualView.setVisibility(GONE);
-                nameTextView.setContentDescription(nameTextView.getText());
-            }
-        }
-=======
->>>>>>> upstream-12.8.1
     }
 
     public void setSelfAsSavedMessages(boolean value) {

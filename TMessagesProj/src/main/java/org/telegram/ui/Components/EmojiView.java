@@ -7420,16 +7420,12 @@ public class EmojiView extends FrameLayout implements
                     if (position == trendingHeaderRow) {
                         cell.setText(getString(R.string.FeaturedEmojiPacks), R.drawable.msg_close, getString(R.string.AccDescrCloseTrendingEmoji));
                     } else if (position == recentlyUsedHeaderRow) {
-<<<<<<< OctoGram
                         cell.setText(LocaleController.getString(R.string.RecentlyUsed), 0);
                         if (OctoConfig.INSTANCE.canShowPreviewEmojis() && OctoConfig.INSTANCE.hideRecentEmojis.getValue()) {
                             cell.setText(LocaleController.getString(R.string.PinnedEmojisList), 0);
                         }
                     } else if (position == pinnedHeaderRow) {
                         cell.setText(LocaleController.getString(R.string.PinnedEmojisList), 0);
-=======
-                        cell.setText(getString(R.string.RecentlyUsed), 0);
->>>>>>> upstream-12.8.1
                     } else if (index >= emojiTitles.length) {
                         try {
                             cell.setText(emojipacksProcessed.get(index - emojiTitles.length).set.title, 0);
@@ -7865,10 +7861,6 @@ public class EmojiView extends FrameLayout implements
         return packs;
     }
 
-<<<<<<< OctoGram
-    private boolean shouldShowEmojiSet(TLRPC.StickerSetCovered set) {
-        return allowEmojisForNonPremium || UserConfig.getInstance(currentAccount).isPremium() || !MediaDataController.getInstance(currentAccount).isStickerPackInstalled(set.set.id);
-=======
     private static class EmojiPackInfo {
         private final @Nullable TLRPC.StickerSetCovered stickerSetCovered;
         private final @Nullable TLRPC.TL_messages_stickerSet stickerSet;
@@ -7891,7 +7883,6 @@ public class EmojiView extends FrameLayout implements
             this.documents = documents;
             this.firstDocument = documents != null && !documents.isEmpty() ? documents.get(0) : null;
         }
->>>>>>> upstream-12.8.1
     }
 
     private class EmojiSearchAdapter extends RecyclerListView.SelectionAdapter {

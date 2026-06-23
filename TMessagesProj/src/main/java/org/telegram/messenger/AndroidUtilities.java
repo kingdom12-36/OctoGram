@@ -2430,7 +2430,6 @@ public class AndroidUtilities {
             if (!typefaceCache.containsKey(assetPath)) {
                 Typeface t = null;
                 try {
-<<<<<<< OctoGram
                     if (OctoConfig.INSTANCE.useSystemFont.getValue()) {
                         t = switch (assetPath) {
                             case "fonts/rmono.ttf" -> Typeface.MONOSPACE;
@@ -2449,21 +2448,6 @@ public class AndroidUtilities {
                                     ? Typeface.create(Typeface.SANS_SERIF, 400, false)
                                     : Typeface.create("sans-serif", Typeface.NORMAL);
                         };
-=======
-                    Typeface t;
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
-                        if (assetPath.contains("rextrabold")) {
-                            builder.setWeight(800);
-                        }
-                        if (assetPath.contains("medium") || assetPath.contains("rbold")) {
-                            builder.setWeight(700);
-                        }
-                        if (assetPath.contains("italic")) {
-                            builder.setItalic(true);
-                        }
-                        t = builder.build();
->>>>>>> upstream-12.8.1
                     } else {
                         if (Build.VERSION.SDK_INT >= 26) {
                             Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);

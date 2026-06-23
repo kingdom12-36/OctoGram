@@ -614,11 +614,7 @@ public class ItemOptions {
         return this;
     }
 
-<<<<<<< OctoGram
-    public ItemOptions addChatForLockedAccounts(TLObject obj, boolean checked, Runnable onClickListener) {
-=======
     public ItemOptions addAccount(int account, boolean checked, Runnable onClickListener) {
->>>>>>> upstream-12.8.1
         if (context == null) {
             return this;
         }
@@ -626,7 +622,6 @@ public class ItemOptions {
         final int textColorKey = Theme.key_actionBarDefaultSubmenuItem;
         final int iconColorKey = Theme.key_actionBarDefaultSubmenuItemIcon;
 
-<<<<<<< OctoGram
         ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
         subItem.setPadding(dp(18), 0, dp(18), 0);
         boolean lockedAccount = false;
@@ -640,41 +635,20 @@ public class ItemOptions {
                 lockedAccount = true;
             }
         }
-=======
-        final TLRPC.User user = UserConfig.getInstance(account).getCurrentUser();
-
-        ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
-        subItem.setPadding(dp(18), 0, dp(18), 0);
-        subItem.setText(UserObject.getUserName(user));
->>>>>>> upstream-12.8.1
 
         subItem.setClipToPadding(false);
         subItem.textView.setPadding(subItem.checkViewLeft ? (subItem.checkView != null ? dp(43) : 0) : dp(43), 0, subItem.checkViewLeft ? dp(43) : (subItem.checkView != null ? dp(43) : 0), 0);
         BackupImageView imageView = new BackupImageView(context);
-<<<<<<< OctoGram
-        imageView.setBlurAllowed(true);
-        AvatarDrawable avatarDrawable = new AvatarDrawable();
-        avatarDrawable.setInfo(obj);
-        imageView.setRoundRadius(dp(34));
-        imageView.setForUserOrChat(obj, avatarDrawable);
-=======
         imageView.getImageReceiver().setCurrentAccount(account);
         AvatarDrawable avatarDrawable = new AvatarDrawable();
         avatarDrawable.setInfo(user);
         imageView.setRoundRadius(dp(34));
         imageView.setForUserOrChat(user, avatarDrawable);
->>>>>>> upstream-12.8.1
         imageView.setScaleX(checked ? 0.84f : 1.0f);
         imageView.setScaleY(checked ? 0.84f : 1.0f);
         subItem.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), -5, 0, -5, 0));
 
-<<<<<<< OctoGram
-        if (lockedAccount) {
-            imageView.setHasBlur(true);
-        }
 
-=======
->>>>>>> upstream-12.8.1
         if (checked) {
             final float strokeWidth = 2;
             View checkView = new View(context);
@@ -689,11 +663,7 @@ public class ItemOptions {
             if (onClickListener != null) {
                 onClickListener.run();
             }
-<<<<<<< OctoGram
-            dismiss();
-=======
             if (dismissWithButtons) dismiss();
->>>>>>> upstream-12.8.1
         });
         if (minWidthDp > 0) {
             subItem.setMinimumWidth(dp(minWidthDp));
@@ -1117,10 +1087,6 @@ public class ItemOptions {
         return layout;
     }
 
-<<<<<<< OctoGram
-    public ActionBarPopupWindow.ActionBarPopupWindowLayout getLastLayout() {
-        return lastLayout;
-=======
     public ItemOptions setBlurBackgroundForSwipeback(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundProvider colorProvider, boolean multiwindow) {
         if (linearLayout != null) {
             linearLayout.setBackground(factory.create(linearLayout, multiwindow)
@@ -1138,7 +1104,6 @@ public class ItemOptions {
                 .setRadius(dp(12)));
         }
         return this;
->>>>>>> upstream-12.8.1
     }
 
     public ItemOptions setBlurBackground(BlurringShader.BlurManager blurManager, float ox, float oy) {

@@ -140,12 +140,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
     private Runnable lastRunnable;
     private boolean titleOverlayShown;
     private Runnable titleActionRunnable;
-<<<<<<< OctoGram
     private boolean castShadows = !OctoConfig.INSTANCE.disableDividers.getValue();
-=======
-    private boolean castShadows = true;
-    private int shadowAlpha = 0xFF;
->>>>>>> upstream-12.8.1
 
     public boolean menuOccupyBack;
     protected boolean isSearchFieldVisible;
