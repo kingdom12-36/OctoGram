@@ -32,8 +32,12 @@ public class ChatActivityBlurredRoundPageDownButton extends FrameLayout {
     }
 
     public void addButtonView(ChatActivityBlurredRoundButton button) {
+        addButtonView(button, 56);
+    }
+
+    public void addButtonView(ChatActivityBlurredRoundButton button, int size) {
         this.buttonView = button;
-        addView(button, LayoutHelper.createFrame(56, 56, Gravity.BOTTOM));
+        addView(button, LayoutHelper.createFrame(size, size, Gravity.BOTTOM));
         button.setIconPadding(dp(2));
     }
 
@@ -99,6 +103,22 @@ public class ChatActivityBlurredRoundPageDownButton extends FrameLayout {
         ));
         ScaleStateListAnimator.apply(button, .13f, 2f);
 
+        return button;
+    }
+
+    public static ChatActivityBlurredRoundPageDownButton create(
+            Context context,
+            int size, int iconSize,
+            Theme.ResourcesProvider resourcesProvider,
+            BlurredBackgroundDrawableViewFactory factory,
+            BlurredBackgroundColorProvider colorProvider,
+            @DrawableRes int res
+    ) {
+        ChatActivityBlurredRoundPageDownButton button = new ChatActivityBlurredRoundPageDownButton(context, resourcesProvider);
+        button.addButtonView(ChatActivityBlurredRoundButton.create(
+            context, factory, colorProvider, resourcesProvider, res, iconSize
+        ), size);
+        ScaleStateListAnimator.apply(button, .13f, 2f);
         return button;
     }
 }
