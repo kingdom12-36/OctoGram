@@ -344,7 +344,7 @@ public class MessageSeenView extends FrameLayout {
         return listView;
     }
 
-    private static class UserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+    public static class UserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
         private int currentAccount = UserConfig.selectedAccount;
 

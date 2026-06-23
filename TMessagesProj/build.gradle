@@ -119,6 +119,9 @@ dependencies {
     implementation libs.mlkit.language.id
     implementation libs.billing
     implementation libs.commons.text
+    implementation libs.commonmark.core
+    implementation libs.commonmark.strikethrough
+    implementation libs.commonmark.tables
     implementation libs.gson
     implementation(libs.guava) {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'

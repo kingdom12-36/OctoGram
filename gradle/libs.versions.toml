@@ -53,6 +53,7 @@ stripe_android = "2.0.2" # NOT YET SUPPORTED BY TELEGRAM
 mlkit_language_id = "17.0.6"
 billing = "7.1.1"
 commons_text = "1.10.0"
+commonmark = "0.23.0"
 gson = "2.13.1"
 guava = "33.4.8-android"
 nanohttpd = "2.3.1"
@@ -138,6 +139,9 @@ stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripe_a
 mlkit-language-id = { module = "com.google.mlkit:language-id", version.ref = "mlkit_language_id" }
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commons_text" }
+commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmark-strikethrough = { module = "org.commonmark:commonmark-ext-gfm-strikethrough", version.ref = "commonmark" }
+commonmark-tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 
