@@ -390,19 +390,6 @@ public class TodoItemMenu extends Dialog {
                     super.drawOverlays(canvas);
                 }
             };
-            cell.copyParamsTo(myTaskCell);
-            myTaskCell.copySpoilerEffect2AttachIndexFrom(cell);
-            myTaskCell.setDelegate(new ChatMessageCell.ChatMessageCellDelegate() {
-                @Override
-                public boolean canPerformActions() {
-                    return false;
-                }
-
-                    @Override
-                    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                        setMeasuredDimension(finalWidth, finalHeight);
-                    }
-                };
                 cell.copyParamsTo(myTaskCell);
                 myTaskCell.copySpoilerEffect2AttachIndexFrom(cell);
                 myTaskCell.setDelegate(new ChatMessageCell.ChatMessageCellDelegate() {
@@ -550,7 +537,6 @@ public class TodoItemMenu extends Dialog {
                                 i--;
                             }
                         }
-                    }
                     for (int i = 0; i < media.completions.size(); ++i) {
                         final TLRPC.TodoCompletion c = media.completions.get(i);
                         if (c.id == taskId) {
