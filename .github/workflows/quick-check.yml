@@ -31,7 +31,28 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*','**/libs.versions.toml','**/gradle-wrapper.properties') }}
           restore-keys: gradle-${{ runner.os }}-
 
-      - name: Compile Java sources (no APK, no cache)
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create local.properties (dummy credentials for compile check)
+        run: |
+          mkdir -p /home/octogram/keys
+          cat > /home/octogram/keys/sign.properties << 'EOF'
+          keyPath=/home/octogram/keys/octogram-key.jks
+          storePassword=dummy
+          keyAlias=dummy
+          keyPassword=dummy
+          EOF
+          {
+            echo "sign.file=/home/octogram/keys/sign.properties"
+            echo "MAPS_API_KEY=AIzaSyDummyKey"
+            echo "apiId=12345"
+            echo "apiHash=dummyhash"
+            echo "sentryDsn="
+          } > local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
+
+      - name: Compile Java sources (no APK)
         run: |
           chmod +x ./gradlew
           ./gradlew :TMessagesProj:compileDebugJava \
