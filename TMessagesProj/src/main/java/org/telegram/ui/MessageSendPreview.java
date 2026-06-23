@@ -10,6 +10,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Insets;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -23,16 +26,15 @@ import android.view.KeyEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManagerFixed;
@@ -49,10 +51,8 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
-import org.telegram.messenger.utils.WindowVisibilityManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
@@ -70,14 +70,8 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.ReactionsContainerLayout;
 import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.Components.ScrimOptions;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.Text;
-import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
-import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
-import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceBitmap;
-import org.telegram.ui.Components.blur3.utils.Blur3Utils;
-import org.telegram.ui.Components.chat.ViewPositionWatcher;
 import org.telegram.ui.Components.spoilers.SpoilerEffect2;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stories.recorder.KeyboardNotifier;
@@ -92,8 +86,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
     public final Theme.ResourcesProvider resourcesProvider;
     public final int currentAccount = UserConfig.selectedAccount;
 
-    private WindowVisibilityManager.Controller activityVisibilityController;
-    private Insets insets = Insets.NONE;
+    private final Rect insets = new Rect();
     private Bitmap blurBitmap;
     private BitmapShader blurBitmapShader;
     private Paint blurBitmapPaint;
@@ -148,22 +141,14 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
 
     private SpoilerEffect2 spoilerEffect2;
 
-    private final BlurredBackgroundSourceBitmap iBlur3SourceBitmap;
-    private final BlurredBackgroundDrawableViewFactory iBlur3Factory;
-
     public MessageSendPreview(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context, R.style.TransparentDialog);
         this.context = context;
         this.resourcesProvider = resourcesProvider;
 
-        activityVisibilityController = LaunchActivity.obtainActivityVisibilityController();
         windowView = new FrameLayout(context) {
             @Override
-            protected void dispatchDraw(@NonNull Canvas canvas) {
-                if (activityVisibilityController != null) {
-                    activityVisibilityController.setHidden(openProgress == 1 && blurBitmapPaint != null);
-                }
-
+            protected void dispatchDraw(Canvas canvas) {
                 if (openProgress > 0 && blurBitmapPaint != null) {
                     blurMatrix.reset();
                     final float s = (float) getWidth() / blurBitmap.getWidth();
@@ -193,38 +178,30 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                     layoutDone = true;
                 }
             }
-
-            @Override
-            protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-                super.onSizeChanged(w, h, oldw, oldh);
-                checkBitmapMatrix();
-            }
         };
         spoilerEffect2 = SpoilerEffect2.getInstance(SpoilerEffect2.TYPE_PREVIEW, windowView, windowView);
         windowView.setOnClickListener(v -> {
             onBackPressed();
         });
-        windowView.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
-            if (!focusable && newFocus instanceof EditText) {
-                AndroidUtilities.hideKeyboard(editText);
-                AndroidUtilities.runOnUIThread(() -> {
-                    makeFocusable();
+        windowView.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            @Override
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+                if (!focusable && newFocus instanceof EditText) {
+                    AndroidUtilities.hideKeyboard(editText);
                     AndroidUtilities.runOnUIThread(() -> {
-                        AndroidUtilities.showKeyboard(newFocus);
-                        if (anchorSendButton != null) {
-                            anchorSendButton.getLocationOnScreen(sendButtonInitialPosition);
+                        makeFocusable();
+                        AndroidUtilities.runOnUIThread(() -> {
+                            AndroidUtilities.showKeyboard(newFocus);
+                            if (anchorSendButton != null) {
+                                anchorSendButton.getLocationOnScreen(sendButtonInitialPosition);
 //                                sendButtonInitialPosition[0] = Math.min(sendButtonInitialPosition[0] + anchorSendButton.getWidth(), AndroidUtilities.displaySize.x) - anchorSendButton.getWidth();
-                            sendButtonInitialPosition[0] += anchorSendButton.getWidth() - anchorSendButton.width(anchorSendButton.getHeight()) - dp(6);
-                        }
-                    }, 100);
-                }, 200);
+                                sendButtonInitialPosition[0] += anchorSendButton.getWidth() - anchorSendButton.width(anchorSendButton.getHeight()) - dp(6);
+                            }
+                        }, 100);
+                    }, 200);
+                }
             }
         });
-
-        iBlur3SourceBitmap = new BlurredBackgroundSourceBitmap();
-        iBlur3Factory = new BlurredBackgroundDrawableViewFactory(iBlur3SourceBitmap);
-        iBlur3Factory.setSourceRootView(new ViewPositionWatcher(windowView), windowView);
-
         containerView = new SizeNotifierFrameLayout(context) {
             final int[] pos = new int[2];
             final int[] pos2 = new int[2];
@@ -434,15 +411,29 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         };
         containerView.setClipToPadding(false);
         windowView.addView(containerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
-        ViewCompat.setOnApplyWindowInsetsListener(windowView, new OnApplyWindowInsetsListener() {
-            @Override
-            public @NonNull WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat i) {
-                insets = i.getInsets(WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.systemBars());
-                containerView.setPadding(insets.left, insets.top, insets.right, insets.bottom);
-                windowView.requestLayout();
-                return WindowInsetsCompat.CONSUMED;
-            }
-        });
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            windowView.setFitsSystemWindows(true);
+            windowView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @NonNull
+                @Override
+                public WindowInsets onApplyWindowInsets(@NonNull View v, @NonNull WindowInsets insets) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        Insets r = insets.getInsets(WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.systemBars());
+                        MessageSendPreview.this.insets.set(r.left, r.top, r.right, r.bottom);
+                    } else {
+                        MessageSendPreview.this.insets.set(insets.getSystemWindowInsetLeft(), insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), insets.getSystemWindowInsetBottom());
+                    }
+                    containerView.setPadding(MessageSendPreview.this.insets.left, MessageSendPreview.this.insets.top, MessageSendPreview.this.insets.right, MessageSendPreview.this.insets.bottom);
+                    windowView.requestLayout();
+                    if (Build.VERSION.SDK_INT >= 30) {
+                        return WindowInsets.CONSUMED;
+                    } else {
+                        return insets.consumeSystemWindowInsets();
+                    }
+                }
+            });
+        }
 
         chatListView = new RecyclerListView(context, resourcesProvider) {
             @Override
@@ -484,8 +475,6 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
 
             @Override
             protected void dispatchDraw(Canvas canvas) {
-                updateMessagesVisiblePart();
-
                 canvas.saveLayerAlpha(0, getScrollY() + 1, getWidth(), getScrollY() + getHeight() - 1, 0xFF, Canvas.ALL_SAVE_FLAG);
                 canvas.save();
                 drawChatBackgroundElements(canvas);
@@ -1004,7 +993,6 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                 cell.setMessageObject(messageObject, group, false, false, false);
                 if (position == getMainMessageCellPosition() && !messageObject.needDrawForwarded()) {
                     mainMessageCell = cell;
-                    mainMessageCell.setParentViewSize(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y);
                     mainMessageCellId = messageObject.getId();
                 }
             }
@@ -1063,40 +1051,6 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         };
     }
 
-    private void updateMessagesVisiblePart() {
-        final int height = containerView.getMeasuredHeight();
-        final int recyclerChatViewHeight = height;
-
-        for (int a = 0, N = chatListView.getChildCount(); a < N; a++) {
-            final View view = chatListView.getChildAt(a);
-            if (view instanceof ChatMessageCell) {
-                float y = ViewPositionWatcher.computeYCoordinateInParent(view, containerView);
-
-                final ChatMessageCell cell = (ChatMessageCell) view;
-
-                final int top = (int) y;
-                final int bottom = top + view.getMeasuredHeight();
-                int viewTop = top >= 0 ? 0 : -top;
-                int viewBottom = view.getMeasuredHeight();
-                if (viewBottom > height) {
-                    viewBottom = viewTop + height;
-                }
-
-                cell.setVisiblePart(
-                    viewTop,
-                    viewBottom - viewTop,
-                    recyclerChatViewHeight,
-                    y,
-                    y,
-                    containerView.getMeasuredWidth(),
-                    containerView.getMeasuredHeight(),
-                    0,
-                    0,
-                    0);
-            }
-        }
-    }
-
     @Override
     public void onBackPressed() {
         if (keyboardVisible) {
@@ -1118,14 +1072,17 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         public MessageCell(Context context, int currentAccount, boolean canDrawBackgroundInParent, ChatMessageSharedResources sharedResources, Theme.ResourcesProvider resourcesProvider) {
             super(context, currentAccount, canDrawBackgroundInParent, sharedResources, resourcesProvider);
         }
+
         @Override
         protected SpoilerEffect2 makeSpoilerEffect() {
             return SpoilerEffect2.getInstance(SpoilerEffect2.TYPE_PREVIEW, this, windowView);
         }
+
         @Override
         public boolean isPressed() {
             return false;
         }
+
         public int top = Integer.MAX_VALUE;
         public int bottom = Integer.MAX_VALUE;
         private int pastId = -1;
@@ -1133,10 +1090,17 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
             super.onLayout(changed, left, top, right, bottom);
             if (transitionParams.animateBackgroundBoundsInner && top != 0 && this.top != Integer.MAX_VALUE && bottom != 0 && this.bottom != Integer.MAX_VALUE && pastId == (getMessageObject() == null ? 0 : getMessageObject().getId())) {
+//                if (!scrolledToLast) {
+//                } else {
+//                    setTranslationY(-(bottom - this.bottom));
+//                }
                 if (!scrolledToLast) {
                     setTranslationY(-(top - this.top));
                     animate().translationY(0).setDuration(320).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).start();
+                } else {
+
                 }
+
                 this.top = getTop();
                 this.bottom = getBottom();
                 pastId = getMessageObject() == null ? 0 : getMessageObject().getId();
@@ -1160,11 +1124,13 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         params.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-        params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION |
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        if (Build.VERSION.SDK_INT >= 21) {
+            params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION |
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        }
         params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         if (Build.VERSION.SDK_INT >= 28) {
@@ -1271,9 +1237,6 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
     }
 
     public void setItemOptions(ItemOptions options) {
-        options.setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));
-        options.setBlurBackground(iBlur3Factory, BlurredBackgroundProviderImpl.scrimMenuBackground(resourcesProvider), false);
-
         optionsView = options.getLayout();
         containerView.addView(optionsView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
     }
@@ -1406,7 +1369,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         } else {
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.availableEffectsUpdate);
         }
-        if (effectSelector != null /*&& SharedConfig.getDevicePerformanceClass() < SharedConfig.PERFORMANCE_CLASS_HIGH*/) {
+        if (effectSelector != null) {
             effectSelector.setPaused(true, true);
         }
 
@@ -1609,8 +1572,8 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                 AndroidUtilities.lerp(parentWidth, to.parentWidth, t),
                 AndroidUtilities.lerp(parentHeight, to.parentHeight, t),
                 AndroidUtilities.lerp(blurredViewTopOffset, to.blurredViewTopOffset, t),
-                AndroidUtilities.lerp(blurredViewBottomOffset, to.blurredViewBottomOffset, t),
-                    0);
+                AndroidUtilities.lerp(blurredViewBottomOffset, to.blurredViewBottomOffset, t)
+            );
         }
     }
 
@@ -1669,7 +1632,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         });
         windowView.invalidate();
 
-        afterDismiss();
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.availableEffectsUpdate);
     }
 
     public void dismiss(boolean sent) {
@@ -1687,7 +1650,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         }
         super.dismiss();
 
-        afterDismiss();
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.availableEffectsUpdate);
     }
 
     @Override
@@ -1709,15 +1672,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         });
         windowView.invalidate();
 
-        afterDismiss();
-    }
-
-    private void afterDismiss() {
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.availableEffectsUpdate);
-        if (activityVisibilityController != null) {
-            activityVisibilityController.destroy();
-            activityVisibilityController = null;
-        }
     }
 
     private ValueAnimator openAnimator;
@@ -1806,23 +1761,23 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         if (anchorSendButton != null) {
             anchorSendButton.setAlpha(0.0f);
         }
-
-        ScrimOptions.makeGlobalBlurBitmaps((bitmapBg, bitmapOptions) -> {
+        AndroidUtilities.makeGlobalBlurBitmap(bitmap -> {
             if (anchorSendButton != null) {
                 anchorSendButton.setAlpha(oldAlpha);
             }
             if (withoutView != null) {
                 withoutView.setVisibility(View.VISIBLE);
             }
-            blurBitmap = bitmapBg;
+            blurBitmap = bitmap;
 
             blurBitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             blurBitmapPaint.setShader(blurBitmapShader = new BitmapShader(blurBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+            ColorMatrix colorMatrix = new ColorMatrix();
+            AndroidUtilities.adjustSaturationColorMatrix(colorMatrix, Theme.isCurrentThemeDark() ? .08f : +.25f);
+            AndroidUtilities.adjustBrightnessColorMatrix(colorMatrix, Theme.isCurrentThemeDark() ? -.02f : -.07f);
+            blurBitmapPaint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
             blurMatrix = new Matrix();
-
-            iBlur3SourceBitmap.setBitmap(bitmapOptions);
-            checkBitmapMatrix();
-        });
+        }, 14);
     }
 
     public void updateColors() {
@@ -1954,13 +1909,6 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         canvas.drawRoundRect(AndroidUtilities.rectTmp, buttonHeight / 2f, buttonHeight / 2f, buttonBgPaint);
         buttonText.draw(canvas, cx - buttonWidth / 2f + dp(14), cy, 0xFFFFFFFF, 1f);
         canvas.restore();
-    }
-
-    private void checkBitmapMatrix() {
-        Blur3Utils.checkBitmapSourceMatrixScale(iBlur3SourceBitmap, windowView);
-        if (optionsView != null) {
-            optionsView.invalidate();
-        }
     }
 
 }
