@@ -216,7 +216,7 @@ public class ContactsController extends BaseController {
         }
     }
 
-    private static final String[] projectionPhones = {
+    private String[] projectionPhones = {
             ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY,
             ContactsContract.CommonDataKinds.Phone.NUMBER,
             ContactsContract.CommonDataKinds.Phone.TYPE,
@@ -224,7 +224,7 @@ public class ContactsController extends BaseController {
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
             ContactsContract.RawContacts.ACCOUNT_TYPE,
     };
-    private static final String[] projectionNames = {
+    private String[] projectionNames = {
             ContactsContract.CommonDataKinds.StructuredName.LOOKUP_KEY,
             ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
             ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
@@ -1988,7 +1988,7 @@ public class ContactsController extends BaseController {
         sortedUsersSectionsArray = sortedSectionsArray;
     }
 
-    public static boolean hasContactsPermission() {
+    private boolean hasContactsPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
             return ApplicationLoader.applicationContext.checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
         }
@@ -2013,7 +2013,7 @@ public class ContactsController extends BaseController {
         return true;
     }
 
-    public static boolean hasContactsWritePermission() {
+    private boolean hasContactsWritePermission() {
         if (Build.VERSION.SDK_INT >= 23) {
             return ApplicationLoader.applicationContext.checkSelfPermission(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED;
         }
